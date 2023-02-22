@@ -8,7 +8,7 @@ import { Record, Level, Player, Log } from "./schema";
 
 if (
   process.env.BOT_TOKEN === undefined ||
-  process.env.MONGODB_URI === undefined
+  process.env.MONGODB_TEST_URI === undefined
 )
   env.config();
 
@@ -126,9 +126,9 @@ app.patch(
 );
 
 app.get("/players", async (req, res) => {
-  const players = await Player.find({ points: { $gt: 0 } })
+  const players = await Player.find({ "points.comb": { $gt: 0 } })
     .lean()
-    .sort("-points")
+    .sort("-points.lrr")
     .select("name points -_id");
   return res.status(200).json(players);
 });
@@ -136,7 +136,7 @@ app.get("/players", async (req, res) => {
 app.get("/players/:name", async (req, res) => {
   const player = await Player.findOne({ name: req.params.name })
     .lean({ virtuals: true })
-    .populate("records", "-_id -__v -player -levelID -playerID")
+    .populate("records", "-_id -id -__v -player -levelID -playerID")
     .select("-_id -id -__v");
   return player
     ? res.status(200).json(player)
@@ -150,7 +150,6 @@ app.post(
     if (await Player.exists({ name: req.body.name as string })) throw 409;
     const player = new Player({
       name: req.body.name as string,
-      points: 0,
       discord:
         req.body.discord === null ? undefined : (req.body.discord as string),
     });
@@ -266,8 +265,8 @@ app.post("/submit", async (req, res) => {
 app.get("/members", async (req, res) => {
   const players = await Player.find({ discord: { $exists: true } })
     .lean()
-    .sort("-points")
-    .select("name discord points -_id");
+    .sort("-points.comb")
+    .select("name discord points.comb -_id");
   return res.status(200).json(players);
 });
 

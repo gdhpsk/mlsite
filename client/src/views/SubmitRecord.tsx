@@ -60,7 +60,7 @@ const SubmitRecord: React.FC = () => {
         <label className='input-group place-content-center'>
           <span>Level</span>
           <CreatableSelect
-            className='z-40 w-48'
+            className='z-39 w-48'
             name='levelSelect'
             options={levels.map((l) => ({ value: l.name, label: l.name }))}
             onChange={(e) => setLevel(e.value)}
