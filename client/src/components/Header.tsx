@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
       <div className='flex-1' onClick={() => navigate('/')}>
         <a className='btn-ghost btn text-xl normal-case text-white'>{name}</a>
       </div>
-      {window.innerWidth > 640 ? (
+      {window.innerWidth > 992 ? (
         <div className='flex-none'>
           <ul className='menu menu-horizontal px-1'>
             {Object.keys(routes).map((r, i) => (
