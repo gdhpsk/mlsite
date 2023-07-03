@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { getPlayer, APIOnePlayer } from "../util/withApi"
+import React, { useEffect, useState } from 'react'
+import { getPlayer, APIOnePlayer } from '../util/withApi'
 
 interface PlayerModalProps {
   playerName: string
@@ -15,9 +15,7 @@ const PlayerModal: React.FC<PlayerModalProps> = (props: PlayerModalProps) => {
     getPlayer(playerName).then((p) => setPlayer(p))
   }, [])
 
-  return (show &&
-    <></>
-  )
+  return show && <></>
 }
 
 export default PlayerModal

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useTransition, lazy } from 'react'
+import React from 'react'
 import { APIManyPlayer } from '../util/withApi'
+import { TableRow, TableCell } from '../primitives/table'
 
 interface PlayerProps extends APIManyPlayer {
   show: boolean
@@ -8,22 +9,16 @@ interface PlayerProps extends APIManyPlayer {
   onSelect: () => void
 }
 
-const Player: React.FC<PlayerProps> = (props: PlayerProps) => {
-  const { name, points, position, show, view, onSelect } = props
-
+const Player: React.FC<PlayerProps> = ({ name, points, position, show, view, onSelect }) => {
   return (
     show && (
       <>
-        <tr className='hover cursor-pointer' onClick={onSelect}>
-          <td className='flex items-center'>
-            <div className='text-lg'>
-              <strong>{position}.</strong>&nbsp;{name}
-            </div>
-            <div className='text-md grow text-right opacity-70'>
-              <em>{points[view].toFixed(2)}</em>
-            </div>
-          </td>
-        </tr>
+        <TableRow onClick={onSelect} className="cursor-pointer py-2 text-lg hover:bg-slate-50">
+          <TableCell className="font-semibold">
+            {position}.&nbsp;{name}
+          </TableCell>
+          <TableCell className="italic">{points[view].toFixed(2)}</TableCell>
+        </TableRow>
       </>
     )
   )

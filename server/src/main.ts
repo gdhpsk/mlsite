@@ -5,6 +5,7 @@ import cors from "cors";
 import mongoose, { ClientSession } from "mongoose";
 import path from "path";
 import { Record, Level, Player } from "./schema";
+import axios from "axios";
 
 if (
   process.env.BOT_TOKEN === undefined ||
@@ -251,13 +252,16 @@ app.post("/submit", async (req, res) => {
     return res.sendStatus(409);
   if (!(await Player.exists({ name: req.body.player as string }))) isNew += 1;
   if (!(await Level.exists({ name: req.body.level as string }))) isNew += 2;
-  return fetch(`${process.env.BOT_LISTENER_URI}/submit`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ ...req.body, isNew }),
-  })
+  return axios
+    .post(
+      `${process.env.BOT_LISTENER_URI}/submit`,
+      JSON.stringify({ ...req.body, isNew }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
     .then((data) => res.sendStatus(data.status))
     .catch(() => res.sendStatus(503));
 });

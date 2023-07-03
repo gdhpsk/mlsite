@@ -12,10 +12,10 @@ import About from './views/About'
 const App: React.FC = () => {
   return (
     <>
-      <div className='fixed -z-50 h-screen w-full bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-gray-400 via-gray-600 to-blue-800' />
+      <div className="fixed -z-50 h-screen w-full bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-gray-400 via-gray-600 to-blue-800" />
       <HashRouter>
         <Header
-          name='GD Mobile List'
+          name="GD Mobile List"
           routes={{
             about: '/about',
             leaderboard: '/leaderboard',
@@ -23,10 +23,10 @@ const App: React.FC = () => {
           }}
         />
         <Routes>
-          <Route path='/' element={<List />} />
-          <Route path='/about' element={<About />} />
-          <Route path='/leaderboard' element={<Leaderboard />} />
-          <Route path='/submit' element={<SubmitRecord />} />
+          <Route path="/" element={<List />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/submit" element={<SubmitRecord />} />
         </Routes>
       </HashRouter>
     </>

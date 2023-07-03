@@ -3,6 +3,11 @@ import { getPlayers, APIManyPlayer } from '../util/withApi'
 import Player from '../components/Player'
 import LeaderboardInfoBox from '../components/LeaderboardInfoBox'
 import PlayerModal from '../components/PlayerModal'
+import { Table, TableBody } from '../primitives/table'
+import { ScrollArea } from '../primitives/scroll-area'
+import { Tabs, TabsList, TabsTrigger } from '../primitives/tabs'
+import { Separator } from '../primitives/separator'
+import { Input } from '../primitives/input'
 
 const Leaderboard: React.FC = () => {
   let [players, setPlayers] = useState<Array<APIManyPlayer>>([])
@@ -19,93 +24,79 @@ const Leaderboard: React.FC = () => {
   }, [])
 
   return (
-    <div className='rounded-box border-4 bg-[#f2f7ff] p-8 sm:container sm:m-12 sm:mx-auto sm:w-3/5'>
-      <div className='rounded-box flex justify-center'>
-        <div
-          className={`select-none p-2 text-lg transition-all ${
-            view === 'lrr' ? 'bg-slate-200' : 'cursor-pointer hover:bg-slate-300'
-          }`}
-          onClick={() => setView('lrr')}
-        >
-          LRR
-        </div>
-        <div
-          className={`select-none p-2 text-lg transition-all ${
-            view === 'comb' ? 'bg-slate-200' : 'cursor-pointer hover:bg-slate-300'
-          }`}
-          onClick={() => setView('comb')}
-        >
-          Combined
-        </div>
-        <div
-          className={`select-none p-2 text-lg transition-all ${
-            view === 'hrr' ? 'bg-slate-200' : 'cursor-pointer hover:bg-slate-300'
-          }`}
-          onClick={() => setView('hrr')}
-        >
-          HRR
-        </div>
+    <div className="border-4 bg-[#f2f7ff] p-8 sm:m-12 sm:mx-auto sm:w-3/5">
+      <div className="mx-auto">
+        <Tabs defaultValue="lrr" className="w-[300px]" onValueChange={(val: 'lrr' | 'hrr' | 'comb') => setView(val)}>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="lrr">LRR</TabsTrigger>
+            <TabsTrigger value="comb">Combined</TabsTrigger>
+            <TabsTrigger value="hrr">HRR</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
       <br />
-      <div className='flex'>
-        <div className='rounded-box max-h-[70vh] flex-grow bg-white p-4 shadow-inner'>
-          <div className='flex'>
-            <input
-              type='text'
-              placeholder='Search...'
-              className='input-bordered input m-4 grow'
+      <div className="flex">
+        <div className="max-h-[70vh] flex-grow bg-white p-4 shadow-inner">
+          <div className="flex">
+            <Input
+              type="text"
+              placeholder="Search..."
+              className="input-bordered input m-4 grow"
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <div className='h-[55vh] overflow-y-auto'>
-            <table className='table-compact table w-full'>
-              <tbody>
-                {players
-                  .filter((player) => {
-                    switch (view) {
-                      case 'lrr':
-                        return player.points.lrr > 0
-                      case 'hrr':
-                        return player.points.hrr > 0
-                      case 'comb':
-                        return true
-                    }
-                  })
-                  .sort((a, b) => {
-                    switch (view) {
-                      case 'lrr':
-                        return b.points.lrr - a.points.lrr
-                      case 'hrr':
-                        return b.points.hrr - a.points.hrr
-                      case 'comb':
-                        return b.points.comb - a.points.comb
-                    }
-                  })
-                  .map((player, i) => (
-                    <Player
-                      {...player}
-                      show={search.length > 0 ? player.name.toLowerCase().indexOf(search.toLowerCase()) !== -1 : true}
-                      view={view}
-                      position={i + 1}
-                      onSelect={() => {
-                        setSelectedPlayerName(player.name)
-                        window.innerWidth <= 640 && setShowModal(true)
-                      }}
-                    />
-                  ))}
-              </tbody>
-            </table>
+          <div>
+            <ScrollArea className="h-[55vh]">
+              <Table>
+                <TableBody>
+                  {players
+                    .filter((player) => {
+                      switch (view) {
+                        case 'lrr':
+                          return player.points.lrr > 0
+                        case 'hrr':
+                          return player.points.hrr > 0
+                        case 'comb':
+                          return true
+                      }
+                    })
+                    .sort((a, b) => {
+                      switch (view) {
+                        case 'lrr':
+                          return b.points.lrr - a.points.lrr
+                        case 'hrr':
+                          return b.points.hrr - a.points.hrr
+                        case 'comb':
+                          return b.points.comb - a.points.comb
+                      }
+                    })
+                    .map((player, i) => (
+                      <Player
+                        {...player}
+                        show={search.length > 0 ? player.name.toLowerCase().indexOf(search.toLowerCase()) !== -1 : true}
+                        view={view}
+                        position={i + 1}
+                        onSelect={() => {
+                          setSelectedPlayerName(player.name)
+                          window.innerWidth <= 640 && setShowModal(true)
+                        }}
+                        key={`player-${i}`}
+                      />
+                    ))}
+                </TableBody>
+              </Table>
+            </ScrollArea>
           </div>
         </div>
-        
-        {window.innerWidth > 640 ? 
+
+        {window.innerWidth > 640 ? (
           <>
-            <div className='divider divider-horizontal' />
+            <Separator orientation="vertical" className="mx-4" />
             <LeaderboardInfoBox playerName={selectedPlayerName} view={view} />
           </>
-          : 
-          <PlayerModal playerName={selectedPlayerName} show={showModal} onClose={() => setShowModal(false)}/>
-        }
+        ) : (
+          <PlayerModal playerName={selectedPlayerName} show={showModal} onClose={() => setShowModal(false)} />
+        )}
       </div>
     </div>
   )

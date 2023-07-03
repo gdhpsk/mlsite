@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { getPlayer, APIOnePlayer } from '../util/withApi'
 import Records from './Records'
+import { ScrollArea } from '../primitives/scroll-area'
 
 interface InfoBoxProps {
   playerName: string
@@ -28,50 +29,52 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
   }, [playerName])
 
   return (
-    <div className='rounded-box flex max-h-[70vh] w-3/5 flex-col space-y-12 overflow-y-auto bg-white p-4 py-12 shadow-inner'>
-      {player && (
-        <div className='grid justify-items-center gap-y-16'>
-          <p className='text-4xl'>
-            <strong>{player.name}</strong>
-          </p>
-          <div className='flex h-24 w-[85%] place-items-center justify-items-center'>
-            <div className='grid flex-grow place-items-center'>
-              <p className='text-center text-2xl'>Class</p>
-              <p className='pt-2 text-center text-xl'>{player.mclass[view]}</p>
+    <div className="rounded-box flex max-h-[70vh] w-3/5 flex-col space-y-12 bg-white p-4 py-12 shadow-inner">
+      <ScrollArea className="max-h-[70vh] p-4">
+        {player && (
+          <div className="grid justify-items-center gap-y-16">
+            <p className="text-4xl">
+              <strong>{player.name}</strong>
+            </p>
+            <div className="flex h-24 w-[85%] place-items-center justify-items-center">
+              <div className="grid flex-grow place-items-center">
+                <p className="text-center text-2xl">Class</p>
+                <p className="pt-2 text-center text-xl">{player.mclass[view]}</p>
+              </div>
+              {/* <div className='divider divider-horizontal' />
+              <div className='grid flex-grow place-items-center'>
+                <p className='text-center text-2xl'>Hertz</p>
+                <table className='table-compact table'>
+                  <tbody>{breakdownRR}</tbody>
+                </table>
+              </div> */}
+              <div className="divider divider-horizontal" />
+              <div className="grid flex-grow place-items-center">
+                <p className="text-center text-2xl">Points</p>
+                <p className="pt-2 text-center text-xl">{player.points[view].toFixed(2)}</p>
+              </div>
             </div>
-            {/* <div className='divider divider-horizontal' />
-            <div className='grid flex-grow place-items-center'>
-              <p className='text-center text-2xl'>Hertz</p>
-              <table className='table-compact table'>
-                <tbody>{breakdownRR}</tbody>
-              </table>
-            </div> */}
-            <div className='divider divider-horizontal' />
-            <div className='grid flex-grow place-items-center'>
-              <p className='text-center text-2xl'>Points</p>
-              <p className='pt-2 text-center text-xl'>{player.points[view].toFixed(2)}</p>
+            <div className="grid w-3/4 justify-items-center">
+              <p className="text-3xl">Records</p>
+              <br />
+              <Records
+                rec={player.records
+                  .filter((record) => {
+                    switch (view) {
+                      case 'lrr':
+                        return record.hertz <= 60
+                      case 'hrr':
+                        return record.hertz > 60
+                      case 'comb':
+                        return true
+                    }
+                  })
+                  .sort((a, b) => a.level.localeCompare(b.level))}
+              />
             </div>
           </div>
-          <div className='grid w-3/4 justify-items-center'>
-            <p className='text-3xl'>Records</p>
-            <br />
-            <Records
-              rec={player.records
-                .filter((record) => {
-                  switch (view) {
-                    case 'lrr':
-                      return record.hertz <= 60
-                    case 'hrr':
-                      return record.hertz > 60
-                    case 'comb':
-                      return true
-                  }
-                })
-                .sort((a, b) => a.level.localeCompare(b.level))}
-            />
-          </div>
-        </div>
-      )}
+        )}
+      </ScrollArea>
     </div>
   )
 }
