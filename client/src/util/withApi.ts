@@ -26,21 +26,23 @@ export interface APIOneLevel extends APIManyLevel {
 
 export interface APIManyPlayer {
   name: string
-  points: number
+  points: {
+    lrr: number
+    hrr: number
+    comb: number
+  }
 }
 
 export interface APIOnePlayer extends APIManyPlayer {
   hertz: {
     [rr: number]: number
   }
-  mclass: string
+  mclass: {
+    lrr: string
+    hrr: string
+    comb: string
+  }
   records: APIPlayerRecord[]
-}
-
-export interface APILog {
-  date: string
-  content: string
-  type: number
 }
 
 interface RecordSubmission {
@@ -64,10 +66,6 @@ export const getPlayers = async (): Promise<APIManyPlayer[]> => {
 
 export const getPlayer = async (name: string): Promise<APIOnePlayer> => {
   return fetch(`/players/${name}`).then((data) => data.json())
-}
-
-export const getLogs = async (): Promise<APILog[]> => {
-  return fetch(`/logs`).then((data) => data.json())
 }
 
 export const submitRecord = async (record: RecordSubmission): Promise<Response> => {

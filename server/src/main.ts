@@ -4,11 +4,12 @@ import env from "dotenv";
 import cors from "cors";
 import mongoose, { ClientSession } from "mongoose";
 import path from "path";
-import { Record, Level, Player, Log } from "./schema";
+import { Record, Level, Player } from "./schema";
+import axios from "axios";
 
 if (
   process.env.BOT_TOKEN === undefined ||
-  process.env.MONGODB_URI === undefined
+  process.env.MONGODB_TEST_URI === undefined
 )
   env.config();
 
@@ -126,9 +127,9 @@ app.patch(
 );
 
 app.get("/players", async (req, res) => {
-  const players = await Player.find({ points: { $gt: 0 } })
+  const players = await Player.find({ "points.comb": { $gt: 0 } })
     .lean()
-    .sort("-points")
+    .sort("-points.comb")
     .select("name points -_id");
   return res.status(200).json(players);
 });
@@ -136,7 +137,7 @@ app.get("/players", async (req, res) => {
 app.get("/players/:name", async (req, res) => {
   const player = await Player.findOne({ name: req.params.name })
     .lean({ virtuals: true })
-    .populate("records", "-_id -__v -player -levelID -playerID")
+    .populate("records", "-_id -id -__v -player -levelID -playerID")
     .select("-_id -id -__v");
   return player
     ? res.status(200).json(player)
@@ -150,7 +151,6 @@ app.post(
     if (await Player.exists({ name: req.body.name as string })) throw 409;
     const player = new Player({
       name: req.body.name as string,
-      points: 0,
       discord:
         req.body.discord === null ? undefined : (req.body.discord as string),
     });
@@ -252,13 +252,16 @@ app.post("/submit", async (req, res) => {
     return res.sendStatus(409);
   if (!(await Player.exists({ name: req.body.player as string }))) isNew += 1;
   if (!(await Level.exists({ name: req.body.level as string }))) isNew += 2;
-  return fetch(`${process.env.BOT_LISTENER_URI}/submit`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ ...req.body, isNew }),
-  })
+  return axios
+    .post(
+      `${process.env.BOT_LISTENER_URI}/submit`,
+      JSON.stringify({ ...req.body, isNew }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
     .then((data) => res.sendStatus(data.status))
     .catch(() => res.sendStatus(503));
 });
@@ -266,37 +269,37 @@ app.post("/submit", async (req, res) => {
 app.get("/members", async (req, res) => {
   const players = await Player.find({ discord: { $exists: true } })
     .lean()
-    .sort("-points")
-    .select("name discord points -_id");
+    .sort("-points.comb")
+    .select("name discord points.comb -_id");
   return res.status(200).json(players);
 });
 
-app.get("/logs", async (req, res) => {
-  const logs = await Log.find().lean().select("-__v -_id");
-  return res.status(200).json(logs);
-});
+// app.get("/logs", async (req, res) => {
+//   const logs = await Log.find().lean().select("-__v -_id");
+//   return res.status(200).json(logs);
+// });
 
-app.post("/logs", authed, async (req, res) => {
-  const log = new Log({
-    date: req.body.date as string,
-    content: req.body.content as string,
-    type: req.body.type as number,
-  });
-  await log.save();
-  return res.status(201).json({ id: log.id });
-});
+// app.post("/logs", authed, async (req, res) => {
+//   const log = new Log({
+//     date: req.body.date as string,
+//     content: req.body.content as string,
+//     type: req.body.type as number,
+//   });
+//   await log.save();
+//   return res.status(201).json({ id: log.id });
+// });
 
-app.patch("/logs/:id", authed, async (req, res) => {
-  const log = await Log.findByIdAndUpdate(req.params.id, {
-    $set: { content: req.body.content },
-  });
-  return log ? res.sendStatus(200) : res.sendStatus(404);
-});
+// app.patch("/logs/:id", authed, async (req, res) => {
+//   const log = await Log.findByIdAndUpdate(req.params.id, {
+//     $set: { content: req.body.content },
+//   });
+//   return log ? res.sendStatus(200) : res.sendStatus(404);
+// });
 
-app.delete("/logs/:id", authed, async (req, res) => {
-  const log = await Log.findByIdAndDelete(req.params.id);
-  return log ? res.sendStatus(200) : res.sendStatus(404);
-});
+// app.delete("/logs/:id", authed, async (req, res) => {
+//   const log = await Log.findByIdAndDelete(req.params.id);
+//   return log ? res.sendStatus(200) : res.sendStatus(404);
+// });
 
 try {
   mongoose.connect(process.env.MONGODB_URI as string);

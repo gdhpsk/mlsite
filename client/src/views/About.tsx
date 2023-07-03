@@ -2,23 +2,23 @@ import React from 'react'
 
 const About: React.FC = () => {
   return (
-    <div className='rounded-box grid border-4 bg-[#f2f7ff] p-8 sm:m-12 sm:mx-auto sm:w-3/5'>
-      <div className='flex flex-col justify-self-center'>
-        <div className='grid justify-items-center'>
-          <h1 className='text-4xl font-bold'>The Mobile List</h1>
+    <div className="rounded-box grid border-4 bg-[#f2f7ff] p-8 sm:m-12 sm:mx-auto sm:w-3/5">
+      <div className="flex flex-col justify-self-center">
+        <div className="grid justify-items-center">
+          <h1 className="text-4xl font-bold">The Mobile List</h1>
           <br />
-          <p className='text-center'>
+          <p className="text-center">
             Ever since the use of high refresh rate &#40;HRR&#41; displays and FPS bypass became popular, Geometry Dash
             has become a very competitive game. Since the main demon list, Pointercrate, is HRR based and full of levels
             that are inaccessible to mobile players, we have created this list which maintains the top 100 most
             difficult demons beaten by mobile players on 60hz.
           </p>
         </div>
-        <div className='divider' />
-        <div className='grid justify-items-center'>
-          <h3 className='text-2xl'>How it Works</h3>
+        <hr className="my-4" />
+        <div className="grid justify-items-center">
+          <h3 className="text-2xl">How it Works</h3>
           <br />
-          <ul className='list-disc'>
+          <ul className="list-disc">
             <li>
               Remember&#58; this is a mobile-based list. These levels may not be in the order that computer players want
               them to be in.
@@ -47,18 +47,18 @@ const About: React.FC = () => {
             <li>Physics bypass is not allowed on the list.</li>
           </ul>
         </div>
-        <div className='divider' />
-        <div className='grid justify-items-center'>
-          <h3 className='text-2xl'>The Team</h3>
+        <hr className="my-4" />
+        <div className="grid justify-items-center">
+          <h3 className="text-2xl">The Team</h3>
           <br />
-          <div className='flex place-items-start justify-items-center gap-x-12'>
-            <div className='grid justify-items-center gap-y-1'>
-              <h5 className='text-lg font-bold'>Owners</h5>
+          <div className="flex place-items-start justify-items-center gap-x-12">
+            <div className="grid justify-items-center gap-y-1">
+              <h5 className="text-lg font-bold">Owners</h5>
               <p>MiniWheatDuo</p>
               <p>Coopersuper</p>
             </div>
-            <div className='grid justify-items-center gap-y-1'>
-              <h5 className='text-lg font-bold'>Editors</h5>
+            <div className="grid justify-items-center gap-y-1">
+              <h5 className="text-lg font-bold">Editors</h5>
               <p>Batle</p>
               <p>Bigthunder556</p>
               <p>Cappyt</p>
@@ -70,11 +70,11 @@ const About: React.FC = () => {
               <p>SubZeroV</p>
               <p>Rusty</p>
             </div>
-            <div className='grid justify-items-center gap-y-1'>
-              <h5 className='text-lg font-bold'>Developer</h5>
+            <div className="grid justify-items-center gap-y-1">
+              <h5 className="text-lg font-bold">Developer</h5>
               <p>Zoink Doink</p>
               <br />
-              <h5 className='text-lg font-medium'>
+              <h5 className="text-lg font-medium">
                 <em>Assistants</em>
               </h5>
               <p>gdhpsk</p>
@@ -84,17 +84,17 @@ const About: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className='divider' />
-        <div className='grid justify-items-center'>
-          <h3 className='text-2xl'>Contact Us</h3>
+        <hr className="my-4" />
+        <div className="grid justify-items-center">
+          <h3 className="text-2xl">Contact Us</h3>
           <br />
-          <p className='text-center'>
+          <p className="text-center">
             For questions/concerns about the rules or the list in general, reach out to{' '}
-            <strong className='select-all'>MiniWheatDuo&#35;2088</strong> on discord.
+            <strong className="select-all">MiniWheatDuo&#35;2088</strong> on discord.
           </p>
-          <p className='text-center'>
+          <p className="text-center">
             For questions/concerns about the site, reach out to{' '}
-            <strong className='select-all'>Zoink Doink&#35;1995</strong> on discord.
+            <strong className="select-all">Zoink Doink&#35;1995</strong> on discord.
           </p>
         </div>
       </div>

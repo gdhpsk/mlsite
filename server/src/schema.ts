@@ -58,15 +58,23 @@ type LevelDocument = Document<unknown, any, ILevel> &
 
 interface IPlayer {
   name: string;
-  points: number;
+  points: {
+    lrr: number;
+    hrr: number;
+    comb: number;
+  };
   discord?: string;
   records?: Types.ObjectId[] | RecordDocument[];
   hertz?: { [rr: number]: number };
-  mclass?: string;
+  mclass?: {
+    lrr: string;
+    hrr: string;
+    comb: string;
+  };
 }
 
 interface IPlayerMethods {
-  getCompletedLevels(): Promise<LevelDocument[]>;
+  getCompletedLevels(): Promise<Comps>;
   updatePoints(session: ClientSession): Promise<void>;
   ban(session: ClientSession): Promise<void>;
 }
@@ -78,14 +86,19 @@ interface PlayerModel extends Model<IPlayer, {}, IPlayerMethods> {
 type PlayerDocument = Document<unknown, any, IPlayer> &
   IPlayer & { _id: Types.ObjectId } & IPlayerMethods;
 
-interface ILog {
-  date: string;
-  content: string;
-  type: number;
-}
+// interface ILog {
+//   date: string;
+//   content: string;
+//   type: number;
+// }
 
 interface LP {
   [levelID: string]: number;
+}
+
+interface Comps {
+  lrr: LevelDocument[];
+  hrr: LevelDocument[];
 }
 
 mongoose.plugin(mongooseLeanVirtuals);
@@ -129,7 +142,11 @@ const recordSchema = new Schema<IRecord, RecordModel, IRecordMethods>(
         }).session(session);
         await Player.findByIdAndUpdate(this.playerID, {
           $pull: { records: this._id },
-          $inc: { points: justOne === 1 ? -(level?.points as number) : 0 },
+          $inc: {
+            [`points.${this.hertz <= 60 ? "lrr" : "hrr"}`]:
+              justOne === 1 ? -level?.points! : 0,
+            ["points.comb"]: justOne === 1 ? -level?.points! : 0,
+          },
         }).session(session);
         await this.deleteOne({ session: session });
       },
@@ -149,7 +166,10 @@ recordSchema.pre("save", async function () {
     { name: this.player },
     {
       $addToSet: { records: this._id },
-      $inc: { points: level.points as number },
+      $inc: {
+        [`points.${this.hertz <= 60 ? "lrr" : "hrr"}`]: level.points!,
+        ["points.comb"]: level.points!,
+      },
     },
     { new: true }
   ).session(session as ClientSession);
@@ -245,8 +265,12 @@ const levelSchema = new Schema<ILevel, LevelModel, ILevelMethods>(
 const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
   {
     name: { type: String, required: true },
-    points: { type: Number, required: true, default: 0 },
-    discord: { type: String },
+    points: {
+      lrr: { type: Number, required: true, default: 0 },
+      hrr: { type: Number, required: true, default: 0 },
+      comb: { type: Number, required: true, default: 0 },
+    },
+    discord: { type: String, required: false },
     records: [{ type: Schema.Types.ObjectId, ref: "Record" }],
   },
   {
@@ -274,7 +298,12 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             [1000, "Class S"],
             [20000, "Overlords"],
           ];
-          return (classes.find((c) => this.points < c[0]) ?? classes[0])[1];
+          return {
+            lrr: (classes.find((c) => this.points.lrr < c[0]) ?? classes[0])[1],
+            hrr: (classes.find((c) => this.points.hrr < c[0]) ?? classes[0])[1],
+            comb: (classes.find((c) => this.points.comb < c[0]) ??
+              classes[0])[1],
+          };
         },
       },
     },
@@ -297,14 +326,14 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
           { session: session }
         );
         for (const p of players) {
-          const levelIDs = await p
-            .getCompletedLevels()
-            .then((levels) => levels.map((l) => l.id));
-          const points = levelIDs
-            .map((id) => lp[id] ?? 0)
+          const completions = await p.getCompletedLevels();
+          const lrr = completions.lrr
+            .map((l) => lp[l.id] ?? 0)
             .reduce((a, b) => a + b, 0);
-          p.points = points;
-          if (p === null) throw 500;
+          const hrr = completions.hrr
+            .map((l) => lp[l.id] ?? 0)
+            .reduce((a, b) => a + b, 0);
+          p.points = { lrr, hrr, comb: lrr + hrr };
           p.$session(session);
           await p.save();
         }
@@ -312,19 +341,27 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
     },
     methods: {
       async getCompletedLevels() {
-        await this.populate("records", "levelID");
-        var levels = [];
+        await this.populate("records", "levelID hertz");
+        var completions: Comps = {
+          lrr: [],
+          hrr: [],
+        };
         for (const r of this.records) {
-          levels.push(await Level.findById(r.levelID));
+          const level = await Level.findById(r.levelID);
+          level &&
+            (r.hertz <= 60 ? completions.lrr : completions.hrr).push(level);
         }
-        return levels;
+        return completions;
       },
       async updatePoints(session: ClientSession) {
-        const levels: LevelDocument[] = await this.getCompletedLevels();
-        const points = levels
+        const completions: Comps = await this.getCompletedLevels();
+        const lrr = completions.lrr
           .map((l) => l.points)
           .reduce((a: number, b: number) => a + b, 0);
-        this.points = points;
+        const hrr = completions.hrr
+          .map((l) => l.points)
+          .reduce((a: number, b: number) => a + b, 0);
+        this.points = { lrr, hrr, comb: lrr! + hrr! };
         this.$session(session);
         await this.save();
       },
@@ -339,13 +376,13 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
   }
 );
 
-const logSchema = new Schema<ILog>({
-  date: { type: String, required: true },
-  content: { type: String, required: true },
-  type: { type: Number, required: true, min: 1, max: 3 },
-});
+// const logSchema = new Schema<ILog>({
+//   date: { type: String, required: true },
+//   content: { type: String, required: true },
+//   type: { type: Number, required: true, min: 1, max: 3 },
+// });
 
 export const Record = model<IRecord, RecordModel>("Record", recordSchema);
 export const Level = model<ILevel, LevelModel>("Level", levelSchema);
 export const Player = model<IPlayer, PlayerModel>("Player", playerSchema);
-export const Log = model<ILog>("Log", logSchema);
+// export const Log = model<ILog>("Log", logSchema);

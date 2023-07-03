@@ -2,43 +2,47 @@ import React, { useEffect, useRef, useState } from 'react'
 import { getLevels, APIManyLevel, APIOneLevel } from '../util/withApi'
 import Level from '../components/Level'
 import ListInfoBox from '../components/ListInfoBox'
+import { ScrollArea } from '../primitives/scroll-area'
+import { Input } from '../primitives/input'
+import { Separator } from '../primitives/separator'
 
 const List: React.FC = () => {
-  let [levels, setLevels] = useState<Array<APIManyLevel>>([])
+  let [levels, setLevels] = useState<APIManyLevel[]>([])
   let [selectedLevelName, setSelectedLevelName] = useState<string>(undefined)
   let [search, setSearch] = useState<string>('')
+
   useEffect(() => {
     getLevels().then((l) => {
       setLevels(l)
       setSelectedLevelName(l[0].name)
     })
   }, [])
+
   return (
-    <div className='rounded-box flex w-full border-4 bg-[#f2f7ff] p-8 sm:container sm:m-12 sm:mx-auto'>
-      <br />
-      <div className='rounded-box max-h-[75vh] flex-grow bg-white p-4 shadow-inner'>
-        <div className='flex'>
-          <input
-            type='text'
-            placeholder='Search...'
-            className='input-bordered input m-4 grow'
-            onChange={(e) => setSearch(e.target.value)}
-          />
+    <div className="flex w-full border-4 bg-[#f2f7ff] p-8 sm:m-12 sm:mx-auto">
+      <div className="max-h-[75vh] flex-grow bg-white p-4 shadow-inner">
+        <div className="flex">
+          <Input type="text" placeholder="Search..." className="m-4 grow" onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <div className='h-[60vh] overflow-y-auto px-4'>
-          {levels.map((level) => (
-            <Level
-              {...level}
-              show={search.length > 0 ? level.name.toLowerCase().indexOf(search.toLowerCase()) !== -1 : true}
-              onSelect={() => {
-                setSelectedLevelName(level.name)
-              }}
-            />
-          ))}
+        <div>
+          <ScrollArea className="h-[60vh] rounded-md border">
+            <div className="p-4">
+              {levels.map((level, i) => (
+                <Level
+                  {...level}
+                  show={search.length > 0 ? level.name.toLowerCase().indexOf(search.toLowerCase()) !== -1 : true}
+                  onSelect={() => {
+                    setSelectedLevelName(level.name)
+                  }}
+                  key={`level-${i}`}
+                />
+              ))}
+            </div>
+          </ScrollArea>
         </div>
       </div>
-      <div className='divider divider-horizontal' />
-      <ListInfoBox {...{ levelName: selectedLevelName }} />
+      <Separator orientation="vertical" />
+      <ListInfoBox levelName={selectedLevelName} />
     </div>
   )
 }

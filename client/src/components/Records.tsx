@@ -1,5 +1,8 @@
 import React from 'react'
-import { HiExternalLink } from 'react-icons/hi'
+import { ExternalLink } from 'lucide-react'
+import { Table, TableBody, TableRow, TableCell } from '../primitives/table'
+import { ScrollArea } from '../primitives/scroll-area'
+import { cn } from '../util/reusables'
 
 interface Record {
   hertz: number
@@ -12,25 +15,25 @@ interface RecordsProps {
   rec: Record[]
 }
 
-const Records: React.FC<RecordsProps> = (props: RecordsProps) => {
-  const { rec } = props
-
+const Records: React.FC<RecordsProps> = ({ rec }) => {
   return (
-    <table className='table-zebra table-compact table w-full'>
-      <tbody>
-        {rec.map((r) => (
-          <tr>
-            <td className={`text-center text-lg ${r.hertz === 60 ? 'font-semibold' : ''}`}>{r.player ?? r.level}</td>
-            <td className={`text-center text-lg ${r.hertz === 60 ? 'font-semibold' : ''}`}>{r.hertz}hz</td>
-            <td>
-              <a href={r.link} target={'_blank'} className='btn-ghost btn-square btn-sm btn'>
-                <HiExternalLink />
+    <Table>
+      <TableBody>
+        {rec.map((r, i) => (
+          <TableRow key={`record-${i}`} className={cn('text-lg', r.hertz === 60 && 'font-semibold')}>
+            <TableCell>{r.player ?? r.level}</TableCell>
+            <TableCell>{r.hertz}</TableCell>
+            <TableCell>
+              <a href={r.link} target={'_blank'}>
+                <div className="w-min rounded-lg p-2 hover:bg-slate-100">
+                  <ExternalLink />
+                </div>
               </a>
-            </td>
-          </tr>
+            </TableCell>
+          </TableRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   )
 }
 

@@ -11,27 +11,24 @@ const Level: React.FC<LevelProps> = (props: LevelProps) => {
 
   return (
     show && (
-      <>
-        <div
-          tabIndex={0}
-          className='rounded-box cursor-pointer border border-base-300 bg-white p-12 shadow-lg transition-all hover:shadow-xl'
-          onClick={onSelect}
-        >
-          <div className='text-xl'>
-            <p>
-              <strong>
-                {position}. &ldquo;{name}&rdquo;
-              </strong>
-            </p>
-            <p className='text-base text-secondary-content'>
-              <em>{creator}</em>
-            </p>
+      <div
+        tabIndex={0}
+        className="rounded-box border-base-300 mb-4 cursor-pointer border bg-white p-12 shadow-lg transition-all hover:shadow-xl"
+        onClick={onSelect}
+      >
+        <div className="text-xl">
+          <p>
+            <strong>
+              {position}. &ldquo;{name}&rdquo;
+            </strong>
+          </p>
+          <p className="text-secondary-content text-base">
+            <em>{creator}</em>
+          </p>
 
-            {/* &nbsp;<em>&#40;{Math.round(100 * points) / 100} points&#41;</em> */}
-          </div>
+          {/* &nbsp;<em>&#40;{Math.round(100 * points) / 100} points&#41;</em> */}
         </div>
-        <br />
-      </>
+      </div>
     )
   )
 }

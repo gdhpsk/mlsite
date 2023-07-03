@@ -1,6 +1,13 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { HiMenu } from 'react-icons/hi'
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  navigationMenuTriggerStyle,
+} from '../primitives/navigation-menu'
 
 interface HeaderProps {
   name: string
@@ -15,35 +22,36 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
   let [show, setShow] = useState<boolean>(false)
   const navigate = useNavigate()
 
-  // bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-blue-100 via-blue-300 to-blue-500
-
   return (
-    <div className='navbar bg-slate-700 pr-12' id='nav'>
-      <div className='flex-1' onClick={() => navigate('/')}>
-        <a className='btn-ghost btn text-xl normal-case text-white'>{name}</a>
+    <div className="flex select-none flex-row items-center justify-between bg-slate-700 pr-12">
+      <div className="h-full cursor-pointer p-4 text-xl text-white hover:bg-slate-800" onClick={() => navigate('/')}>
+        {name}
       </div>
-      {window.innerWidth > 640 ? (
-        <div className='flex-none'>
-          <ul className='menu menu-horizontal px-1'>
+      {window.innerWidth > 992 ? (
+        <NavigationMenu>
+          <NavigationMenuList>
             {Object.keys(routes).map((r, i) => (
-              <li
-                key={`link-${i}`}
-                onClick={() => {
-                  navigate(routes[r])
-                }}
-              >
-                <a className='text-white'>{tabs[i]}</a>
-              </li>
+              <NavigationMenuItem key={`nav-${i}`}>
+                <div
+                  className="cursor-pointer p-4 text-white hover:bg-slate-800"
+                  onClick={() => {
+                    navigate(routes[r])
+                  }}
+                >
+                  {tabs[i]}
+                </div>
+              </NavigationMenuItem>
             ))}
-          </ul>
-        </div>
+          </NavigationMenuList>
+        </NavigationMenu>
       ) : (
-        <div className='flex-none'>
-          <div className='dropdown-end dropdown' onClick={() => setShow(!show)}>
-            <label tabIndex={0} className='btn-ghost btn'>
+        <div className="flex-none">
+          <NavigationMenu></NavigationMenu>
+          <div className="" onClick={() => setShow(!show)}>
+            <label tabIndex={0} className="btn-ghost btn">
               <HiMenu size={30} />
             </label>
-            <ul tabIndex={0} className='z-60 dropdown-content menu rounded-box bg-white' hidden={!show}>
+            <ul tabIndex={0} className="z-60 dropdown-content menu rounded-box bg-white" hidden={!show}>
               {Object.keys(routes).map((r, i) => (
                 <li
                   key={`link-${i}`}
@@ -52,7 +60,7 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
                     setShow(false)
                   }}
                 >
-                  <a className='text-white'>{tabs[i]}</a>
+                  <a className="text-white">{tabs[i]}</a>
                 </li>
               ))}
             </ul>
