@@ -6,6 +6,8 @@ import mongoose, { ClientSession } from "mongoose";
 import path from "path";
 import { Record, Level, Player } from "./schema";
 import axios from "axios";
+import cluster from "cluster";
+import os from "os";
 
 if (
   process.env.BOT_TOKEN === undefined ||
@@ -301,18 +303,34 @@ app.get("/members", async (req, res) => {
 //   return log ? res.sendStatus(200) : res.sendStatus(404);
 // });
 
-try {
-  mongoose.connect(process.env.MONGODB_URI as string, {
-    dbName: "mobilelist",
-    readPreference: "primary",
-    authSource: "$external",
-    authMechanism: "MONGODB-X509",
-    tlsCertificateKeyFile: process.env.keyPath as string
-})
-} catch (error) {
-  console.error(error);
-}
+if (cluster.isPrimary) {
+  const cpus = os.cpus().length;
+  for (let i = 0; i < cpus; i++) {
+    cluster.fork();
+  }
 
-app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`);
-});
+  cluster.on("listening", (worker) => {
+    console.log(`Worker ${worker.process.pid as number} is online.`);
+  });
+
+  cluster.on("exit", (worker) => {
+    console.log(`Worker ${worker.process.pid as number} is dead.`);
+    cluster.fork();
+  });
+} else {
+  try {
+    mongoose.connect(process.env.MONGODB_URI as string, {
+      dbName: "mobilelist",
+      readPreference: "primary",
+      authSource: "$external",
+      authMechanism: "MONGODB-X509",
+      tlsCertificateKeyFile: process.env.keyPath as string,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+
+  app.listen(port, () => {
+    console.log(`App listening at http://localhost:${port}`);
+  });
+}
