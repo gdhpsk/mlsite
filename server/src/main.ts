@@ -319,7 +319,13 @@ if (cluster.isPrimary) {
   });
 } else {
   try {
-    mongoose.connect(process.env.MONGODB_URI as string);
+    mongoose.connect(process.env.MONGODB_URI as string, {
+      dbName: "mobilelist",
+      readPreference: "primary",
+      authSource: "$external",
+      authMechanism: "MONGODB-X509",
+      tlsCertificateKeyFile: process.env.keyPath as string,
+    });
   } catch (error) {
     console.error(error);
   }
