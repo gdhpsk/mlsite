@@ -22,6 +22,15 @@ app.set("query parser", "simple");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
+app.use((req, res, next) => {
+  console.log(
+    `[Worker ${process.pid}] ${req.method} ${req.path} --> (${
+      req.ip as string
+    })`
+  );
+
+  next();
+});
 app.use("/", express.static(path.resolve(__dirname, "../client")));
 
 const authed = (req: Request, res: Response, next: NextFunction) => {
@@ -319,13 +328,7 @@ if (cluster.isPrimary) {
   });
 } else {
   try {
-    mongoose.connect(process.env.MONGODB_URI as string, {
-      dbName: "mobilelist",
-      readPreference: "primary",
-      authSource: "$external",
-      authMechanism: "MONGODB-X509",
-      tlsCertificateKeyFile: process.env.keyPath as string,
-    });
+    mongoose.connect(process.env.MONGODB_URI as string);
   } catch (error) {
     console.error(error);
   }
