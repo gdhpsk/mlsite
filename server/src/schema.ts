@@ -309,34 +309,186 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
     },
     statics: {
       async updateAllPoints(session: ClientSession) {
-        const levels = await Level.find(
+        let objs = await this.aggregate([
           {
-            position: { $lte: 100 },
-          },
-          {},
-          { session: session }
-        );
-        const lp: LP = Object.assign(
-          {},
-          ...levels.map((l) => ({ [l.id]: l.points as number }))
-        );
-        const players: PlayerDocument[] = await this.find(
-          {},
-          {},
-          { session: session }
-        );
-        for (const p of players) {
-          const completions = await p.getCompletedLevels();
-          const lrr = completions.lrr
-            .map((l) => lp[l.id] ?? 0)
-            .reduce((a, b) => a + b, 0);
-          const hrr = completions.hrr
-            .map((l) => lp[l.id] ?? 0)
-            .reduce((a, b) => a + b, 0);
-          p.points = { lrr, hrr, comb: lrr + hrr };
-          p.$session(session);
-          await p.save();
-        }
+            '$lookup': {
+              'from': 'records', 
+              'let': {
+                'records': '$records'
+              }, 
+              'pipeline': [
+                {
+                  '$match': {
+                    '$expr': {
+                      '$in': [
+                        '$_id', '$$records'
+                      ]
+                    }
+                  }
+                }, {
+                  '$project': {
+                    '_id': '$levelID', 
+                    'hertz': '$hertz'
+                  }
+                }
+              ], 
+              'as': 'temp'
+            }
+          }, {
+            '$lookup': {
+              'from': 'levels', 
+              'let': {
+                'records': '$temp'
+              }, 
+              'pipeline': [
+                {
+                  '$match': {
+                    '$expr': {
+                      '$in': [
+                        '$_id', {
+                          '$map': {
+                            'input': '$$records', 
+                            'in': '$$this._id'
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }, {
+                  '$project': {
+                    'points': {
+                      '$round': [
+                        {
+                          '$subtract': [
+                            {
+                              '$divide': [
+                                2250, {
+                                  '$add': [
+                                    {
+                                      '$multiply': [
+                                        0.37, '$position'
+                                      ]
+                                    }, 9
+                                  ]
+                                }
+                              ]
+                            }, 40
+                          ]
+                        }, 1
+                      ]
+                    }
+                  }
+                }
+              ], 
+              'as': 'temp2'
+            }
+          }, {
+            '$project': {
+              'name': 1, 
+              'discord': 1, 
+              'records': 1, 
+              'lrr': {
+                '$filter': {
+                  'input': '$temp2', 
+                  'cond': {
+                    '$in': [
+                      '$$this._id', {
+                        '$map': {
+                          'input': {
+                            '$filter': {
+                              'input': '$temp', 
+                              'as': 'this2', 
+                              'cond': {
+                                '$lte': [
+                                  '$$this2.hertz', 60
+                                ]
+                              }
+                            }
+                          }, 
+                          'as': 'this3', 
+                          'in': '$$this3._id'
+                        }
+                      }
+                    ]
+                  }
+                }
+              }, 
+              'hrr': {
+                '$filter': {
+                  'input': '$temp2', 
+                  'cond': {
+                    '$in': [
+                      '$$this._id', {
+                        '$map': {
+                          'input': {
+                            '$filter': {
+                              'input': '$temp', 
+                              'as': 'this2', 
+                              'cond': {
+                                '$gt': [
+                                  '$$this2.hertz', 60
+                                ]
+                              }
+                            }
+                          }, 
+                          'as': 'this3', 
+                          'in': '$$this3._id'
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }, {
+            '$project': {
+              'name': 1, 
+              'discord': 1, 
+              'records': 1, 
+              'points': {
+                'lrr': {
+                  '$reduce': {
+                    'input': '$lrr', 
+                    'initialValue': 0, 
+                    'in': {
+                      '$add': [
+                        '$$value', '$$this.points'
+                      ]
+                    }
+                  }
+                }, 
+                'hrr': {
+                  '$reduce': {
+                    'input': '$hrr', 
+                    'initialValue': 0, 
+                    'in': {
+                      '$add': [
+                        '$$value', '$$this.points'
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }, {
+            '$project': {
+              'name': 1, 
+              'discord': 1, 
+              'records': 1, 
+              'points': {
+                'lrr': '$points.lrr', 
+                'hrr': '$points.hrr', 
+                'comb': {
+                  '$add': [
+                    '$points.lrr', '$points.hrr'
+                  ]
+                }
+              }
+            }
+          }
+        ], {session})
+        await this.deleteMany({}, {session})
+        await this.insertMany(objs, {session})
       },
     },
     methods: {
