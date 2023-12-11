@@ -1,4 +1,7 @@
+/** @type {import('webpack').Configuration} */
+
 const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: path.resolve(__dirname, "src", "App.tsx"),
@@ -23,6 +26,17 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: path.resolve(__dirname, "index.html"), to: "index.html" },
+        // { from: path.resolve(__dirname, "static/"), to: "static/" },
+      ],
+      options: {
+        concurrency: 100
+      }
+    }),
+  ],
   resolve: {
     extensions: ['.css', '.js', '.jsx', '.tsx', '.ts'],
   },
