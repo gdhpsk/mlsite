@@ -13,20 +13,19 @@ const Leaderboard: React.FC = () => {
   let [players, setPlayers] = useState<Array<APIManyPlayer>>([])
   let [selectedPlayerName, setSelectedPlayerName] = useState<string>(undefined)
   let [search, setSearch] = useState<string>('')
-  let [view, setView] = useState<'lrr' | 'hrr' | 'comb'>('lrr')
+  let [view, setView] = useState<'lrr' | 'hrr' | 'comb'>('comb')
   let [showModal, setShowModal] = useState<boolean>(false)
 
   useEffect(() => {
     getPlayers().then((p) => {
       setPlayers(p)
-      setSelectedPlayerName(p[0].name)
     })
   }, [])
 
   return (
-    <div className="border-4 bg-[#f2f7ff] p-8 sm:m-12 sm:mx-auto sm:w-3/5">
-      <div className="mx-auto">
-        <Tabs defaultValue="lrr" className="w-[300px]" onValueChange={(val: 'lrr' | 'hrr' | 'comb') => setView(val)}>
+    <div className={`border-4 bg-[#f2f7ff] sm:m-12 sm:mx-auto overflow-x-hidden ${window.innerWidth < 1400 ? "" : "sm:w-3/5 p-8"}`}>
+      {window.innerWidth < 1400 && selectedPlayerName ? "" : <><div className="mx-auto">
+        <Tabs defaultValue="comb" className="w-[300px]" onValueChange={(val: 'lrr' | 'hrr' | 'comb') => setView(val)}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="lrr">LRR</TabsTrigger>
             <TabsTrigger value="comb">Combined</TabsTrigger>
@@ -34,19 +33,20 @@ const Leaderboard: React.FC = () => {
           </TabsList>
         </Tabs>
       </div>
-      <br />
+      <br /></>}
       <div className="flex">
-        <div className="max-h-[70vh] flex-grow bg-white p-4 shadow-inner">
+        {window.innerWidth < 1400 && selectedPlayerName ? "" : <div className="flex-grow bg-white p-4 shadow-inner">
           <div className="flex">
             <Input
               type="text"
               placeholder="Search..."
               className="input-bordered input m-4 grow"
               onChange={(e) => setSearch(e.target.value)}
+              defaultValue={search}
             />
           </div>
           <div>
-            <ScrollArea className="h-[55vh]">
+            <ScrollArea style={{height: window.innerWidth < 1400 ? `${window.innerHeight - 236}px` : "55vh"}}>
               <Table>
                 <TableBody>
                   {players
@@ -87,15 +87,13 @@ const Leaderboard: React.FC = () => {
               </Table>
             </ScrollArea>
           </div>
-        </div>
+        </div>}
 
-        {window.innerWidth > 640 ? (
+        {window.innerWidth < 1400 && !selectedPlayerName ? "" :  (
           <>
-            <Separator orientation="vertical" className="mx-4" />
-            <LeaderboardInfoBox playerName={selectedPlayerName} view={view} />
+            {window.innerWidth < 1400 ? "" : <Separator orientation="vertical" className="mx-4" />}
+            <LeaderboardInfoBox playerName={selectedPlayerName} view={view} width={window.innerWidth} selectedState={setSelectedPlayerName}/>
           </>
-        ) : (
-          <PlayerModal playerName={selectedPlayerName} show={showModal} onClose={() => setShowModal(false)} />
         )}
       </div>
     </div>

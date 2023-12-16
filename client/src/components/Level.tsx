@@ -13,7 +13,7 @@ const Level: React.FC<LevelProps> = (props: LevelProps) => {
     show && (
       <div
         tabIndex={0}
-        className="rounded-box border-base-300 mb-4 cursor-pointer border bg-white p-12 shadow-lg transition-all hover:shadow-xl"
+        className="levellist rounded-box border-base-300 mb-4 cursor-pointer border bg-white p-12 shadow-lg transition-all hover:shadow-xl"
         onClick={onSelect}
       >
         <div className="text-xl">

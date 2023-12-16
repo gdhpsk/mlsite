@@ -18,6 +18,7 @@ const App: React.FC = () => {
           name="GD Mobile List"
           routes={{
             about: '/about',
+            levels: '/',
             leaderboard: '/leaderboard',
             submit: '/submit',
           }}
@@ -25,6 +26,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<List />} />
           <Route path="/about" element={<About />} />
+          <Route path="/" element={<List />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/submit" element={<SubmitRecord />} />
         </Routes>

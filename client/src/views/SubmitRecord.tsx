@@ -15,6 +15,7 @@ const SubmitRecord: React.FC = () => {
   let [player, setPlayer] = useState<string>('')
   let [hertz, setHertz] = useState<number>(60)
   let [link, setLink] = useState<string>('')
+  let [raw, setRaw] = useState<string>('')
   let [submitStatus, setSubmitStatus] = useState<number>(undefined)
   let [error, setError] = useState<string>(undefined)
   let [disabled, setDisabled] = useState<boolean>(false)
@@ -82,12 +83,14 @@ const SubmitRecord: React.FC = () => {
         />
         <Label>Video Link</Label>
         <Input type="text" onChange={(e) => setLink(e.target.value)} className="mb-3" placeholder=". . ." />
+        <Label>Raw Footage</Label>
+        <Input type="text" onChange={(e) => setRaw(e.target.value)} className="mb-3" placeholder=". . ." />
         <div className="mt-3 flex justify-center">
           <Button
             disabled={disabled}
             onClick={() => {
-              if (player && level && hertz && link) {
-                submitRecord({ player, level, hertz, link })
+              if (player && level && hertz && link && raw) {
+                submitRecord({ player, level, hertz, link, raw })
                   .then((data) => setSubmitStatus(data.status))
                   .then(() => {
                     setDisabled(true)
@@ -95,6 +98,7 @@ const SubmitRecord: React.FC = () => {
                     setLevel(undefined)
                     setHertz(undefined)
                     setLink(undefined)
+                    setRaw(undefined)
                   })
               } else {
                 setError('Please fill out all fields')

@@ -50,6 +50,7 @@ interface RecordSubmission {
   level: string
   hertz: number
   link: string
+  raw: string
 }
 
 export const getLevels = async (): Promise<APIManyLevel[]> => {

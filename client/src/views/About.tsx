@@ -2,7 +2,7 @@ import React from 'react'
 
 const About: React.FC = () => {
   return (
-    <div className="rounded-box grid border-4 bg-[#f2f7ff] p-8 sm:m-12 sm:mx-auto sm:w-3/5">
+    <div className="rounded-box max-w-5xl border-4 bg-[#f2f7ff] p-8 sm:m-12 sm:mx-auto">
       <div className="flex flex-col justify-self-center">
         <div className="grid justify-items-center">
           <h1 className="text-4xl font-bold">The Mobile List</h1>
@@ -51,7 +51,7 @@ const About: React.FC = () => {
         <div className="grid justify-items-center">
           <h3 className="text-2xl">The Team</h3>
           <br />
-          <div className="flex place-items-start justify-items-center gap-x-12">
+          <div className="grid place-items-start justify-items-center gap-x-12" style={{gridTemplateColumns: "repeat(3, minmax(0, 1fr))"}}>
             <div className="grid justify-items-center gap-y-1">
               <h5 className="text-lg font-bold">Owners</h5>
               <p>MiniWheatDuo</p>
@@ -71,13 +71,13 @@ const About: React.FC = () => {
               <p>Rusty</p>
             </div>
             <div className="grid justify-items-center gap-y-1">
-              <h5 className="text-lg font-bold">Developer</h5>
+              <h5 className="text-lg font-bold">Developers</h5>
               <p>Zoink Doink</p>
+              <p>gdhpsk</p>
               <br />
               <h5 className="text-lg font-medium">
                 <em>Assistants</em>
               </h5>
-              <p>gdhpsk</p>
               <p>Amp1ify</p>
               <p>Surpl3x</p>
               <p>Zeth</p>
@@ -90,11 +90,11 @@ const About: React.FC = () => {
           <br />
           <p className="text-center">
             For questions/concerns about the rules or the list in general, reach out to{' '}
-            <strong className="select-all">MiniWheatDuo&#35;2088</strong> on discord.
+            <strong className="select-all">glorbinus_slingting_pickleball_x</strong> on discord.
           </p>
           <p className="text-center">
-            For questions/concerns about the site, reach out to{' '}
-            <strong className="select-all">Zoink Doink&#35;1995</strong> on discord.
+            For questions/concerns about the site, reach out to either{' '}
+            <strong className="select-all">zoinkdoink</strong> or <strong className="select-all">gdhpsk</strong> on discord.
           </p>
         </div>
       </div>

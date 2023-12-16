@@ -2,14 +2,17 @@ import React, { useState, useEffect } from 'react'
 import { getPlayer, APIOnePlayer } from '../util/withApi'
 import Records from './Records'
 import { ScrollArea } from '../primitives/scroll-area'
+import { Button } from 'react-bootstrap'
 
 interface InfoBoxProps {
   playerName: string
-  view: 'lrr' | 'hrr' | 'comb'
+  view: 'lrr' | 'hrr' | 'comb',
+  width: number,
+  selectedState: Function
 }
 
 const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
-  let { playerName, view } = props
+  let { playerName, view, width, selectedState } = props
   let [player, setPlayer] = useState<APIOnePlayer>(undefined)
   // let [breakdownRR, setBreakdownRR] = useState<Array<JSX.Element>>([])
   useEffect(() => {
@@ -29,10 +32,14 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
   }, [playerName])
 
   return (
-    <div className="rounded-box flex max-h-[70vh] w-3/5 flex-col space-y-12 bg-white p-4 py-12 shadow-inner">
-      <ScrollArea className="max-h-[70vh] p-4">
+    <div className={`rounded-box flex ${width < 1400 ? "" : "w-3/5"} flex-col space-y-12 bg-white p-4 py-12 shadow-inner`} style={{width: width < 1400 ? "-webkit-fill-available" : "revert-layer"}}>
+            {player && <Button onClick={() => {
+            selectedState("")
+            setPlayer(undefined)
+          }}>Back</Button>}
+      <ScrollArea className="p-4" style={{height: width < 1400 ? `${window.innerHeight - 236}px` : "55vh"}}>
         {player && (
-          <div className="grid justify-items-center gap-y-16">
+           <div className="grid justify-items-center gap-y-16">
             <p className="text-4xl">
               <strong>{player.name}</strong>
             </p>
@@ -54,7 +61,7 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
                 <p className="pt-2 text-center text-xl">{player.points[view].toFixed(2)}</p>
               </div>
             </div>
-            <div className="grid w-3/4 justify-items-center">
+            <div className="grid justify-items-center">
               <p className="text-3xl">Records</p>
               <br />
               <Records
@@ -73,7 +80,7 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
               />
             </div>
           </div>
-        )}
+  )}
       </ScrollArea>
     </div>
   )
