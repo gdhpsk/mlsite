@@ -23,12 +23,13 @@ const List: React.FC = () => {
   let [listOfObservers, setListOfObservers] = useState([])
 
   useEffect(() => {
-    if((window.innerWidth < 1000 && selectedLevelName) || search) return;
+    if((window.innerWidth < 1000 && selectedLevelName) || search || !levels.length) return;
     let value = getScrolledHeight()
-    setScrolledHeight({scrolledHeight: value});
+    setScrolledHeight({scrolledHeight: value || 0});
   })
 
   useEffect(() => {
+    document.body.style.overflow = "hidden"
     getLevels().then((l) => {
       setLevels(l)
     })
@@ -56,7 +57,7 @@ const List: React.FC = () => {
    {window.innerWidth < 1000 && selectedLevelName ? "" : <div className="flex-grow bg-white p-4 shadow-inner">
         <div className="flex">
           <Input type="text" placeholder="Search..." className="m-4 grow" onChange={(e) => setSearch(e.target.value)} defaultValue={search}/>
-          <Input type="text" placeholder="Pos..." className="m-4 w-14" disabled={!!search} onKeyDown={(e) => {
+          <Input type="number" placeholder="Pos..." className="m-4 w-14" disabled={!!search} onKeyDown={(e) => {
             if(e.key == "Enter") {
               let index = e.currentTarget.value
                let rect = listOfObservers[(parseInt(index) || 1)-1].target
@@ -86,7 +87,7 @@ const List: React.FC = () => {
           ></Form.Range>
         </div>
         <div>
-          <ScrollArea className="rounded-md border" style={{height: window.innerWidth < 1000 ? `${window.innerHeight - 201}px` : "60vh"}} id="levels-section">
+          <ScrollArea className="rounded-md border" style={{height: window.innerWidth < 1000 ? "calc(100vh - 200px)" : "60vh"}} id="levels-section">
             <div className="p-4">
               {levels.map((level, i) => (
                 <Level

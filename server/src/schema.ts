@@ -194,7 +194,7 @@ const levelSchema = new Schema<ILevel, LevelModel, ILevelMethods>(
       points: {
         get() {
           return this.position <= 100
-            ? 2250 / (0.37 * this.position + 9) - 40.12
+            ? 2160 / (0.35 * this.position + 8.65) - 40.12
             : 0;
         },
       },
@@ -361,13 +361,13 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                       '$subtract': [
                         {
                           '$divide': [
-                            2250, {
+                            2160, {
                               '$add': [
                                 {
                                   '$multiply': [
-                                    0.37, '$position'
+                                    0.35, '$position'
                                   ]
-                                }, 9
+                                }, 8.65
                               ]
                             }
                           ]
@@ -571,13 +571,13 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                       '$subtract': [
                         {
                           '$divide': [
-                            2250, {
+                            2160, {
                               '$add': [
                                 {
                                   '$multiply': [
-                                    0.37, '$position'
+                                    0.35, '$position'
                                   ]
-                                }, 9
+                                }, 8.65
                               ]
                             }
                           ]

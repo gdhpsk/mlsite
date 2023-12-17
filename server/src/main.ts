@@ -63,7 +63,7 @@ const transaction = (
 };
 
 app.get("/levels", async (req, res) => {
-  const levels = await Level.find({ position: { $lte: 100 } })
+  const levels = await Level.find({ position: req.query.position ? parseInt(req.query.position as string) : { $lte: 100 } })
     .lean({ virtuals: true })
     .sort("position")
     .select("-_id -__v -records");
@@ -136,6 +136,14 @@ app.patch(
     throw 400;
   })
 );
+
+app.get("/players", async (req, res) => {
+  const players = await Player.find({ "points.comb": { $gt: 0 } })
+    .lean()
+    .sort("-points.comb")
+    .select("name points -_id");
+  return res.status(200).json(players);
+});
 
 app.get("/players", async (req, res) => {
   const players = await Player.find({ "points.comb": { $gt: 0 } })
@@ -278,7 +286,7 @@ app.post("/submit", async (req, res) => {
 });
 
 app.get("/members", async (req, res) => {
-  const players = await Player.find({ discord: { $exists: true } })
+  const players = await Player.find({ discord: { $exists: req.query.disc == "false" ? false : true } })
     .lean()
     .sort("-points.comb")
     .select("name discord points.comb -_id");

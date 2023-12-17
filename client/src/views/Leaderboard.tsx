@@ -17,6 +17,7 @@ const Leaderboard: React.FC = () => {
   let [showModal, setShowModal] = useState<boolean>(false)
 
   useEffect(() => {
+    document.body.style.overflow = "hidden"
     getPlayers().then((p) => {
       setPlayers(p)
     })
@@ -46,7 +47,7 @@ const Leaderboard: React.FC = () => {
             />
           </div>
           <div>
-            <ScrollArea style={{height: window.innerWidth < 1400 ? `${window.innerHeight - 236}px` : "55vh"}}>
+            <ScrollArea style={{height: window.innerWidth < 1400 ? `calc(100vh - 236px)` : "55vh"}}>
               <Table>
                 <TableBody>
                   {players

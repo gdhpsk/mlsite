@@ -14,6 +14,7 @@ const ListInfoBox: React.FC<InfoBoxProps> = ({ levelName, width, selectedState }
   let [level, setLevel] = useState<APIOneLevel>(undefined)
 
   useEffect(() => {
+    document.body.style.overflow = "hidden"
     levelName && getLevel(levelName).then((l) => setLevel(l))
   }, [levelName])
 
@@ -44,7 +45,7 @@ function getYouTubeVideoID(url: string) {
                 setLevel(undefined)
               }}>Back</Button>}
       {level && (<>
-        <ScrollArea className="h-full w-full" style={{height: width < 1000 ? `${window.innerHeight - 236}px` : "60vh"}}>
+        <ScrollArea className="h-full w-full" style={{height: width < 1000 ? "calc(100vh - 236px)" : "60vh"}}>
           <div className="grid justify-items-center gap-y-16">
             <p className="text-4xl">
               <strong>{level.name}</strong>

@@ -16,19 +16,8 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
   let [player, setPlayer] = useState<APIOnePlayer>(undefined)
   // let [breakdownRR, setBreakdownRR] = useState<Array<JSX.Element>>([])
   useEffect(() => {
+    document.body.style.overflow = "hidden"
     playerName && getPlayer(playerName).then((p) => setPlayer(p))
-    // .then(() => {
-    // let rrs: JSX.Element[] = []
-    // for (const rr of Object.keys(player.hertz)) {
-    //   rrs.push(
-    //     <tr>
-    //       <td className={`text-center ${rr === '60' ? 'font-semibold' : ''}`}>{rr}</td>
-    //       <td className={`text-center ${rr === '60' ? 'font-semibold' : ''}`}>{player.hertz[Number(rr)].toString()}</td>
-    //     </tr>,
-    //   )
-    //   setBreakdownRR(rrs)
-    // }
-    // })
   }, [playerName])
 
   return (
@@ -37,7 +26,7 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
             selectedState("")
             setPlayer(undefined)
           }}>Back</Button>}
-      <ScrollArea className="p-4" style={{height: width < 1400 ? `${window.innerHeight - 236}px` : "55vh"}}>
+      <ScrollArea className="p-4" style={{height: width < 1400 ? "calc(100vh - 236px)" : "55vh"}}>
         {player && (
            <div className="grid justify-items-center gap-y-16">
             <p className="text-4xl">
