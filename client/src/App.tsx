@@ -8,6 +8,9 @@ import List from './views/List'
 import Leaderboard from './views/Leaderboard'
 import SubmitRecord from './views/SubmitRecord'
 import About from './views/About'
+import FAQ from './views/FAQ'
+import Roulette from './views/Roulette'
+import Changelog from './views/Changelog'
 
 const App: React.FC = () => {
   return (
@@ -16,11 +19,16 @@ const App: React.FC = () => {
       <HashRouter>
         <Header
           name="GD Mobile List"
-          routes={{
+          main={{
             about: '/about',
             levels: '/',
             leaderboard: '/leaderboard',
-            submit: '/submit',
+            submit: "/submit"
+          }}
+          additional={{
+            faq: "/faq",
+            roulette: "/roulette",
+            changelog: "/changelog"
           }}
         />
         <Routes>
@@ -28,6 +36,9 @@ const App: React.FC = () => {
           <Route path="/about" element={<About />} />
           <Route path="/" element={<List />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/roulette" element={<Roulette />} />
+          <Route path="/changelog" element={<Changelog />} />
           <Route path="/submit" element={<SubmitRecord />} />
         </Routes>
       </HashRouter>

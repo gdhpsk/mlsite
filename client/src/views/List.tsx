@@ -12,6 +12,7 @@ const List: React.FC = () => {
   let [selectedLevelName, setSelectedLevelName] = useState<string>("")
   let [search, setSearch] = useState<string>('')
   let [{scrolledHeight}, setScrolledHeight] = useState({scrolledHeight: 0})
+  let [originalHeight, setOriginalHeight] = useState(0)
   let getScrolledHeight = () => {
     try {
       let element = document.getElementById("levels-section").children[1];
@@ -23,13 +24,23 @@ const List: React.FC = () => {
   let [listOfObservers, setListOfObservers] = useState([])
 
   useEffect(() => {
-    if((window.innerWidth < 1000 && selectedLevelName) || search || !levels.length) return;
+    if(selectedLevelName && !originalHeight && scrolledHeight && window.innerWidth < 800) {
+      setOriginalHeight(scrolledHeight)
+      return;
+    }
+    if(search || (selectedLevelName && window.innerWidth < 800) || !levels.length) return;
+    if(!selectedLevelName && originalHeight) {
+      let element = document.getElementById("levels-section").children[1];
+      document.getElementById("levels-section").children[1].scrollTop = (element.scrollHeight - element.clientHeight) * (originalHeight / 100)
+      setOriginalHeight(0)
+      return;
+    }
     let value = getScrolledHeight()
     setScrolledHeight({scrolledHeight: value || 0});
   })
 
   useEffect(() => {
-    document.body.style.overflow = "hidden"
+    document.body.style.overflow = (window.innerWidth < 1500 ? "hidden" : "visible")
     getLevels().then((l) => {
       setLevels(l)
     })
@@ -53,8 +64,8 @@ const List: React.FC = () => {
   }, [levels, selectedLevelName, search])
 
   return (
-    <div className={`flex w-full border-4 bg-[#f2f7ff] overflow-hidden sm:mx-auto ${window.innerWidth < 1000 ? "flex-col" : "sm:w-3/5 p-8 sm:m-12"}`}>
-   {window.innerWidth < 1000 && selectedLevelName ? "" : <div className="flex-grow bg-white p-4 shadow-inner">
+    <div className={`flex w-full border-4 bg-[#f2f7ff] overflow-hidden sm:mx-auto ${window.innerWidth < 800 ? "flex-col" : ""} ${window.innerWidth < 1500 ? "" : "sm:w-3/4 p-8 sm:m-12"}`}>
+   {window.innerWidth < 800 && selectedLevelName ? "" : <div className="flex-grow bg-white p-4 shadow-inner">
         <div className="flex">
           <Input type="text" placeholder="Search..." className="m-4 grow" onChange={(e) => setSearch(e.target.value)} defaultValue={search}/>
           <Input type="number" placeholder="Pos..." className="m-4 w-14" disabled={!!search} onKeyDown={(e) => {
@@ -87,7 +98,7 @@ const List: React.FC = () => {
           ></Form.Range>
         </div>
         <div>
-          <ScrollArea className="rounded-md border" style={{height: window.innerWidth < 1000 ? "calc(100vh - 200px)" : "60vh"}} id="levels-section">
+          <ScrollArea className="rounded-md border" style={{height: window.innerWidth < 1500 ? "calc(100vh - 200px)" : "60vh"}} id="levels-section">
             <div className="p-4">
               {levels.map((level, i) => (
                 <Level
@@ -103,8 +114,8 @@ const List: React.FC = () => {
           </ScrollArea>
         </div>
       </div>}
-      {window.innerWidth >= 1000 ? <Separator orientation="vertical" /> : ""}
-      {window.innerWidth < 1000 && !selectedLevelName ? "" : <ListInfoBox levelName={selectedLevelName} width={window.innerWidth} selectedState={setSelectedLevelName}/>}
+      {window.innerWidth >= 800 ? <Separator orientation="vertical" /> : ""}
+      {window.innerWidth < 800 && !selectedLevelName ? "" : <ListInfoBox levelName={selectedLevelName} width={window.innerWidth} selectedState={setSelectedLevelName}/>}
     </div> )
 }
 

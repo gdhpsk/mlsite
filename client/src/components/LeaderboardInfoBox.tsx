@@ -21,12 +21,12 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
   }, [playerName])
 
   return (
-    <div className={`rounded-box flex ${width < 1400 ? "" : "w-3/5"} flex-col space-y-12 bg-white p-4 py-12 shadow-inner`} style={{width: width < 1400 ? "-webkit-fill-available" : "revert-layer"}}>
+    <div className={`rounded-box flex ${width < 1500 ? "" : "w-3/5"} flex-col bg-white p-4 py-12 shadow-inner`} style={{width: width < 1500 ? "-webkit-fill-available" : "revert-layer"}}>
             {player && <Button onClick={() => {
             selectedState("")
             setPlayer(undefined)
           }}>Back</Button>}
-      <ScrollArea className="p-4" style={{height: width < 1400 ? "calc(100vh - 236px)" : "55vh"}}>
+      <ScrollArea className="p-4" style={{height: width < 1500 ? "calc(100vh - 189px)" : "55vh"}}>
         {player && (
            <div className="grid justify-items-center gap-y-16">
             <p className="text-4xl">
@@ -64,8 +64,7 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
                       case 'comb':
                         return true
                     }
-                  })
-                  .sort((a, b) => a.level.localeCompare(b.level))}
+                  })}
               />
             </div>
           </div>

@@ -39,18 +39,19 @@ function getYouTubeVideoID(url: string) {
 }
 
   return (
-    <div className={`rounded-box flex ${width < 1000 ? "" : "w-3/5"} flex-col space-y-12 overflow-y-auto bg-white p-4 py-12 shadow-inner`}  style={{width: width < 1000 ? "-webkit-fill-available" : "revert-layer"}}>
+    <div className={`rounded-box flex ${width < 1500 ? "" : "w-3/5"} flex-col overflow-y-auto bg-white p-4 py-12 shadow-inner`}  style={{width: width < 1500 ? "-webkit-fill-available" : "revert-layer"}}>
       {level && <Button onClick={() => {
                 selectedState("")
                 setLevel(undefined)
               }}>Back</Button>}
       {level && (<>
-        <ScrollArea className="h-full w-full" style={{height: width < 1000 ? "calc(100vh - 236px)" : "60vh"}}>
+      <br></br>
+        <ScrollArea className="h-full w-full" style={{height: width < 1500 ? "calc(100vh - 212px)" : "60vh"}}>
           <div className="grid justify-items-center gap-y-16">
             <p className="text-4xl">
               <strong>{level.name}</strong>
             </p>
-            <iframe width="352" height="198" src={getYouTubeEmbedUrl(level.records[0].link)} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+            <iframe width="352" height="198" src={getYouTubeEmbedUrl(level.records[0]?.link || "")} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
             <div className="flex h-24 w-[85%] place-items-center justify-items-center">
               <div className="grid flex-grow place-items-center">
                 <p className="text-center text-2xl">Position</p>
@@ -67,7 +68,7 @@ function getYouTubeVideoID(url: string) {
                 <p className="pt-2 text-center text-xl">{level.points.toFixed(2)}</p>
               </div>
             </div>
-            <div className="grid w-3/4 justify-items-center">
+            <div className="grid justify-items-center" style={{width: "min(400px, 90%)"}}>
               <p className="text-3xl">Records</p>
               <br />
               <Records rec={level.records} />

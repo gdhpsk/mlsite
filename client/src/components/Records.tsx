@@ -21,7 +21,7 @@ const Records: React.FC<RecordsProps> = ({ rec }) => {
       <TableBody>
         {rec.map((r, i) => (
           <TableRow key={`record-${i}`} style={{backgroundColor: i % 2 ? "white" : "lightgray"}} className={cn('text-lg', r.hertz === 60 && 'font-semibold')}>
-            <TableCell>{r.player ?? r.level}</TableCell>
+            <TableCell>{r.level ? `${i+1}. ` : ""}{r.player ?? r.level}</TableCell>
             <TableCell>{r.hertz}</TableCell>
             <TableCell>
               <a href={r.link} target={'_blank'}>

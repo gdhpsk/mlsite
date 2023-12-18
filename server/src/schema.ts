@@ -194,7 +194,7 @@ const levelSchema = new Schema<ILevel, LevelModel, ILevelMethods>(
       points: {
         get() {
           return this.position <= 100
-            ? 2160 / (0.35 * this.position + 8.65) - 40.12
+            ? 2160 / (0.35 * this.position + 8.65) - 40
             : 0;
         },
       },
@@ -329,6 +329,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                 }, {
                   '$project': {
                     '_id': '$levelID', 
+                    'id': '$_id', 
                     'hertz': '$hertz'
                   }
                 }
@@ -383,7 +384,29 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1, 
               'discord': 1, 
-              'records': 1, 
+              'records': {
+                '$map': {
+                  'input': '$temp', 
+                  'in': {
+                    '_id': '$$this.id', 
+                    'level': {
+                      '$arrayElemAt': [
+                        {
+                          '$filter': {
+                            'input': '$temp2', 
+                            'as': 'this2', 
+                            'cond': {
+                              '$eq': [
+                                '$$this2._id', '$$this._id'
+                              ]
+                            }
+                          }
+                        }, 0
+                      ]
+                    }
+                  }
+                }
+              }, 
               'lrr': {
                 '$filter': {
                   'input': '$temp2', 
@@ -441,7 +464,14 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1, 
               'discord': 1, 
-              'records': 1, 
+              'records': {
+                '$sortArray': {
+                  'input': '$records', 
+                  'sortBy': {
+                    'level.points': -1
+                  }
+                }
+              }, 
               'points': {
                 'lrr': {
                   '$reduce': {
@@ -471,7 +501,12 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1, 
               'discord': 1, 
-              'records': 1, 
+              'records': {
+                '$map': {
+                  'input': '$records', 
+                  'in': '$$this._id'
+                }
+              }, 
               'points': {
                 'lrr': {
                   '$round': [
@@ -517,9 +552,9 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
       async updatePoints(session: ClientSession) {
         let obj = await model("Records").aggregate([
           {
-            '$match': {
-              '_id': this._id
-            }
+              '$match': {
+                '_id': this._id
+              }
           },
           {
             '$lookup': {
@@ -539,6 +574,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                 }, {
                   '$project': {
                     '_id': '$levelID', 
+                    'id': '$_id', 
                     'hertz': '$hertz'
                   }
                 }
@@ -593,7 +629,29 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1, 
               'discord': 1, 
-              'records': 1, 
+              'records': {
+                '$map': {
+                  'input': '$temp', 
+                  'in': {
+                    '_id': '$$this.id', 
+                    'level': {
+                      '$arrayElemAt': [
+                        {
+                          '$filter': {
+                            'input': '$temp2', 
+                            'as': 'this2', 
+                            'cond': {
+                              '$eq': [
+                                '$$this2._id', '$$this._id'
+                              ]
+                            }
+                          }
+                        }, 0
+                      ]
+                    }
+                  }
+                }
+              }, 
               'lrr': {
                 '$filter': {
                   'input': '$temp2', 
@@ -651,7 +709,14 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1, 
               'discord': 1, 
-              'records': 1, 
+              'records': {
+                '$sortArray': {
+                  'input': '$records', 
+                  'sortBy': {
+                    'level.points': -1
+                  }
+                }
+              }, 
               'points': {
                 'lrr': {
                   '$reduce': {
@@ -681,7 +746,12 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1, 
               'discord': 1, 
-              'records': 1, 
+              'records': {
+                '$map': {
+                  'input': '$records', 
+                  'in': '$$this._id'
+                }
+              }, 
               'points': {
                 'lrr': {
                   '$round': [

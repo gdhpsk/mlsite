@@ -9,23 +9,56 @@ import { Tabs, TabsList, TabsTrigger } from '../primitives/tabs'
 import { Separator } from '../primitives/separator'
 import { Input } from '../primitives/input'
 
+const classes = [
+  [1000, "Overlords"],
+  [600, "Class S"],
+  [300, "Class A"],
+  [150, "Class B"],
+  [50, "Class C"],
+  [1, "Class D"]
+];
+
 const Leaderboard: React.FC = () => {
   let [players, setPlayers] = useState<Array<APIManyPlayer>>([])
+  let [processedPlayers, setProcessedPlayers] = useState<Array<APIManyPlayer>>([])
   let [selectedPlayerName, setSelectedPlayerName] = useState<string>(undefined)
   let [search, setSearch] = useState<string>('')
   let [view, setView] = useState<'lrr' | 'hrr' | 'comb'>('comb')
   let [showModal, setShowModal] = useState<boolean>(false)
 
   useEffect(() => {
-    document.body.style.overflow = "hidden"
+    document.body.style.overflow = (window.innerWidth < 1500 ? "hidden" : "visible")
     getPlayers().then((p) => {
       setPlayers(p)
     })
   }, [])
 
+  useEffect(() => {
+    setProcessedPlayers(players.filter((player) => {
+      switch (view) {
+        case 'lrr':
+          return player.points.lrr > 0 
+        case 'hrr':
+          return player.points.hrr > 0
+        case 'comb':
+          return true
+      }
+    })
+                    .sort((a, b) => {
+                      switch (view) {
+                        case 'lrr':
+                          return b.points.lrr - a.points.lrr
+                        case 'hrr':
+                          return b.points.hrr - a.points.hrr
+                        case 'comb':
+                          return b.points.comb - a.points.comb
+                      }
+                    }))
+  }, [view, players])
+
   return (
-    <div className={`border-4 bg-[#f2f7ff] sm:m-12 sm:mx-auto overflow-x-hidden ${window.innerWidth < 1400 ? "" : "sm:w-3/5 p-8"}`}>
-      {window.innerWidth < 1400 && selectedPlayerName ? "" : <><div className="mx-auto">
+    <div className={`border-4 bg-[#f2f7ff] sm:mx-auto overflow-x-hidden ${window.innerWidth < 1500 ? "" : "sm:w-3/5 p-8 sm:m-12"}`}>
+      {window.innerWidth < 800 && selectedPlayerName ? "" : <><div className="mx-auto">
         <Tabs defaultValue="comb" className="w-[300px]" onValueChange={(val: 'lrr' | 'hrr' | 'comb') => setView(val)}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="lrr">LRR</TabsTrigger>
@@ -36,7 +69,7 @@ const Leaderboard: React.FC = () => {
       </div>
       <br /></>}
       <div className="flex">
-        {window.innerWidth < 1400 && selectedPlayerName ? "" : <div className="flex-grow bg-white p-4 shadow-inner">
+        {window.innerWidth < 800 && selectedPlayerName ? "" : <div className="flex-grow bg-white p-4 shadow-inner">
           <div className="flex">
             <Input
               type="text"
@@ -47,36 +80,20 @@ const Leaderboard: React.FC = () => {
             />
           </div>
           <div>
-            <ScrollArea style={{height: window.innerWidth < 1400 ? `calc(100vh - 236px)` : "55vh"}}>
-              <Table>
+            <ScrollArea style={{height: window.innerWidth < 1500 ? `calc(100vh - 236px)` : "55vh"}}>
+              {classes.map((c, cIndex) => <div>
+                <h1 className="text-center font-extrabold text-3xl">{c[1]} ({c[0]}+)</h1>
+                <br></br>
+                <Table>
                 <TableBody>
-                  {players
-                    .filter((player) => {
-                      switch (view) {
-                        case 'lrr':
-                          return player.points.lrr > 0
-                        case 'hrr':
-                          return player.points.hrr > 0
-                        case 'comb':
-                          return true
-                      }
-                    })
-                    .sort((a, b) => {
-                      switch (view) {
-                        case 'lrr':
-                          return b.points.lrr - a.points.lrr
-                        case 'hrr':
-                          return b.points.hrr - a.points.hrr
-                        case 'comb':
-                          return b.points.comb - a.points.comb
-                      }
-                    })
+                  {processedPlayers
+                    .filter((player) => player.points[view] >= (c[0] as number)  && player.points[view] < ((classes[cIndex-1]?.[0] ?? Infinity) as number))
                     .map((player, i) => (
                       <Player
                         {...player}
                         show={search.length > 0 ? player.name.toLowerCase().indexOf(search.toLowerCase()) !== -1 : true}
                         view={view}
-                        position={i + 1}
+                        position={processedPlayers.findIndex(e => e.name == player.name) + 1}
                         onSelect={() => {
                           setSelectedPlayerName(player.name)
                           window.innerWidth <= 640 && setShowModal(true)
@@ -86,13 +103,15 @@ const Leaderboard: React.FC = () => {
                     ))}
                 </TableBody>
               </Table>
+              <br></br>
+              </div>)}
             </ScrollArea>
           </div>
         </div>}
 
-        {window.innerWidth < 1400 && !selectedPlayerName ? "" :  (
+        {window.innerWidth < 800 && !selectedPlayerName ? "" :  (
           <>
-            {window.innerWidth < 1400 ? "" : <Separator orientation="vertical" className="mx-4" />}
+            {window.innerWidth < 800 ? "" : <Separator orientation="vertical" className="mx-4" />}
             <LeaderboardInfoBox playerName={selectedPlayerName} view={view} width={window.innerWidth} selectedState={setSelectedPlayerName}/>
           </>
         )}
