@@ -18,7 +18,7 @@ export interface ChangelogBoxTypes {
 const ChangelogBox: React.FC<ChangelogBoxTypes> = ({ title, date, ruleChanges, levelPlacements, placementAdjustments, knockedOffLevels, other, extra }) => {
   return (
     <div className={`rounded-box flex w-4/5 flex-col overflow-y-auto bg-white p-4 py-12 shadow-inner`}  style={{width: "-webkit-fill-available"}}>
-      <h1 className="font-extrabold text-xl">({date}) - {title}</h1>
+      <h1 className="font-extrabold text-xl">({date}){title ?  `- ${title}` : ""}</h1>
     {ruleChanges.length ? <>
     <br></br>
         <h1 className="font-extrabold text-xl">Rule Changes</h1>
@@ -27,7 +27,7 @@ const ChangelogBox: React.FC<ChangelogBoxTypes> = ({ title, date, ruleChanges, l
     </> : ""}
     {levelPlacements.length ? <>
     <br></br>
-        <h1 className="font-extrabold text-xl">Level Changes</h1>
+        <h1 className="font-extrabold text-xl">Level Additions</h1>
         {levelPlacements.map(e => <><br></br>- {e}</>)}
         <br></br>
     </> : ""}
@@ -39,14 +39,14 @@ const ChangelogBox: React.FC<ChangelogBoxTypes> = ({ title, date, ruleChanges, l
     </> : ""}
     {knockedOffLevels.length ? <>
     <br></br>
-        <h1 className="font-extrabold text-xl">Level Changes</h1>
+        <h1 className="font-extrabold text-xl">Level Removals</h1>
         {knockedOffLevels.map(e => <><br></br>- {e}</>)}
         <br></br>
     </> : ""}
     {other.length ? <>
     <br></br>
-        <h1 className="font-extrabold text-xl">Level Changes</h1>
-        {ruleChanges.map(e => <><br></br>- {e}</>)}
+        <h1 className="font-extrabold text-xl">Other Changes</h1>
+        {other.map(e => <><br></br>- {e}</>)}
         <br></br>
     </> : ""}
     <br></br>

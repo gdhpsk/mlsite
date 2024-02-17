@@ -11,6 +11,7 @@ const List: React.FC = () => {
   let [levels, setLevels] = useState<APIManyLevel[]>([])
   let [selectedLevelName, setSelectedLevelName] = useState<string>("")
   let [search, setSearch] = useState<string>('')
+  let [{atLevel}, setAtLevel] = useState({atLevel: 1})
   let [{scrolledHeight}, setScrolledHeight] = useState({scrolledHeight: 0})
   let [originalHeight, setOriginalHeight] = useState(0)
   let getScrolledHeight = () => {
@@ -34,6 +35,14 @@ const List: React.FC = () => {
       document.getElementById("levels-section").children[1].scrollTop = (element.scrollHeight - element.clientHeight) * (originalHeight / 100)
       setOriginalHeight(0)
       return;
+    }
+    let element = document.getElementById("levels-section").children[1];
+    if(listOfObservers.length && listOfObservers[0].target) {
+      let val = (listOfObservers as any).findLastIndex((e:any) => element.scrollTop + element.clientHeight - e.target.clientHeight * (0.75) >= e.boundingClientRect.top - element.getBoundingClientRect().top)+1 || 1
+      if(atLevel !=  val) {
+        (document.getElementById("level-pos-box") as any).value = val
+      }
+      setAtLevel({atLevel: val})
     }
     let value = getScrolledHeight()
     setScrolledHeight({scrolledHeight: value || 0});
@@ -68,7 +77,7 @@ const List: React.FC = () => {
    {window.innerWidth < 800 && selectedLevelName ? "" : <div className="flex-grow bg-white p-4 shadow-inner">
         <div className="flex">
           <Input type="text" placeholder="Search..." className="m-4 grow" onChange={(e) => setSearch(e.target.value)} defaultValue={search}/>
-          <Input type="number" placeholder="Pos..." className="m-4 w-14" disabled={!!search} onKeyDown={(e) => {
+          <Input type="number" placeholder="Pos..." className="m-4 w-14" disabled={!!search} id="level-pos-box" onKeyDown={(e) => {
             if(e.key == "Enter") {
               let index = e.currentTarget.value
                let rect = listOfObservers[(parseInt(index) || 1)-1].target
@@ -80,6 +89,7 @@ const List: React.FC = () => {
             }
           }}/>
         </div>
+        <p style={{textAlign: "center"}}>{atLevel}</p>
         <div className="flex justify-center mb-3">
           <Form.Range
             disabled={!!search}
@@ -96,6 +106,11 @@ const List: React.FC = () => {
             }}
             className='w-80'
           ></Form.Range>
+        </div>
+        <div className="flex justify-center mb-3 mt-[-15px]" style={{gap: "calc(25rem / 3)"}}>
+            <p style={{textAlign: "left"}}>1</p>
+            <p style={{textAlign: "center"}}>{Math.round(levels.length / 2)}</p>
+            <p style={{textAlign: "end"}}>{levels.length}</p>
         </div>
         <div>
           <ScrollArea className="rounded-md border" style={{height: window.innerWidth < 1500 ? "calc(100vh - 200px)" : "60vh"}} id="levels-section">

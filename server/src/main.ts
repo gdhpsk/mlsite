@@ -63,7 +63,7 @@ const transaction = (
 };
 
 app.get("/levels", async (req, res) => {
-  const levels = await Level.find({ position: req.query.position ? parseInt(req.query.position as string) : { $lte: 100 } })
+  const levels = await Level.find({ position: req.query.position ? parseInt(req.query.position as string) : { $lte: Infinity } })
     .lean({ virtuals: true })
     .sort("position")
     .select("-_id -__v -records");
