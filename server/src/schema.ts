@@ -40,6 +40,7 @@ type RecordDocument = Document<unknown, any, IRecord> &
 interface ILevel {
   name: string;
   creator: string;
+  urlHash?: string;
   position: number;
   records?: Types.ObjectId[] | RecordDocument[];
   points?: number;
@@ -183,6 +184,7 @@ const levelSchema = new Schema<ILevel, LevelModel, ILevelMethods>(
   {
     name: { type: String, required: true },
     creator: { type: String, required: true },
+    urlHash: {type: String},
     position: { type: Number, required: true },
     records: [{ type: Schema.Types.ObjectId, ref: "Record" }],
   },
@@ -262,6 +264,12 @@ const levelSchema = new Schema<ILevel, LevelModel, ILevelMethods>(
     },
   }
 );
+
+const packSchema = new Schema({
+  name: String,
+  levels: [mongoose.SchemaTypes.ObjectId],
+  position: Number
+})
 
 const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
   {
@@ -801,4 +809,5 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
 export const Record = model<IRecord, RecordModel>("Record", recordSchema);
 export const Level = model<ILevel, LevelModel>("Level", levelSchema);
 export const Player = model<IPlayer, PlayerModel>("Player", playerSchema);
+export const Pack = model("Pack", packSchema)
 // export const Log = model<ILog>("Log", logSchema);

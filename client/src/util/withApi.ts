@@ -18,6 +18,7 @@ export interface APIManyLevel {
   position: number
   points: number
   id?: any
+  urlHash?: string
 }
 
 export interface APIOneLevel extends APIManyLevel {

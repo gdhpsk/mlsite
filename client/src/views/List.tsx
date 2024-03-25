@@ -2,16 +2,18 @@ import React, { useEffect, useRef, useState } from 'react'
 import { getLevels, APIManyLevel, APIOneLevel } from '../util/withApi'
 import Level from '../components/Level'
 import ListInfoBox from '../components/ListInfoBox'
-import { ScrollArea } from '../primitives/scroll-area'
+import { ScrollAreaNoScroll } from '../primitives/scroll-area'
 import { Input } from '../primitives/input'
 import { Separator } from '../primitives/separator'
 import { Button, Form } from 'react-bootstrap'
 
 const List: React.FC = () => {
+
   let [levels, setLevels] = useState<APIManyLevel[]>([])
   let [selectedLevelName, setSelectedLevelName] = useState<string>("")
   let [search, setSearch] = useState<string>('')
   let [{atLevel}, setAtLevel] = useState({atLevel: 1})
+  let [{scrollTop}, setScrollTop] = useState({scrollTop: 0})
   let [{scrolledHeight}, setScrolledHeight] = useState({scrolledHeight: 0})
   let [originalHeight, setOriginalHeight] = useState(0)
   let getScrolledHeight = () => {
@@ -37,21 +39,28 @@ const List: React.FC = () => {
       return;
     }
     let element = document.getElementById("levels-section").children[1];
+    
+    let value = getScrolledHeight()
     if(listOfObservers.length && listOfObservers[0].target) {
-      let val = (listOfObservers as any).findLastIndex((e:any) => element.scrollTop + element.clientHeight - e.target.clientHeight * (0.75) >= e.boundingClientRect.top - element.getBoundingClientRect().top)+1 || 1
+      let val = Math.min(Math.max(Math.round(element.scrollTop / (element.scrollHeight - element.clientHeight) * 100), 1), 100)
       if(atLevel !=  val) {
         (document.getElementById("level-pos-box") as any).value = val
       }
       setAtLevel({atLevel: val})
     }
-    let value = getScrolledHeight()
     setScrolledHeight({scrolledHeight: value || 0});
   })
 
   useEffect(() => {
+    let element = document.getElementById("levels-section")?.children?.[1];
+    if(!element) return;
+    setScrollTop({scrollTop: element.scrollTop})
+  }, [selectedLevelName])
+
+  useEffect(() => {
     document.body.style.overflow = (window.innerWidth < 1500 ? "hidden" : "visible")
-    getLevels().then((l) => {
-      setLevels(l)
+    getLevels().then((l: any) => {
+      setLevels(l.slice(0, 100))
     })
   }, [])
 
@@ -73,11 +82,11 @@ const List: React.FC = () => {
   }, [levels, selectedLevelName, search])
 
   return (
-    <div className={`flex w-full border-4 bg-[#f2f7ff] overflow-hidden sm:mx-auto ${window.innerWidth < 800 ? "flex-col" : ""} ${window.innerWidth < 1500 ? "" : "sm:w-3/4 p-8 sm:m-12"}`}>
-   {window.innerWidth < 800 && selectedLevelName ? "" : <div className="flex-grow bg-white p-4 shadow-inner">
+    <div className={`flex w-full border-r-4 border-l-4 bg-[#f2f7ff] sm:mx-auto ${window.innerWidth < 800 ? "flex-col" : ""} ${window.innerWidth < 1500 ? "" : "sm:w-3/4 pr-8 pl-8"}`}>
+   {window.innerWidth < 800 && selectedLevelName ? "" : <div className="flex-grow overflow-hidden bg-white pr-4 pl-4 shadow-inner" style={{height: "calc(100vh - 58px)"}}>
         <div className="flex">
           <Input type="text" placeholder="Search..." className="m-4 grow" onChange={(e) => setSearch(e.target.value)} defaultValue={search}/>
-          <Input type="number" placeholder="Pos..." className="m-4 w-14" disabled={!!search} id="level-pos-box" onKeyDown={(e) => {
+          <Input type="number" placeholder="Pos..." className="m-4 w-20" disabled={!!search} id="level-pos-box" onKeyDown={(e) => {
             if(e.key == "Enter") {
               let index = e.currentTarget.value
                let rect = listOfObservers[(parseInt(index) || 1)-1].target
@@ -89,7 +98,7 @@ const List: React.FC = () => {
             }
           }}/>
         </div>
-        <p style={{textAlign: "center"}}>{atLevel}</p>
+        {window.innerWidth < 1500 ? "" : <>
         <div className="flex justify-center mb-3">
           <Form.Range
             disabled={!!search}
@@ -104,16 +113,13 @@ const List: React.FC = () => {
                  behavior: "auto"
                })
             }}
-            className='w-80'
+            style={{transform: "translateY(calc((-180px + 100vh)/2)) translateX(-15vw) rotate(90deg)"}}
+            className='absolute w-[50vh]'
           ></Form.Range>
         </div>
-        <div className="flex justify-center mb-3 mt-[-15px]" style={{gap: "calc(25rem / 3)"}}>
-            <p style={{textAlign: "left"}}>1</p>
-            <p style={{textAlign: "center"}}>{Math.round(levels.length / 2)}</p>
-            <p style={{textAlign: "end"}}>{levels.length}</p>
-        </div>
+        </>}
         <div>
-          <ScrollArea className="rounded-md border" style={{height: window.innerWidth < 1500 ? "calc(100vh - 200px)" : "60vh"}} id="levels-section">
+          <ScrollAreaNoScroll className="rounded-md border" style={{height: "calc(100vh - 180px)"}} id="levels-section">
             <div className="p-4">
               {levels.map((level, i) => (
                 <Level
@@ -126,7 +132,7 @@ const List: React.FC = () => {
                 />
               ))}
             </div>
-          </ScrollArea>
+          </ScrollAreaNoScroll>
         </div>
       </div>}
       {window.innerWidth >= 800 ? <Separator orientation="vertical" /> : ""}

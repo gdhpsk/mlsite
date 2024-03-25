@@ -45,6 +45,7 @@ const Roulette: React.FC = () => {
           setRoulette(JSON.parse(fileReader.result as string))
           setRouletteStarted(true)
          localStorage.setItem("roulette", fileReader.result as string)
+         setEndText("")
        } catch(e) {
          console.log(e)
        }
@@ -54,7 +55,7 @@ const Roulette: React.FC = () => {
   }
   
   return (
-  <div className={`flex w-full border-4 bg-[#f2f7ff] overflow-hidden sm:mx-auto ${window.innerWidth < 800 ? "flex-col" : ""} ${window.innerWidth < 1500 ? "" : "sm:w-1/2 p-8 sm:m-12"}`}>
+  <div className={`flex w-full border-4 bg-[#f2f7ff] sm:mx-auto ${window.innerWidth < 800 ? "flex-col" : ""} ${window.innerWidth < 1500 ? "" : "sm:w-1/2 p-8 sm:m-12"}`}>
       <div className={`rounded-box flex flex-col overflow-y-auto bg-white p-4 py-12 shadow-inner overflow-x-hidden`}  style={{width: "-webkit-fill-available", height: window.innerWidth < 1500 ? "calc(100vh - 68px)" : "80vh"}}>
             <h1 className="text-center font-extrabold text-5xl">Mobile List Roulette</h1>
             <br></br>
@@ -93,7 +94,7 @@ const Roulette: React.FC = () => {
                   </div>
               </div> : ""}
             <div className='grid'>
-              {!rouletteStarted ? <><br></br><Button onClick={() => {
+              {!rouletteStarted ? <><br></br><Button disabled={!levels.length} onClick={() => {
                 setEndText("")
                 let arr = []
                 if(checkedLevels.main) {
@@ -115,6 +116,14 @@ const Roulette: React.FC = () => {
                 })
                 setRouletteStarted(true)
               }}>Start</Button></> : ""}
+              {rouletteStarted ? <><br></br><Button className='hidden' onClick={() => {
+                setEndText(`In total, you did ${roulette.levels.length} levels (skipping ${roulette.levels.slice(0, -1).filter(e => e.skipped).length} levels), and got to ${roulette.levels.at(-1).percent}%. Thanks for playing! :)`)
+                setRoulette({
+                  ...roulette,
+                  finished: true
+                })
+                setRouletteStarted(false)
+              }} id="complete-roulette"></Button></> : ""}
               {rouletteStarted ? <><br></br><Button onClick={() => {
                 setEndText(`In total, you did ${roulette.levels.length-1} levels (skipping ${roulette.levels.slice(0, -1).filter(e => e.skipped).length} levels), and got to ${roulette.levels.at(-1).percent}%. Thanks for playing! :)`)
                 setRoulette({

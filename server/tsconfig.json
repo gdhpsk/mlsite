@@ -1,7 +1,10 @@
 {
+  "exclude": [
+    "./server/adapter.ts"
+  ],
   "compilerOptions": {
-    "module": "ES6",
-    "target": "ES5",
+    "module": "ESNext",
+    "target": "ESNext",
     "allowJs": true,
     "moduleResolution": "node",
     "noImplicitAny": true,

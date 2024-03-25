@@ -4,7 +4,8 @@ import env from "dotenv";
 import cors from "cors";
 import mongoose, { ClientSession } from "mongoose";
 import path from "path";
-import { Record, Level, Player } from "./schema";
+import { Record, Level, Player, Pack } from "./schema";
+import nextAuth from "./auth.route"
 import axios from "axios";
 import cluster from "cluster";
 import os from "os";
@@ -32,6 +33,8 @@ app.use((req, res, next) => {
   next();
 });
 app.use("/", express.static(path.resolve(__dirname, "../client")));
+app.use("/auth/*", nextAuth)
+app.use("/", express.static("public"))
 
 const authed = (req: Request, res: Response, next: NextFunction) => {
   if (!(req.headers.auth ?? "" === (process.env.BOT_TOKEN as string))) {
@@ -259,6 +262,83 @@ app.delete(
     return 200;
   })
 );
+
+app.route("/packs")
+.get(async (req, res) => {
+  let pack = await Pack.find().sort({position: 1}).lean()
+  let packs = await Promise.all(pack.map(async e => {
+    let levels  = await Promise.all(e.levels.map(async x => await Level.findOne(x).select("name")))
+    let players = await Player.aggregate([
+      {
+        '$lookup': {
+          'from': 'records', 
+          'let': {
+            'ids': {
+              '$map': {
+                'input': '$records', 
+                'in': {
+                  '$toString': '$$this'
+                }
+              }
+            }
+          }, 
+          'pipeline': [
+            {
+              '$match': {
+                '$expr': {
+                  '$in': [
+                    {
+                      '$toString': '$_id'
+                    }, '$$ids'
+                  ]
+                }
+              }
+            }
+          ], 
+          'as': 'records'
+        }
+      }, {
+        '$match': {
+          '$expr': {
+            '$eq': [
+              e.levels.length, {
+                '$size': {
+                  '$setIntersection': [
+                    {
+                      '$map': {
+                        'input': '$records', 
+                        'in': '$$this.levelID'
+                      }
+                    }, e.levels
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        $project: {
+          name: 1,
+          records: {
+            $filter: {
+              input: "$records",
+              cond: {
+                $in: ["$$this.levelID", e.levels]
+              }
+            }
+          }
+        }
+      }
+    ])
+    return {
+      ...e,
+      levels,
+      players
+    }
+  }))
+  return res.status(200).json(packs)
+})
 
 app.post("/submit", async (req, res) => {
   var isNew = 0;

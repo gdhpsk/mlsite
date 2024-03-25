@@ -1,12 +1,11 @@
-import React, { useState } from 'react'
+'use client';
+import React, { useState, } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { HiMenu } from 'react-icons/hi'
 import {
   NavigationMenu,
   NavigationMenuList,
   NavigationMenuItem,
-  NavigationMenuLink,
-  navigationMenuTriggerStyle,
 } from '../primitives/navigation-menu'
 
 interface HeaderProps {
@@ -21,11 +20,12 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
   const { name, main, additional } = props
-  const [mainTabs, additionalTabs] = [['About', 'Levels', 'Leaderboard', 'Submit Record'], ['FAQ', 'Roulette', 'Changelog']]
+  const [mainTabs, additionalTabs] = [['About', 'Levels', 'Leaderboard', 'Submit Record'], ['FAQ', 'Roulette', 'Changelog', "AME", "Packs"]]
   let [show, setShow] = useState<boolean>(false)
   const navigate = useNavigate()
 
   return (
+    <>
     <div className="flex select-none flex-row items-center justify-between bg-slate-700 pr-12 opacity-100">
       <div className="h-full cursor-pointer p-4 text-xl text-white hover:bg-slate-800" onClick={() => navigate('/')}>
         {name}
@@ -57,6 +57,12 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
                 </div>
               </NavigationMenuItem>
             ))}
+            <div
+                  className="cursor-pointer p-4 text-white hover:bg-slate-800"
+                  onClick={() => document.getElementById("login-form-button").click()}
+                >
+                  Login
+                </div>
           </NavigationMenuList>
         </NavigationMenu>
       ) : (
@@ -68,7 +74,7 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
             <label tabIndex={0} className="btn-ghost btn">
               <HiMenu size={30} />
             </label>
-            <div className={`absolute ${!show ? "hidden" : "block"} bg-slate-600 z-50`} style={{width: "min(300px, 100%)", height: "calc(100% - 60px)", marginTop: "15px", marginLeft: "-222px"}}>
+            <div className={`absolute ${!show ? "hidden" : "block"} bg-slate-600 z-50 overflow-y-scroll`} style={{width: "min(300px, 100%)", height: "calc(100% - 60px)", marginTop: "15px", marginLeft: "-222px"}}>
               <br></br>
               <h1 className="text-white text-center text-3xl">GD Mobile List</h1>
               <br></br>
@@ -105,11 +111,19 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
                 </p>
                 <br></br>
               </>))}
+              <p
+                  className="text-white p-4 text-xl border-double"
+                  onClick={() => document.getElementById("login-form-button").click()}
+                >
+                  Login
+                  </p>
             </div>  
           </div>
         </div>
       )}
     </div>
+    
+</>
   )
 }
 

@@ -11,10 +11,14 @@ import About from './views/About'
 import FAQ from './views/FAQ'
 import Roulette from './views/Roulette'
 import Changelog from './views/Changelog'
+import AllMobileExtremes from './views/AllMobileExtremes'
+import Packs from './views/Packs'
+import Login from './components/Login'
 
 const App: React.FC = () => {
   return (
     <>
+    <Login></Login>
       <div className="fixed -z-50 h-screen w-full bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-gray-400 via-gray-600 to-blue-800" />
       <HashRouter>
         <Header
@@ -28,7 +32,9 @@ const App: React.FC = () => {
           additional={{
             faq: "/faq",
             roulette: "/roulette",
-            changelog: "/changelog"
+            changelog: "/changelog",
+            ame: "/ame",
+            packs: "/packs"
           }}
         />
         <Routes>
@@ -40,6 +46,8 @@ const App: React.FC = () => {
           <Route path="/roulette" element={<Roulette />} />
           <Route path="/changelog" element={<Changelog />} />
           <Route path="/submit" element={<SubmitRecord />} />
+          <Route path="/ame" element={<AllMobileExtremes />} />
+          <Route path="/packs" element={<Packs />} />
         </Routes>
       </HashRouter>
     </>

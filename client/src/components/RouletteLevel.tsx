@@ -66,7 +66,7 @@ function getYouTubeVideoID(url: string) {
             <div className="flex gap-2">
             <Button className='bg-blue-500 p-2' onClick={() => {
                 let inputtedPercent = parseInt((document.getElementById("percentile") as any)?.value || 0)  || percent
-                if(inputtedPercent < percent) return;
+                if(inputtedPercent < percent || inputtedPercent > 100) return;
                 let ind = Math.floor(Math.random() * (rouletteState.obj.remaining.length - 1))
                 if(!rouletteState.obj.remaining.length || inputtedPercent == 100) {
                     rouletteState.func({
@@ -78,7 +78,7 @@ function getYouTubeVideoID(url: string) {
                         remaining: []
                       })
                      setTimeout(() => {
-                        document.getElementById("end-roulette").click()
+                        document.getElementById("complete-roulette").click()
                      }, 0)
                       return
                 }
@@ -109,7 +109,7 @@ function getYouTubeVideoID(url: string) {
                         remaining: []
                       })
                       setTimeout(() => {
-                         document.getElementById("end-roulette").click()
+                         document.getElementById("complete-roulette").click()
                       }, 0)
                       return
                 }
