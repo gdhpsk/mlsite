@@ -1,6 +1,6 @@
 {
   "ignore": ["node_modules"],
-  "watch": ["src"],
-  "exec": "yarn build:client",
+  "watch": ["src", "server"],
+  "exec": "yarn build",
   "ext": "ts,tsx,css"
 }

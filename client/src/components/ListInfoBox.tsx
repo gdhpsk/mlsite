@@ -54,7 +54,7 @@ function getYouTubeVideoID(url: string) {
               <span className='text-2xl text-left'>by {level.creator}</span>
             </p>
             <hr className='w-96 h-10 -mt-10' />
-            <div className={`grid h-24 -mt-10 ${width < 1500 ? "justify-items-center place-items-center pr-8" : "justify-items-start place-items-start"}`} style={{width: "-webkit-fill-available"}}>
+            <div className={`grid h-24 -mt-14 ${width < 1500 ? "justify-items-center place-items-center pr-8" : "justify-items-start place-items-start"}`} style={{width: "-webkit-fill-available"}}>
             <iframe width="352" height="198" src={getYouTubeEmbedUrl(level.records[0]?.link || "")} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
             </div>
             <br></br>

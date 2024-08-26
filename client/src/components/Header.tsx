@@ -20,7 +20,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
   const { name, main, additional } = props
-  const [mainTabs, additionalTabs] = [['About', 'Levels', 'Leaderboard', 'Submit Record'], ['FAQ', 'Roulette', 'Changelog', "AME", "Packs"]]
+  const [mainTabs, additionalTabs] = [['About', 'Levels', 'Legacy', 'Leaderboard', 'Submit Record'], ['FAQ', 'Roulette', 'Changelog', "AME", "Packs"]]
   let [show, setShow] = useState<boolean>(false)
   const navigate = useNavigate()
 
@@ -45,7 +45,7 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
                 </div>
               </NavigationMenuItem>
             ))}
-             {Object.keys(additional).map((r, i) => (
+             {Object.keys(additional).map((r, i) => ( 
               <NavigationMenuItem key={`nav-${i}`}>
                 <div
                   className="cursor-pointer p-4 text-white hover:bg-slate-800"

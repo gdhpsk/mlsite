@@ -14,6 +14,7 @@ import Changelog from './views/Changelog'
 import AllMobileExtremes from './views/AllMobileExtremes'
 import Packs from './views/Packs'
 import Login from './components/Login'
+import Legacy from './views/Legacy'
 
 const App: React.FC = () => {
   return (
@@ -26,6 +27,7 @@ const App: React.FC = () => {
           main={{
             about: '/about',
             levels: '/',
+            legacy: "/legacy",
             leaderboard: '/leaderboard',
             submit: "/submit"
           }}
@@ -48,6 +50,7 @@ const App: React.FC = () => {
           <Route path="/submit" element={<SubmitRecord />} />
           <Route path="/ame" element={<AllMobileExtremes />} />
           <Route path="/packs" element={<Packs />} />
+          <Route path="/legacy" element={<Legacy />} />
         </Routes>
       </HashRouter>
     </>

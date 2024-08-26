@@ -61,12 +61,11 @@ const Login: React.FC = () => {
           <br></br>
           <Button variant='secondary' disabled={!login.email.text || !login.email.valid || !login.password} onClick={async () => {
             setError({color: "blue", message: "Loading...", type: 1})
-            let req = await signIn("credentials", {email: login.email.text, password: login.password, type: "login", redirect: false})
+            let req = await signIn("credentials", {email: login.email.text, password: login.password, type: "login", redirect: false, json: true})
             if(req?.error) {
                 setError({color: "red", message: req?.error || "", type: 1})
             } else {
               console.log(req)
-                // window.location.reload()
             }
           }}>Submit</Button>
         </div>

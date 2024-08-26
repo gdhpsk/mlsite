@@ -15,6 +15,11 @@ let mods = [
     name: "Geode",
     logo: "geode.png",
     link: "https://geode-sdk.org/"
+  },
+  {
+    name: "IAD",
+    logo: "iad.png",
+    link: "https://discord.com/invite/GSnM6ycEdU"
   }
 ]
 
@@ -37,7 +42,7 @@ let faq: Record<"records" | "submissions" | "misc", Array<[string, React.ReactNo
   ["I play with bypass, is that accepted?", <>TPS bypass on IAD and MHM, and the iCreate physics bypass <b>are accepted, with a max of 240fps</b>. Your record will be taken as the fps you have bypassed to. If you bypass down to 60fps, your record <b>will be accepted as 60fps</b>.</>]
   ],
   submissions: [
-    ["How do I submit a record?", <>You can visit the “<b>Submit Record</b>” page on this website, fill in the information, and submit. Otherwise, you can ask a list staff for the <b>old google form</b>, we’ll keep on checking it until the end of the year!</>],
+    ["How do I submit a record?", <>You can visit the “<b>Submit Record</b>” page on this website, fill in the information, and submit. Otherwise, you can ask a list staff for the <a href="https://docs.google.com/forms/d/e/1FAIpQLScT8aGlWyRRnn34P9gpvyrECCl-Jn2zaiRO5xsUWzD1qS_98A/viewform" target='_blank'><b>old google form</b></a>, we’ll keep on checking it until the end of the year!</>],
   ["The level I want to submit isn't on the list, can I submit it anyways?", <>You can submit through the <b>Submit page</b> and put the name of the level there. In the <b>Extra Info</b> section, you should also put your placement opinion as well as your progress on relevant levels. Do take note though, to be displayed on the list, levels must have at least one <b>60fps mobile</b> victor. Bypassing down to 60fps also fulfills this requirement.</>],
   ["What proof do I need?", <>Our baseline requirements are <b>raw footage and external audio</b>, although these may be swapped out for an acceptable alternative. <b>Two-player levels beaten solo require a handcam</b>.</>],
   ["How long must my raw footage be?", <>There is <b>no minimum length</b> for your footage, but we recommend at least <b>5-10 minutes</b> of it. Raw footage below this length can be accepted, but we may reject some records on the grounds of insufficient proof.</>],
@@ -58,7 +63,7 @@ let faq: Record<"records" | "submissions" | "misc", Array<[string, React.ReactNo
   ["What is the AME?", <>All Mobile Extremes is a GDDP of sorts for mobile players, and hopes to organize every extreme beaten on mobile into tiers. If you have at least 10 extremes done on mobile, you can ask <b>WhiteEmerald</b>, <b>MiniWheatDuo</b> or <b>Cappyt</b> for a profile.</>],
   ["Why are there question marks in the legacy list?", <>To date, we have unfortunately lost the names of 8 legacy list levels from 2017-2018, but know their position and have left their spots as such. We offer a bounty for anyone who remembers what these levels are and can provide substantial proof to back the claim.</>],
   ["Will you ever extend the list to 150 levels?", <>Unfortunately due to calculation and workload issues, we <b>do not have plans to extend the list in the near future</b>. However, P8geons runs an unofficial extension of the list at <b>Mobile List Plus</b>, so do check it out!</>],
-  ["Do the list packs give list points?", <>List packs do not give any points, but they will display on your profile.</>],
+  ["Do the list packs give list points?", <>List packs do not give any points for now, but they will display on your profile.</>],
   ["My profile shows wrong information, how do I change it?", <>You can <b>contact a list staff</b> on discord and request for your information to be changed.</>],
   ["I have questions not on this page, where do I go?", <>For any other information on this list, you can ask one of the three list leaders on discord. Their information is listed in the “About” page!</>],
   ]

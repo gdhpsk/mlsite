@@ -3,10 +3,12 @@
     "./server/adapter.ts"
   ],
   "compilerOptions": {
-    "module": "ESNext",
+    "module": "NodeNext",
+    "skipLibCheck": true,
+    "lib": ["ES2015"],
     "target": "ESNext",
     "allowJs": true,
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,

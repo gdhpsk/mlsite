@@ -33,7 +33,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use("/", express.static(path.resolve(__dirname, "../client")));
-app.use("/auth/*", nextAuth)
+app.use("/api/auth", nextAuth)
 app.use("/", express.static("public"))
 
 const authed = (req: Request, res: Response, next: NextFunction) => {
@@ -46,7 +46,7 @@ const authed = (req: Request, res: Response, next: NextFunction) => {
 
 const transaction = (
   fn: (req: Request, res: Response, session: ClientSession) => Promise<number>
-) => {
+) => { 
   return async (req: Request, res: Response) => {
     const session = await mongoose.startSession();
     let result: any;
@@ -68,7 +68,7 @@ const transaction = (
 app.get("/levels", async (req, res) => {
   const levels = await Level.find({ position: req.query.position ? parseInt(req.query.position as string) : { $lte: Infinity } })
     .lean({ virtuals: true })
-    .sort("position")
+    .sort("position") 
     .select("-_id -__v -records");
   return res.status(200).json(levels);
 });
