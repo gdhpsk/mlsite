@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 let mods: any = {
   Owners: [
@@ -51,7 +51,9 @@ let mods: any = {
 }
 
 const About: React.FC = () => {
-  document.body.style.overflow = "visible"
+  useEffect(() => {
+    document.body.style.overflow = "visible"
+  }, [])
   return (
     <div className="rounded-box max-w-5xl border-4 bg-[#f2f7ff] p-8 sm:m-12 sm:mx-auto">
       <div className="flex flex-col justify-self-center">

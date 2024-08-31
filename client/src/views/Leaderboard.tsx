@@ -24,6 +24,7 @@ const Leaderboard: React.FC = () => {
   let [selectedPlayerName, setSelectedPlayerName] = useState<string>(undefined)
   let [search, setSearch] = useState<string>('')
   let [view, setView] = useState<'lrr' | 'hrr' | 'comb'>('comb')
+  let [margin, setMargin] = useState(0)
   let [showModal, setShowModal] = useState<boolean>(false)
 
   useEffect(() => {
@@ -58,7 +59,7 @@ const Leaderboard: React.FC = () => {
 
   return (
     <div className={`border-4 bg-[#f2f7ff] sm:mx-auto overflow-x-hidden ${window.innerWidth < 1500 ? "" : "sm:w-3/5 p-8 sm:m-12"}`}>
-      {window.innerWidth < 800 && selectedPlayerName ? "" : <><div className="mx-auto">
+      {window.innerWidth < 800 && selectedPlayerName ? "" : <>{window.innerWidth < 800 ? <br></br> : ""}<div className={`mx-auto ${window.innerWidth < 800 ? 'grid place-items-center' : ""}`}>
         <Tabs defaultValue="comb" className="w-[300px]" onValueChange={(val: 'lrr' | 'hrr' | 'comb') => setView(val)}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="lrr">LRR</TabsTrigger>
@@ -94,6 +95,8 @@ const Leaderboard: React.FC = () => {
                         show={search.length > 0 ? player.name.toLowerCase().indexOf(search.toLowerCase()) !== -1 : true}
                         view={view}
                         position={processedPlayers.findIndex(e => e.name == player.name) + 1}
+                        margin={margin}
+                        setMargin={setMargin}
                         onSelect={() => {
                           setSelectedPlayerName(player.name)
                           window.innerWidth <= 640 && setShowModal(true)

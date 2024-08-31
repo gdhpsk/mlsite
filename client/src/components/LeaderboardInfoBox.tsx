@@ -34,7 +34,7 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
             </p>
             <div className="flex h-24 w-[85%] place-items-center justify-items-center">
               <div className="grid flex-grow place-items-center">
-                <p className="text-center text-2xl">Class</p>
+                <p className="text-center text-2xl">{view != "comb" ? `${view.toUpperCase()} ` : ""}Class</p>
                 <p className="pt-2 text-center text-xl">{player.mclass[view]}</p>
               </div>
               {/* <div className='divider divider-horizontal' />

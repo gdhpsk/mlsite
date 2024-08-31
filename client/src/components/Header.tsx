@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, } from 'react'
+import React, { useEffect, useState, } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { HiMenu } from 'react-icons/hi'
 import {
@@ -23,6 +23,20 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
   const [mainTabs, additionalTabs] = [['About', 'Levels', 'Legacy', 'Leaderboard', 'Submit Record'], ['FAQ', 'Roulette', 'Changelog', "AME", "Packs"]]
   let [show, setShow] = useState<boolean>(false)
   const navigate = useNavigate()
+  let [scrollable, setScrollable] = useState("")
+  useEffect(() => {
+    if(!scrollable) {
+      setScrollable(document.body.style.overflow)
+    }
+  }, [document.body.style.overflow])
+
+  useEffect(() => {
+    if(show) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = scrollable
+    }
+  }, [show])
 
   return (
     <>
