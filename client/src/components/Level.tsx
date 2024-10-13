@@ -19,20 +19,20 @@ const Level: React.FC<LevelProps> = (props: LevelProps) => {
       <div
         tabIndex={0}
         className="levellist rounded-box border-base-300 mb-4 cursor-pointer border pl-6 pr-12 pt-4 pb-4 shadow-lg transition-all hover:shadow-xl"
-        style={{borderRadius: "10px", background: `linear-gradient(130deg, rgb(255, 255, 255) ${urlHash ? "calc(100% - 125px)" : "100%"}, transparent 0%)`, backgroundColor: urlHash ? "rgba(0, 0, 0, 0.25)" : ""}}
+        style={{borderRadius: "10px", background: `linear-gradient(130deg, rgb(255, 255, 255) ${urlHash ? "calc(100% - 125px)" : "100%"}, transparent 0%)`, backgroundColor: urlHash ? "rgba(0, 0, 0, 0.2)" : ""}}
         onClick={onSelect}
       >
         {!urlHash && position < 101 ? <div className='relative w-0 h-0' style={{left: "calc(100% - 10px)", top: "15px"}}>
         <Button className='rounded-full relative bg-sky-600 w-8 text-2xl'>+</Button>
         </div> : ""}
         <div className="text-xl">
-          <p style={{wordBreak: "break-word", textShadow: "-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff"}}>
-            <strong>
+          <p style={{overflowWrap: "anywhere", textShadow: "-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff"}}>
+            <strong style={{overflowWrap: "anywhere"}}>
               {position}. &ldquo;{name}&rdquo;
             </strong>
           </p>
-          <p className="text-secondary-content text-base" style={{wordBreak: "break-word", textShadow: "-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff"}}>
-            <em>{creator}</em>
+          <p className="text-secondary-content text-base" style={{overflowWrap: "anywhere", textShadow: "-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff"}}>
+            <em style={{overflowWrap: "anywhere"}}>{creator}</em>
           </p>
 
           {/* &nbsp;<em>&#40;{Math.round(100 * points) / 100} points&#41;</em> */}

@@ -157,13 +157,24 @@ app.get("/players", async (req, res) => {
 });
 
 app.get("/players/:name", async (req, res) => {
-  const player = await Player.findOne({ name: req.params.name })
-    .lean({ virtuals: true })
-    .populate("records", "-_id -id -__v -player -levelID -playerID")
-    .select("-_id -id -__v");
-  return player
-    ? res.status(200).json(player)
-    : res.status(404).send("Player not found.");
+  Player.findOne({ name: req.params.name })
+  .lean({virtuals: true})
+  .populate({
+    path: 'records',                   // First, populate the 'records' field
+    select: '-_id -id -__v -player -playerID',  // Exclude fields from 'records'
+    populate: {
+      path: 'levelID',                 // Then, populate the 'levelID' field inside each 'record'
+      select: 'position',              // Include only the 'position' field from 'Level'
+    }
+  })
+  .select("-_id -id -__v")             // Exclude top-level fields from the Player document
+  .exec((err, result) => {
+    if (err || !result) {
+      return res.status(404).send("Player not found.");
+    } else {
+      res.status(200).json(result)
+    }
+  });
 });
 
 app.post(
@@ -372,6 +383,24 @@ app.get("/members", async (req, res) => {
     .select("name discord points.comb -_id");
   return res.status(200).json(players);
 });
+let usercount = {
+  count: 0,
+  refresh: 0
+}
+app.get("/users", async (req, res) => {
+  if(usercount.refresh >= Date.now()) {
+    return res.json({count: usercount.count, refresh: usercount.refresh})
+  }
+  let request: any = await fetch("https://discord.com/api/v10/guilds/341748330801659904?with_counts=true", {
+    headers: {
+      Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`
+    }
+  })
+  let json: Record<any, any> = await request.json()
+  usercount.count = json.approximate_member_count
+  usercount.refresh = Date.now() + 300_000
+  return res.json({count: usercount.count})
+})
 
 // app.get("/logs", async (req, res) => {
 //   const logs = await Log.find().lean().select("-__v -_id");

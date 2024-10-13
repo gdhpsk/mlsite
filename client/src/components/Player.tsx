@@ -12,25 +12,14 @@ interface PlayerProps extends APIManyPlayer {
 }
 
 const Player: React.FC<PlayerProps> = ({ name, points, position, show, view, onSelect, margin, setMargin }) => {
-  let element = useRef()
-  useEffect(() => {
-    if(!element.current) return;
-    let e: any = element.current
-    let width = e.getBoundingClientRect().width
-    if(position == 1) {
-      setMargin(width)
-      return;
-    }
-    (element.current as any).style.paddingLeft = margin - width
-  }, [element])
   return (
     show && (
       <>
         <TableRow onClick={onSelect} className="cursor-pointer py-2 text-lg hover:bg-slate-50">
-          <TableCell className="font-semibold" ref={element}>
+          <TableCell className="font-semibold">
             {position}.&nbsp;{name}
           </TableCell>
-          <TableCell className="italic">{points[view].toFixed(2)}</TableCell>
+          <TableCell className="italic lead-points"><span className='text-white select-none'>{[...new Array(4 - points[view].toFixed(2).toString().split(".")[0].length)].map(e => "0")}</span>{points[view].toFixed(2).toString().split(".")[0]}<span className='px-[1px]'>.</span>{points[view].toFixed(2).toString().split(".")[1]}</TableCell>
         </TableRow>
       </>
     )

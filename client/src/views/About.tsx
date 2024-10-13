@@ -21,7 +21,8 @@ let mods: any = {
     { name: 'P8geons', discord: 'p8geons' },
     { name: 'SeaWolfMikes', discord: 'seawolfmikes' },
     { name: 'BiPolarBearr', discord: 'bipolarbearrgd' },
-    { name: 'Coheton', discord: 'coheton' }
+    { name: 'Coheton', discord: 'coheton' },
+    { name: 'Karthik', discord: 'karthik567' }
   ],
   Developers: [
     { name: 'Zoink Doink', discord: 'zoinkdoink' },
@@ -72,11 +73,15 @@ const About: React.FC = () => {
             {Object.entries(mods).slice(0, -1).map(([header, moderators]: any) => <div className="grid justify-items-center gap-y-1">
               <h5 className="text-lg font-bold">{header}</h5>
               <div className="grid place-items-start justify-items-center" style={{gridTemplateColumns: `repeat(${moderators.length > 10 && window.innerWidth > 768 ? 2 : 1}, minmax(0, 1fr))`}}>
-              {moderators.map((e:any) => <p onClick={() => {
+              {(header == "Editors" && (moderators.length % 2) ? moderators.slice(0, -1) : moderators).map((e:any) => <p style={{textDecoration: "dotted underline"}} onClick={() => {
                 navigator.clipboard.writeText(e.discord)
                 alert(`Successfully copied ${e.name}'s discord username`)
               }}>{e.name}</p>)}
               </div>
+              {header == "Editors" ? <p style={{textDecoration: "dotted underline"}} onClick={() => {
+                navigator.clipboard.writeText(moderators.at(-1).discord)
+                alert(`Successfully copied ${moderators.at(-1).name}'s discord username`)
+              }}>{moderators.at(-1).name}</p> : ""}
             </div>)}
           </div>
           <br></br>
@@ -105,10 +110,13 @@ const About: React.FC = () => {
 <li>For an updated level to be added, the update must stay true to the original. The general gameplay of the level should remain the same, excluding buffs, nerfs, and bugfixes (e.g. Furious Flames, Killbot, Fabrication).</li>
 <li>Updates that do not resemble the original level will not be added to the list. The update must also be harder than the original by 2 or more positions. If the level is nerfed, it will simply be moved down, retaining its records.</li>
 <li>Megahack Mobile, IAD, Geode and iCreate records are allowed on the list. Geode completions should show the enabled mods in the raw footage.</li>
+<li>Due to 2.2 standardising physics to 2.1 60fps, 2.1 and 2.2 records will both continue to be accepted to Mobile List.</li>
 <li>TPS Bypass is allowed on the list, with the following restrictions:</li>
-<li>The highest limit of TPS Bypass is 240fps, and records will be taken as the fps bypassed to.</li>
-<li>Records submitted must also contain information on their device model, as well as native fps used before bypass.</li>
-<li>Furthermore, HRR devices using TPS Bypass down to 60fps will be accepted as 60hz, and are able to add new levels to the list.</li>
+<li style={{marginLeft: "20px"}}>The highest limit of TPS Bypass is 240fps, and records will be taken as the fps bypassed to.</li>
+<li style={{marginLeft: "20px"}}>Records submitted must also contain information on their device model, as well as native fps used before bypass.</li>
+<li style={{marginLeft: "20px"}}>Furthermore, HRR devices using TPS Bypass down to 60fps will be accepted as 60hz, and are able to add new levels to the list.</li>
+<li>Additionally, Click on Steps will be allowed on the list with the same above restrictions, with refresh rate taken as your device's sampling rate. CBF implementations that bypass the step system will not be allowed.</li>
+<li style={{marginLeft: "20px"}}>Records that use either mod must show so in their raw footage by opening mod settings. If we find that records input between frames without being marked as such, these records will be removed from the list.</li>
           </ul>
         </div>
         <hr className="my-4" />

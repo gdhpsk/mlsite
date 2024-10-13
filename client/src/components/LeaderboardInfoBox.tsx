@@ -21,14 +21,14 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
   }, [playerName])
 
   return (
-    <div className={`rounded-box flex ${width < 1500 ? "" : "w-3/5"} flex-col bg-white p-4 py-12 shadow-inner`} style={{width: width < 1500 ? "-webkit-fill-available" : "revert-layer"}}>
-            {player && <Button onClick={() => {
-            selectedState("")
-            setPlayer(undefined)
-          }}>Back</Button>}
-      <ScrollArea className="p-4" style={{height: width < 1500 ? "calc(100vh - 189px)" : "55vh"}}>
+    <div className={`rounded-box flex ${width < 1500 ? "items-center justify-center w-full" : "w-3/5 pl-4"} flex-col overflow-y-auto bg-white py-12 shadow-inner`}  style={{width: width < 1500 ? "-webkit-fill-available" : "revert-layer",  height: window.innerHeight - 140}}>
+      <ScrollArea className="p-4" style={{height: window.innerHeight - 180}}>
         {player && (
            <div className="grid justify-items-center gap-y-16">
+            <Button onClick={() => {
+            selectedState("")
+            setPlayer(undefined)
+          }}>Back</Button>
             <p className="text-4xl">
               <strong>{player.name}</strong>
             </p>
@@ -50,8 +50,19 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
                 <p className="pt-2 text-center text-xl">{player.points[view].toFixed(2)}</p>
               </div>
             </div>
-            <div className="grid justify-items-center">
-              <p className="text-3xl">Records</p>
+            <div className="grid justify-items-center bg-blue-100">
+              <br />
+              <p className="text-3xl">Records ({player.records
+                  .filter((record) => {
+                    switch (view) {
+                      case 'lrr':
+                        return record.hertz <= 60
+                      case 'hrr':
+                        return record.hertz > 60
+                      case 'comb':
+                        return true
+                    }
+                  }).length})</p>
               <br />
               <Records
                 rec={player.records
@@ -69,6 +80,8 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
             </div>
           </div>
   )}
+  <br></br>
+  <br></br>
       </ScrollArea>
     </div>
   )

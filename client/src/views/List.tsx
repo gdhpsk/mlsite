@@ -8,13 +8,13 @@ import { Separator } from '../primitives/separator'
 import { Button, Form } from 'react-bootstrap'
 
 const List: React.FC = () => {
+  useEffect(() => {
+    document.body.style.overflow = "hidden"
+  }, [])
 
   let [levels, setLevels] = useState<APIManyLevel[]>([])
   let [selectedLevelName, setSelectedLevelName] = useState<string>("")
   let [search, setSearch] = useState<string>('')
-  let [{atLevel}, setAtLevel] = useState({atLevel: 1})
-  let [{scrollTop}, setScrollTop] = useState({scrollTop: 0})
-  let [{scrolledHeight}, setScrolledHeight] = useState({scrolledHeight: 0})
   let [originalHeight, setOriginalHeight] = useState(0)
   let getScrolledHeight = () => {
     try {
@@ -25,12 +25,7 @@ const List: React.FC = () => {
     }
   }
   let [listOfObservers, setListOfObservers] = useState([])
-
   useEffect(() => {
-    if(selectedLevelName && !originalHeight && scrolledHeight && window.innerWidth < 800) {
-      setOriginalHeight(scrolledHeight)
-      return;
-    }
     if(search || (selectedLevelName && window.innerWidth < 800) || !levels.length) return;
     if(!selectedLevelName && originalHeight) {
       let element = document.getElementById("levels-section").children[1];
@@ -38,32 +33,18 @@ const List: React.FC = () => {
       setOriginalHeight(0)
       return;
     }
-    let element = document.getElementById("levels-section").children[1];
-    
-    let value = getScrolledHeight()
-    if(listOfObservers.length && listOfObservers[0].target) {
-      let val = Math.min(Math.max(Math.round(element.scrollTop / (element.scrollHeight - element.clientHeight) * 100), 1), 100)
-      if(atLevel !=  val) {
-        (document.getElementById("level-pos-box") as any).value = val
-      }
-      setAtLevel({atLevel: val})
-    }
-    setScrolledHeight({scrolledHeight: value || 0});
   })
-
-  useEffect(() => {
-    let element = document.getElementById("levels-section")?.children?.[1];
-    if(!element) return;
-    setScrollTop({scrollTop: element.scrollTop})
-  }, [selectedLevelName])
-
   useEffect(() => {
     document.body.style.overflow = (window.innerWidth < 1500 ? "hidden" : "visible")
+        setInterval(() => {
+      let value = getScrolledHeight();
+      (document.getElementById("scroll-box") as any).value = value
+    }, 10)
     getLevels().then((l: any) => {
       setLevels(l.slice(0, 100))
     })
   }, [])
-
+ 
   useEffect(() => {
     if(!levels.length) return;
     let list: any = []
@@ -82,11 +63,11 @@ const List: React.FC = () => {
   }, [levels, selectedLevelName, search])
 
   return (
-    <div className={`flex w-full border-r-4 border-l-4 bg-[#f2f7ff] sm:mx-auto ${window.innerWidth < 800 ? "flex-col" : ""} ${window.innerWidth < 1500 ? "" : "sm:w-3/4 pr-8 pl-8"}`}>
-   {window.innerWidth < 800 && selectedLevelName ? "" : <div className="flex-grow overflow-hidden bg-white pr-4 pl-4 shadow-inner" style={{height: "calc(100vh - 58px)"}}>
+    <div className={`flex gap-2 w-full border-r-4 border-l-4 bg-[#f2f7ff] sm:mx-auto ${window.innerWidth < 800 ? "flex-col" : ""} ${window.innerWidth < 1500 ? "" : "sm:w-3/4 pr-8 pl-8"}`}>
+   {window.innerWidth < 800 && selectedLevelName ? "" : <div className="flex-grow overflow-hidden bg-white pr-4 pl-4 shadow-inner" style={{height: window.innerHeight - 60}}>
         <div className="flex">
           <Input type="text" placeholder="Search..." className="m-4 grow" onChange={(e) => setSearch(e.target.value)} defaultValue={search}/>
-          <Input type="number" placeholder="Pos..." className="m-4 w-20" disabled={!!search} id="level-pos-box" onKeyDown={(e) => {
+          <Input type="number" placeholder="#" className="m-4 w-20" disabled={!!search} id="level-pos-box" onKeyDown={(e) => {
             if(e.key == "Enter") {
               let index = e.currentTarget.value
                let rect = listOfObservers[(parseInt(index) || 1)-1].target
@@ -103,7 +84,7 @@ const List: React.FC = () => {
           <Form.Range
             disabled={!!search}
             step={0.01}
-            value={scrolledHeight}
+            defaultValue={0}
             id="scroll-box"
             onChange={(e) => {
               let index = parseFloat(e.target.value)
@@ -119,7 +100,7 @@ const List: React.FC = () => {
         </div>
         </>}
         <div>
-          <ScrollAreaNoScroll className="rounded-md border" style={{height: "calc(100vh - 180px)"}} id="levels-section">
+          <ScrollAreaNoScroll className="rounded-md border pb-8" style={{height: "calc(100vh - 100px)"}} id="levels-section">
             <div className="p-4">
               {levels.map((level, i) => (
                 <Level
@@ -135,7 +116,6 @@ const List: React.FC = () => {
           </ScrollAreaNoScroll>
         </div>
       </div>}
-      {window.innerWidth >= 800 ? <Separator orientation="vertical" /> : ""}
       {window.innerWidth < 800 && !selectedLevelName ? "" : <ListInfoBox levelName={selectedLevelName} width={window.innerWidth} selectedState={setSelectedLevelName}/>}
     </div> )
 }

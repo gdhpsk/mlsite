@@ -3,11 +3,12 @@ import { getPlayers, APIManyPlayer } from '../util/withApi'
 import Player from '../components/Player'
 import LeaderboardInfoBox from '../components/LeaderboardInfoBox'
 import PlayerModal from '../components/PlayerModal'
-import { Table, TableBody } from '../primitives/table'
+import { Table, TableBody, TableCell, TableRow } from '../primitives/table'
 import { ScrollArea } from '../primitives/scroll-area'
 import { Tabs, TabsList, TabsTrigger } from '../primitives/tabs'
 import { Separator } from '../primitives/separator'
 import { Input } from '../primitives/input'
+import { useSearchParams } from 'react-router-dom'
 
 const classes = [
   [1000, "Overlords"],
@@ -19,16 +20,19 @@ const classes = [
 ];
 
 const Leaderboard: React.FC = () => {
+  useEffect(() => {
+    document.body.style.overflow = "hidden"
+  }, [])
+  let params = useSearchParams()[0]
   let [players, setPlayers] = useState<Array<APIManyPlayer>>([])
   let [processedPlayers, setProcessedPlayers] = useState<Array<APIManyPlayer>>([])
-  let [selectedPlayerName, setSelectedPlayerName] = useState<string>(undefined)
+  let [selectedPlayerName, setSelectedPlayerName] = useState<string>(params.get("player"))
   let [search, setSearch] = useState<string>('')
   let [view, setView] = useState<'lrr' | 'hrr' | 'comb'>('comb')
   let [margin, setMargin] = useState(0)
   let [showModal, setShowModal] = useState<boolean>(false)
 
   useEffect(() => {
-    document.body.style.overflow = (window.innerWidth < 1500 ? "hidden" : "visible")
     getPlayers().then((p) => {
       setPlayers(p)
     })
@@ -58,8 +62,10 @@ const Leaderboard: React.FC = () => {
   }, [view, players])
 
   return (
-    <div className={`border-4 bg-[#f2f7ff] sm:mx-auto overflow-x-hidden ${window.innerWidth < 1500 ? "" : "sm:w-3/5 p-8 sm:m-12"}`}>
-      {window.innerWidth < 800 && selectedPlayerName ? "" : <>{window.innerWidth < 800 ? <br></br> : ""}<div className={`mx-auto ${window.innerWidth < 800 ? 'grid place-items-center' : ""}`}>
+    <div className={`border-4 bg-[#f2f7ff] sm:mx-auto overflow-x-hidden ${window.innerWidth < 1500 ? "" : "sm:w-3/5 p-8"}`}>
+      <div className="flex">
+        {window.innerWidth < 800 && selectedPlayerName ? "" : <div className="flex-grow p-4">
+          <div className={`mx-auto grid place-items-center`}>
         <Tabs defaultValue="comb" className="w-[300px]" onValueChange={(val: 'lrr' | 'hrr' | 'comb') => setView(val)}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="lrr">LRR</TabsTrigger>
@@ -68,9 +74,8 @@ const Leaderboard: React.FC = () => {
           </TabsList>
         </Tabs>
       </div>
-      <br /></>}
-      <div className="flex">
-        {window.innerWidth < 800 && selectedPlayerName ? "" : <div className="flex-grow bg-white p-4 shadow-inner">
+      <br></br>
+<div className='bg-white'>
           <div className="flex">
             <Input
               type="text"
@@ -81,12 +86,16 @@ const Leaderboard: React.FC = () => {
             />
           </div>
           <div>
-            <ScrollArea style={{height: window.innerWidth < 1500 ? `calc(100vh - 236px)` : "55vh"}}>
-              {classes.map((c, cIndex) => <div>
-                <h1 className="text-center font-extrabold text-3xl">{c[1]} ({c[0]}+)</h1>
-                <br></br>
-                <Table>
-                <TableBody>
+            <ScrollArea style={{height: window.innerHeight - 270}}>
+              
+            <Table>
+              {classes.map((c, cIndex) => <>
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={2}><h1 className="text-center font-extrabold text-3xl">{c[1]} ({c[0]}+)</h1></TableCell>
+                </TableRow>
+              </TableBody>
+              <TableBody>
                   {processedPlayers
                     .filter((player) => player.points[view] >= (c[0] as number)  && player.points[view] < ((classes[cIndex-1]?.[0] ?? Infinity) as number))
                     .map((player, i) => (
@@ -104,13 +113,13 @@ const Leaderboard: React.FC = () => {
                         key={`player-${i}`}
                       />
                     ))}
-                </TableBody>
+                </TableBody></>)}
               </Table>
               <br></br>
-              </div>)}
+              <br></br>
             </ScrollArea>
           </div>
-        </div>}
+        </div></div>}
 
         {window.innerWidth < 800 && !selectedPlayerName ? "" :  (
           <>

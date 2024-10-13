@@ -20,14 +20,18 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
   const { name, main, additional } = props
-  const [mainTabs, additionalTabs] = [['About', 'Levels', 'Legacy', 'Leaderboard', 'Submit Record'], ['FAQ', 'Roulette', 'Changelog', "AME", "Packs"]]
+  // const [mainTabs, additionalTabs] = [['About', 'Levels', 'Legacy', 'Leaderboard', 'Submit Record'], ['FAQ', 'Roulette', 'Changelog', "AME", "Packs"]]
+  
+  const [mainTabs, additionalTabs] = [['About', 'Levels', 'Legacy', 'Leaderboard', 'Submit Record'], ['FAQ', 'Roulette', 'Changelog', "AME"]]
   let [show, setShow] = useState<boolean>(false)
   const navigate = useNavigate()
   let [scrollable, setScrollable] = useState("")
   useEffect(() => {
-    if(!scrollable) {
-      setScrollable(document.body.style.overflow)
-    }
+    setTimeout(() => {
+      if(!scrollable) {
+        setScrollable(document.body.style.overflow)
+      }
+    }, 500)
   }, [document.body.style.overflow])
 
   useEffect(() => {
@@ -71,12 +75,12 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
                 </div>
               </NavigationMenuItem>
             ))}
-            <div
+            {/* <div
                   className="cursor-pointer p-4 text-white hover:bg-slate-800"
                   onClick={() => document.getElementById("login-form-button").click()}
                 >
                   Login
-                </div>
+                </div> */}
           </NavigationMenuList>
         </NavigationMenu>
       ) : (
@@ -90,7 +94,7 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
             </label>
             <div className={`absolute ${!show ? "hidden" : "block"} bg-slate-600 z-50 overflow-y-scroll`} style={{width: "min(300px, 100%)", height: "calc(100% - 60px)", marginTop: "15px", marginLeft: "-222px"}}>
               <br></br>
-              <h1 className="text-white text-center text-3xl">GD Mobile List</h1>
+              <h1 className="text-white text-center text-3xl font-extrabold">GD Mobile List</h1>
               <br></br>
               <hr/>
               <br></br>
@@ -125,12 +129,13 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
                 </p>
                 <br></br>
               </>))}
-              <p
+              {/* <p
                   className="text-white p-4 text-xl border-double"
                   onClick={() => document.getElementById("login-form-button").click()}
                 >
                   Login
-                  </p>
+                  </p> */}
+                  <br></br>
             </div>  
           </div>
         </div>

@@ -9,6 +9,9 @@ interface Record {
   link: string
   player?: string
   level?: string
+  levelID?: {
+    position?: number
+  }
 }
 
 interface RecordsProps {
@@ -17,12 +20,13 @@ interface RecordsProps {
 
 const Records: React.FC<RecordsProps> = ({ rec }) => {
   return (
+    <div className='overflow-x-hidden w-full'>
     <Table>
       <TableBody>
         {rec.map((r, i) => (
-          <TableRow key={`record-${i}`} style={{backgroundColor: i % 2 ? "white" : "lightgray"}} className={cn('text-lg', r.hertz === 60 && 'font-semibold')}>
-            <TableCell>{r.level ? `${i+1}. ` : ""}{r.player ?? r.level}</TableCell>
-            <TableCell>{r.hertz}</TableCell>
+          <TableRow key={`record-${i}`} style={{backgroundColor: i % 2 ? "whitesmoke" : "lightgray"}} className={cn('text-lg', r.hertz === 60 && 'font-semibold')}>
+            <TableCell>{r.level ? r.levelID.position : i+1}. {r.player ? <a href={`/#/leaderboard?player=${r.player}`}>{r.player}</a> : r.level}</TableCell>
+            <TableCell style={{width: "20px"}}>{r.hertz}</TableCell>
             <TableCell>
               <a href={r.link} target={'_blank'}>
                 <div className="w-min rounded-lg p-2 hover:bg-slate-100">
@@ -34,6 +38,7 @@ const Records: React.FC<RecordsProps> = ({ rec }) => {
         ))}
       </TableBody>
     </Table>
+    </div>
   )
 }
 

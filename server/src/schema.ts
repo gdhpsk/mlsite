@@ -280,7 +280,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
       comb: { type: Number, required: true, default: 0 },
     },
     discord: { type: String, required: false },
-    records: [{ type: Schema.Types.ObjectId, ref: "Record" }],
+    records: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Record' }],
   },
   {
     minimize: false,

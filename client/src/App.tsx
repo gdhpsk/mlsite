@@ -20,7 +20,7 @@ const App: React.FC = () => {
   return (
     <>
     <Login></Login>
-      <div className="fixed -z-50 h-screen w-full bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-gray-400 via-gray-600 to-blue-800" />
+      <div className="fixed -z-50 h-screen w-full to-blue-800" style={{background: "url('https://storage.hpsk.me/api/bucket/file/0ef55cacd10c')", backgroundPosition: "center", backgroundRepeat: "no-repeat", backgroundSize: "cover"}}/>
       <HashRouter>
         <Header
           name="GD Mobile List"
@@ -36,7 +36,7 @@ const App: React.FC = () => {
             roulette: "/roulette",
             changelog: "/changelog",
             ame: "/ame",
-            packs: "/packs"
+            // packs: "/packs"
           }}
         />
         <Routes>
