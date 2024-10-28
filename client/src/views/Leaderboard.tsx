@@ -46,7 +46,7 @@ const Leaderboard: React.FC = () => {
         case 'hrr':
           return player.points.hrr > 0
         case 'comb':
-          return true
+          return player.points.comb > 0
       }
     })
                     .sort((a, b) => {

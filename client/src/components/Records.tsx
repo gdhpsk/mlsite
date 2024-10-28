@@ -24,7 +24,7 @@ const Records: React.FC<RecordsProps> = ({ rec, refFunction }) => {
   useEffect(() => {
     if(refFunction) refFunction(ref.current)
   }, [ref.current])
-if(rec[0].level) {
+if(rec?.[0]?.level) {
   rec.sort((a,b) => a.levelID.position - b.levelID.position)
 }
   return (

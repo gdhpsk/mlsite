@@ -367,21 +367,27 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                 }, {
                   '$project': {
                     'points': {
-                      '$subtract': [
-                        {
-                          '$divide': [
-                            2160, {
-                              '$add': [
-                                {
-                                  '$multiply': [
-                                    0.35, '$position'
+                      '$cond' : {
+                        'if': {'$gt': ['$position', 100]},
+                        'then': 0,
+                        'else':  {
+                          '$subtract': [
+                            {
+                              '$divide': [
+                                2160, {
+                                  '$add': [
+                                    {
+                                      '$multiply': [
+                                        0.35, '$position'
+                                      ]
+                                    }, 8.65
                                   ]
-                                }, 8.65
+                                }
                               ]
-                            }
+                            }, 40
                           ]
-                        }, 40
-                      ]
+                        }
+                      }
                     }
                   }
                 }
@@ -611,22 +617,28 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                   }
                 }, {
                   '$project': {
-                    'points': {
-                      '$subtract': [
-                        {
-                          '$divide': [
-                            2160, {
-                              '$add': [
-                                {
-                                  '$multiply': [
-                                    0.35, '$position'
+                    'points':  {
+                      '$cond' : {
+                        'if': {'$gt': ['$position', 100]},
+                        'then': 0,
+                        'else':  {
+                          '$subtract': [
+                            {
+                              '$divide': [
+                                2160, {
+                                  '$add': [
+                                    {
+                                      '$multiply': [
+                                        0.35, '$position'
+                                      ]
+                                    }, 8.65
                                   ]
-                                }, 8.65
+                                }
                               ]
-                            }
+                            }, 40
                           ]
-                        }, 40
-                      ]
+                        }
+                      }
                     }
                   }
                 }

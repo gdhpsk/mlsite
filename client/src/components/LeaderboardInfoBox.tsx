@@ -53,7 +53,7 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
               </div>
             </div>
             <div className="grid justify-items-center bg-[#dbfeea]" style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 500px)`}}>
-              <p className="text-3xl font-bold py-6">• Records ({player.records
+              <p className="text-3xl font-bold py-6">• Records ({player.records.filter((e: any) => e.levelID.position < 101)
                   .filter((record) => {
                     switch (view) {
                       case 'lrr':
