@@ -31,7 +31,7 @@ if(rec?.[0]?.level) {
     <div className='overflow-x-hidden w-full' ref={ref}>
     <Table>
       <TableBody>
-        {rec.filter(e => e.levelID.position < 101).map((r, i) => (
+        {rec.filter(e => e.levelID ? e.levelID.position < 101 : true).map((r, i) => (
           <TableRow key={`record-${i}`} style={{backgroundColor: i % 2 ? "whitesmoke" : "lightgray"}} className={cn('text-lg', r.hertz === 60 && 'font-semibold')}>
             <TableCell>{r.level ? r.levelID.position : i+1}. {r.player ? <a href={`/#/leaderboard?player=${r.player}`}>{r.player}</a> : <a href={`/#/?level=${r.level}`}>{r.level}</a>}</TableCell>
             <TableCell style={{width: "20px"}}>{r.hertz}</TableCell>
