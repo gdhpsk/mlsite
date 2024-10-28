@@ -29,7 +29,10 @@ const Legacy: React.FC = () => {
       (document.getElementById("scroll-box") as any).value = value
     }, 10)
     getLevels().then((l: any) => {
-      setLevels(l.slice(100))
+      setLevels(l.slice(100).map((e:any) => {
+        delete e.urlHash
+        return e
+      }))
     })
   }, [])
   useEffect(() => {
