@@ -39,9 +39,9 @@ const SubmitRecord: React.FC = () => {
   }, [disabled])
   document.body.style.overflow = "visible"
   return (
-    <div className="place-content-center border-4 bg-[#f2f7ff] p-8 sm:mx-auto sm:mt-12 sm:w-1/2" style={{height: window.innerWidth < 640 ? "calc(100vh - 60px)" : "initial"}}>
+    <div className="place-content-center border-4 bg-[#f2fff7] p-8 sm:mx-auto sm:mt-12 sm:w-1/2" style={{height: window.innerWidth < 640 ? "calc(100vh - 60px)" : "initial"}}>
       <div className="self-center">
-        <div className="mb-3 grid justify-items-center text-2xl">
+        <div className="mb-3 grid justify-items-center text-3xl font-bold">
           <p>Submit a Record</p>
         </div>
         <Label>Player</Label>

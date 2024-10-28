@@ -25,13 +25,13 @@ const Legacy: React.FC = () => {
     document.body.style.overflow = (window.innerWidth < 1500 ? "hidden" : "visible")
     setInterval(() => {
       let value = getScrolledHeight();
+      if(!document.getElementById("scroll-box")) return;
       (document.getElementById("scroll-box") as any).value = value
     }, 10)
     getLevels().then((l: any) => {
       setLevels(l.slice(100))
     })
   }, [])
-
   useEffect(() => {
     if(!levels.length) return;
     let list: any = []
@@ -50,8 +50,26 @@ const Legacy: React.FC = () => {
   }, [levels, search])
 
   return (
-    <div className={`flex w-full border-r-4 border-l-4 bg-[#f2f7ff] sm:mx-auto ${window.innerWidth < 800 ? "flex-col" : ""} ${window.innerWidth < 1500 ? "" : "sm:w-3/4 pr-8 pl-8"}`}  style={{maxWidth: "1800px"}}>
-  <div className="flex-grow overflow-hidden bg-white pr-4 pl-4 shadow-inner" style={{height: window.innerHeight - 60}}>
+    <div className={`flex w-full border-r-4 border-l-4 bg-[#f2fff7] sm:mx-auto ${window.innerWidth < 800 ? "flex-col" : ""} ${window.innerWidth < 1500 ? "" : "sm:w-4/5 pr-8 pl-8"}`}>
+       {window.innerWidth < 1500 ? "" : <div>
+        <Form.Range
+            disabled={!!search}
+            step={0.01}
+            defaultValue={0}
+            id="scroll-box"
+            onChange={(e) => {
+              let index = parseFloat(e.target.value)
+              let top = document.getElementById("levels-section").children[1].scrollHeight * (index/100)
+               document.getElementById("levels-section").children[1].scrollTo({
+                 top,
+                 behavior: "auto"
+               })
+            }}
+            style={{transform: `translateX(calc(-65vh / 2)) rotate(90deg) translateY(18px) translateX(46vh)`}}
+            className={`absolute w-[65vh] ${window.innerWidth < 1500 ? "pl-4" : ""}`}
+          ></Form.Range>
+        </div>}
+  <div className="flex-grow overflow-hidden bg-white pr-4 pl-4 shadow-inner" style={{height: window.innerHeight - 72}}>
         <div className="flex">
           <Input type="text" placeholder="Search..." className="m-4 grow" onChange={(e) => setSearch(e.target.value)} defaultValue={search}/>
           <Input type="number" placeholder="Pos..." className="m-4 w-20" disabled={!!search} id="level-pos-box" onKeyDown={(e) => {
@@ -66,30 +84,11 @@ const Legacy: React.FC = () => {
             }
           }}/>
         </div>
-        {window.innerWidth < 1500 ? "" : <>
-        <div className="flex justify-center mb-3">
-          <Form.Range
-            disabled={!!search}
-            step={0.01}
-            defaultValue={0}
-            id="scroll-box"
-            onChange={(e) => {
-              let index = parseFloat(e.target.value)
-              let top = document.getElementById("levels-section").children[1].scrollHeight * (index/100)
-               document.getElementById("levels-section").children[1].scrollTo({
-                 top,
-                 behavior: "auto"
-               })
-            }}
-            style={{transform: "translateY(calc((-180px + 100vh)/2)) translateX(max(-36.5vw, -885px)) rotate(90deg)"}}
-            className='absolute w-[50vh]'
-          ></Form.Range>
-        </div></>}
         <div>
           <ScrollAreaNoScroll className="rounded-md border" style={{height: "calc(100vh - 180px)"}} id="levels-section">
             <div className="p-4 flex flex-wrap gap-5">
               {levels.filter(e => search.length > 0 ? e.name.toLowerCase().indexOf(search.toLowerCase()) !== -1 : true).map((level, i) => (
-                <div className='flex-grow' style={{width: "min(384px, 100%)"}}>
+                <div className='flex-grow' style={{width: window.innerWidth < 800 ? "100%" : "min(420px, 100%)"}}>
                   <Level
                   {...level}
                   show={true}

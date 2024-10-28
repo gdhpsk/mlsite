@@ -7,7 +7,7 @@ let mods: any = {
       discord: 'glorbinus_slingting_pickleball_x'
     },
     { name: 'Coopersuper', discord: 'coopersuper' },
-    { name: 'Cappyt', discord: 'cappytr' }
+    { name: 'CappytR', discord: 'cappytr' }
   ],
   Editors: [
     { name: 'Batle', discord: '.batle' },
@@ -45,7 +45,7 @@ let mods: any = {
     { name: 'Venfy', discord: undefined },
     { name: 'Hilo', discord: undefined },
     { name: 'Bigthunder556', discord: undefined },
-    { name: 'Amplify', discord: undefined },
+    { name: 'Amp1ify', discord: undefined },
     { name: 'Surpl3x', discord: undefined },
     { name: 'Zeth', discord: undefined }
   ]
@@ -56,10 +56,10 @@ const About: React.FC = () => {
     document.body.style.overflow = "visible"
   }, [])
   return (
-    <div className="rounded-box max-w-5xl border-4 bg-[#f2f7ff] p-8 sm:m-12 sm:mx-auto">
+    <div className="rounded-box max-w-5xl border-4 bg-[#f2fff7] p-8 sm:m-12 sm:mx-auto">
       <div className="flex flex-col justify-self-center">
         <div className="grid justify-items-center">
-          <h1 className="text-4xl font-bold">The Mobile List</h1>
+          <h1 className={`text-${window.innerWidth < 800 ? "4" : "5"}xl font-bold`}>The Mobile List</h1>
           <br />
           <p>
           Ever since the use of high refresh rate (HRR) displays and bypasses became popular, Geometry Dash has become a very competitive game. The original and most popular demon list “Pointercrate” is full of levels that are inaccessible to mobile players due to these HRR advancements. There is still a very large playing community who only has access to lower refresh rate devices and/or chooses to play on these devices. To adapt to the mobile scene, MiniWheatDuo created “The Mobile List” near the end of 2017. It has served through the test of time on Google Sites, and has led GD mobile history. Now a team with the resources necessary, we have created this modern list which maintains the top 100 most difficult demons beaten by mobile players.
@@ -67,32 +67,32 @@ const About: React.FC = () => {
         </div>
         <hr className="my-4" />
         <div className="grid justify-items-center">
-          <h3 className="text-2xl">The Team</h3>
+          <h3 className="text-3xl underline">The Team</h3>
           <br />
           <div className="grid place-items-start justify-items-center gap-x-12" style={{gridTemplateColumns: `repeat(${Object.keys(mods).length-1}, minmax(0, 1fr))`}}>
             {Object.entries(mods).slice(0, -1).map(([header, moderators]: any) => <div className="grid justify-items-center gap-y-1">
-              <h5 className="text-lg font-bold">{header}</h5>
+              <h5 className="text-lg font-bold mb-2">{window.innerWidth < 800 ? `${header}` : `• ${header} •`}</h5>
               <div className="grid place-items-start justify-items-center" style={{gridTemplateColumns: `repeat(${moderators.length > 10 && window.innerWidth > 768 ? 2 : 1}, minmax(0, 1fr))`}}>
-              {(header == "Editors" && (moderators.length % 2) ? moderators.slice(0, -1) : moderators).map((e:any) => <p style={{textDecoration: "dotted underline"}} onClick={() => {
+              {(header == "Editors" && (moderators.length % 2) ? moderators.slice(0, -1) : moderators).map((e:any) => <abbr title="Click to copy discord username"><p className='hover:cursor-pointer' style={{textDecoration: "dotted underline"}} onClick={() => {
                 navigator.clipboard.writeText(e.discord)
                 alert(`Successfully copied ${e.name}'s discord username`)
-              }}>{e.name}</p>)}
+              }}>{e.name}</p></abbr>)}
               </div>
-              {header == "Editors" ? <p style={{textDecoration: "dotted underline"}} onClick={() => {
+              {header == "Editors" ? <abbr title="Click to copy discord username"><p className='hover:cursor-pointer' style={{textDecoration: "dotted underline"}} onClick={() => {
                 navigator.clipboard.writeText(moderators.at(-1).discord)
                 alert(`Successfully copied ${moderators.at(-1).name}'s discord username`)
-              }}>{moderators.at(-1).name}</p> : ""}
+              }}>{moderators.at(-1).name}</p></abbr> : ""}
             </div>)}
           </div>
           <br></br>
-          <h5 className="text-xl font-bold text-center">Special Thanks</h5>
-          <div className='flex flex-wrap gap-3 justify-center' style={{maxWidth: "70%"}}>
+          <h5 className="text-xl font-bold text-center mb-2">• Special Thanks •</h5>
+          <div className='flex flex-wrap gap-3 justify-center' style={{maxWidth: "70%", rowGap: "5px"}}>
             {(Object.values(mods).at(-1) as any).map((e:any) => <span>{e.name}</span>)}
           </div>
         </div>
         <hr className="my-4" />
         <div className="grid justify-items-center">
-          <h3 className="text-2xl">How it Works</h3>
+          <h3 className="text-3xl underline">How it Works</h3>
           <br />
           <ul className="list-disc">
           <li>Remember: This is a mobile-based list. These levels may not be in the order that computer players or higher refresh rate players want them to be in.</li>
@@ -100,8 +100,7 @@ const About: React.FC = () => {
 <li>The records are ordered by who beat the level first, with the first victor at the top. Levels with completions above 60hz will only be added once a 60hz mobile player has completed the level.</li>
 <li>LDM (Low Detail Mode) versions of levels are accepted, as long as it does not affect the difficulty of the level.</li>
 <li>Former mobile players will still be on the list, but only their mobile records will count.</li>
-<li>Illegitimate records will be removed, along with any other records that person</li>
-<li>holds.</li>
+<li>Illegitimate records will be removed, along with any other records that person holds.</li>
 <li>As of 12/15/17, only levels that have been demons at one point or another will be added.</li>
 <li>As of 08/06/23, raw footage and external audio/taps are required for every record submission.</li>
 <li>Using "force smooth fix" or any other method of slowing down your device won't get your record on the list.</li>
@@ -121,7 +120,7 @@ const About: React.FC = () => {
         </div>
         <hr className="my-4" />
         <div className="grid justify-items-center">
-          <h3 className="text-2xl">Contact Us</h3>
+          <h3 className="text-3xl underline">Contact Us</h3>
           <br />
           <p>
           For questions/concerns about the rules or

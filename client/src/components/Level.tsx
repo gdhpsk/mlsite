@@ -8,10 +8,12 @@ interface LevelProps extends APIManyLevel {
 }
 
 const Level: React.FC<LevelProps> = (props: LevelProps) => {
-  const { name, creator, position, show, urlHash, onSelect } = props
+  let { name, creator, position, show, urlHash, onSelect } = props
+  let modifiedName = name.split(" (")
+
   let obj = {}
   if(urlHash) {
-    obj = {backgroundPosition: "center", backgroundSize: "cover"}
+    obj = {backgroundPosition: "right", backgroundSize: "auto 110%", backgroundRepeat: "no-repeat"}
   }
   return (
     show && (
@@ -28,7 +30,7 @@ const Level: React.FC<LevelProps> = (props: LevelProps) => {
         <div className="text-xl">
           <p style={{overflowWrap: "anywhere", textShadow: "-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff"}}>
             <strong style={{overflowWrap: "anywhere"}}>
-              {position}. &ldquo;{name}&rdquo;
+              {position}. &ldquo;{modifiedName[0]}&rdquo;{modifiedName[1] ? " (old)" : ""}
             </strong>
           </p>
           <p className="text-secondary-content text-base" style={{overflowWrap: "anywhere", textShadow: "-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff"}}>

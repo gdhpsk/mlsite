@@ -23,15 +23,15 @@ app.set("query parser", "simple");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
-app.use((req, res, next) => {
-  console.log(
-    `[Worker ${process.pid}] ${req.method} ${req.path} --> (${
-      req.ip as string
-    })`
-  );
+// app.use((req, res, next) => {
+//   console.log(
+//     `[Worker ${process.pid}] ${req.method} ${req.path} --> (${
+//       req.ip as string
+//     })`
+//   );
 
-  next();
-});
+//   next();
+// });
 app.use("/", express.static(path.resolve(__dirname, "../client")));
 app.use("/api/auth", nextAuth)
 app.use("/", express.static("public"))

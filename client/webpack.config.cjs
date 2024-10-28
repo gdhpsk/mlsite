@@ -5,7 +5,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: path.resolve(__dirname, "src", "App.tsx"),
-  mode: "development",
+  mode: "production",
   target: 'web',
   module: {
     rules: [

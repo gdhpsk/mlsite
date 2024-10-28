@@ -21,20 +21,22 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
   }, [playerName])
 
   return (
-    <div className={`rounded-box flex ${width < 1500 ? "items-center justify-center w-full" : "w-3/5 pl-4"} flex-col overflow-y-auto bg-white py-12 shadow-inner`}  style={{width: width < 1500 ? "-webkit-fill-available" : "revert-layer",  height: window.innerHeight - 140}}>
-      <ScrollArea className="p-4" style={{height: window.innerHeight - 180}}>
-        {player && (
-           <div className="grid justify-items-center gap-y-16">
+    <div className={`rounded-box flex ${width < 1500 ? "items-center justify-center w-full" : "w-3/5 pl-4"} flex-col overflow-y-auto bg-white shadow-inner`}  style={{width: width < 1500 ? "-webkit-fill-available" : "revert-layer",  height: window.innerHeight - 75}}>
+      <ScrollArea style={{height: window.innerHeight - 75}} className='w-full'>
+        {player ? (
+           <div className={`grid justify-items-center`}>
+            <div className={`grid place-items-start w-full ${width < 1500 ? "pt-8 pl-8" : "pt-12 pl-16"}`}>
             <Button onClick={() => {
             selectedState("")
             setPlayer(undefined)
-          }}>Back</Button>
-            <p className="text-4xl">
+          }}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width={16}><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></Button>
+          </div>
+            <p className="text-4xl mt-3">
               <strong>{player.name}</strong>
             </p>
-            <div className="flex h-24 w-[85%] place-items-center justify-items-center">
+            <div className="flex h-24 w-[85%] place-items-center justify-items-center mt-3">
               <div className="grid flex-grow place-items-center">
-                <p className="text-center text-2xl">{view != "comb" ? `${view.toUpperCase()} ` : ""}Class</p>
+                <p className="text-center text-2xl font-bold">• {view != "comb" ? `${view.toUpperCase()} ` : ""}Class •</p>
                 <p className="pt-2 text-center text-xl">{player.mclass[view]}</p>
               </div>
               {/* <div className='divider divider-horizontal' />
@@ -46,13 +48,12 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
               </div> */}
               <div className="divider divider-horizontal" />
               <div className="grid flex-grow place-items-center">
-                <p className="text-center text-2xl">Points</p>
+                <p className="text-center text-2xl font-bold">• Points •</p>
                 <p className="pt-2 text-center text-xl">{player.points[view].toFixed(2)}</p>
               </div>
             </div>
-            <div className="grid justify-items-center bg-blue-100">
-              <br />
-              <p className="text-3xl">Records ({player.records
+            <div className="grid justify-items-center bg-[#dbfeea]" style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 500px)`}}>
+              <p className="text-3xl font-bold py-6">• Records ({player.records
                   .filter((record) => {
                     switch (view) {
                       case 'lrr':
@@ -62,8 +63,7 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
                       case 'comb':
                         return true
                     }
-                  }).length})</p>
-              <br />
+                  }).length}) •</p>
               <Records
                 rec={player.records
                   .filter((record) => {
@@ -79,7 +79,11 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
               />
             </div>
           </div>
-  )}
+  ) : <div className='w-full grid place-items-center' style={{height: window.innerHeight - 75}}><div
+  tabIndex={0}
+  className="rounded-box border-base-300 cursor-pointer border pl-6 pr-6 pt-4 pb-4 shadow-lg transition-all hover:shadow-xl bg-white"
+  style={{borderRadius: "10px"}}
+><p className='text-center font-semibold text-2xl text-green-600'>Select a player to display their information!</p></div></div>}
   <br></br>
   <br></br>
       </ScrollArea>

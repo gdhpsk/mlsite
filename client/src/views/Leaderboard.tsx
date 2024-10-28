@@ -62,15 +62,15 @@ const Leaderboard: React.FC = () => {
   }, [view, players])
 
   return (
-    <div className={`border-4 bg-[#f2f7ff] sm:mx-auto overflow-x-hidden ${window.innerWidth < 1500 ? "" : "sm:w-3/5 p-8"}`}>
+    <div className={`border-4 bg-[#f2fff7] sm:mx-auto overflow-x-hidden ${window.innerWidth < 1500 ? "" : "sm:w-4/5 p-8"}`}>
       <div className="flex">
-        {window.innerWidth < 800 && selectedPlayerName ? "" : <div className="flex-grow p-4">
+        {window.innerWidth < 800 && selectedPlayerName ? "" : <div className="flex-grow p-4" style={{width: window.innerWidth < 1500 ? "84ch" : "auto"}}>
           <div className={`mx-auto grid place-items-center`}>
         <Tabs defaultValue="comb" className="w-[300px]" onValueChange={(val: 'lrr' | 'hrr' | 'comb') => setView(val)}>
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="lrr">LRR</TabsTrigger>
-            <TabsTrigger value="comb">Combined</TabsTrigger>
-            <TabsTrigger value="hrr">HRR</TabsTrigger>
+             <TabsTrigger className='data-[state=active]:bg-[#93fdc5]' value="lrr">LRR</TabsTrigger>
+             <TabsTrigger className='data-[state=active]:bg-[#93fdc5]' value="comb">Combined</TabsTrigger>
+             <TabsTrigger className='data-[state=active]:bg-[#93fdc5]' value="hrr">HRR</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
@@ -86,13 +86,13 @@ const Leaderboard: React.FC = () => {
             />
           </div>
           <div>
-            <ScrollArea style={{height: window.innerHeight - 270}}>
+            <ScrollArea style={{height: window.innerHeight - 240}}>
               
             <Table>
               {classes.map((c, cIndex) => <>
               <TableBody>
                 <TableRow>
-                  <TableCell colSpan={2}><h1 className="text-center font-extrabold text-3xl">{c[1]} ({c[0]}+)</h1></TableCell>
+                  <TableCell colSpan={2}><h1 className={`text-center font-extrabold text-${window.innerWidth < 800 ? "2" : "3"}xl`}>• {c[1]} ({c[0]}+) •</h1></TableCell>
                 </TableRow>
               </TableBody>
               <TableBody>

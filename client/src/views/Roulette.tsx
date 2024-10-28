@@ -59,8 +59,8 @@ const Roulette: React.FC = () => {
   }
   
   return (
-  <div className={`w-full border-4 bg-[#f2f7ff] sm:mx-auto ${window.innerWidth < 800 ? "flex-col" : ""} ${window.innerWidth < 1500 ? "" : "sm:w-1/2 pt-8 pl-8 pr-8 sm:m-12"}`}>
-      <div className={`rounded-box flex flex-col overflow-y-hidden bg-white p-4 py-12 shadow-inner overflow-x-hidden min-h-screen`}  style={{width: "-webkit-fill-available"}}>
+    <div className={`rounded-box max-w-5xl border-4 bg-[#f2fff7] lg:p-8 sm:m-12 sm:mx-auto ${window.innerWidth < 1500 ? "" : "w-4/5"}`}>
+        <div className={`rounded-box flex flex-col overflow-y-auto bg-white p-4 py-12 shadow-inner min-h-screen`}  style={{width: "-webkit-fill-available"}}>
             <h1 className="text-center font-extrabold text-5xl">Mobile List Roulette</h1>
             <br></br>
             {rouletteStarted ? <h1 className="text-center font-extrabold text-xl">Currently at: {roulette.levels.at(-1).percent}%</h1> : ""}
@@ -148,21 +148,25 @@ const Roulette: React.FC = () => {
                 setRouletteStarted(true)
               }}>Start</Button></div></> : ""}
               {rouletteStarted ? <><br></br><div className='grid place-items-center'><Button className='hidden bg-blue-500 p-2 w-40 rounded-xl border-white' style={{color: "white"}} onClick={() => {
-                setEndText(`In total, you did ${roulette.levels.length} levels (skipping ${roulette.levels.slice(0, -1).filter(e => e.skipped).length} levels), and got to ${roulette.levels.at(-1).percent}%. Thanks for playing! :)`)
+                if(roulette.remaining.length) {
+                  setEndText(`In total, you did ${roulette.levels.length} levels (skipping ${roulette.levels.slice(0, -1).filter(e => e.skipped).length} levels), and reached ${roulette.levels.at(-1).percent-1}%. Thanks for playing! :)`)
+                } else {
+                  setEndText(`In total, you did ${roulette.levels.length} levels (skipping ${roulette.levels.filter(e => e.skipped).length} levels), and reached ${roulette.levels.at(-1).percent}%. Thanks for playing! :)`)
+                }
                 setRoulette({
                   ...roulette,
                   finished: true
                 })
                 setRouletteStarted(false)
               }} id="complete-roulette"></Button></div></> : ""}
-              {rouletteStarted ? <><br></br><div className='grid place-items-center'><Button className='bg-red-500 p-2 w-40 rounded-xl border-2 border-red-200 hidden' style={{color: "white"}} onClick={() => {
-                setEndText(`In total, you did ${roulette.levels.length-1} levels (skipping ${roulette.levels.slice(0, -1).filter(e => e.skipped).length} levels), and got to ${roulette.levels.at(-1).percent}%. Thanks for playing! :)`)
+              {rouletteStarted ? <><div className='grid place-items-center'><Button className='bg-red-500 p-2 w-0 rounded-xl border-2 border-red-200 hidden' style={{color: "white"}} onClick={() => {
+                setEndText(`In total, you did ${roulette.levels.length-1} levels (skipping ${roulette.levels.slice(0, -1).filter(e => e.skipped).length} levels), and reached ${roulette.levels.at(-1).percent-1}%. Thanks for playing! :)`)
                 setRoulette({
                   ...roulette,
                   finished: true
                 })
                 setRouletteStarted(false)
-              }} id="end-roulette">End</Button><Button className='bg-red-500 p-2 w-40 rounded-xl border-white' style={{color: "white"}} onClick={() => {
+              }} id="end-roulette">End</Button><Button className='bg-red-500 border-2 border-red-200 p-2 w-40 rounded-xl' style={{color: "white"}} onClick={() => {
                 setEndText("")
                 let arr = []
                 if(checkedLevels.main) {
@@ -184,7 +188,7 @@ const Roulette: React.FC = () => {
                 })
                 setRouletteStarted(true)
               }}>Restart</Button></div></> : ""}
-              {rouletteStarted ? <><br></br><div className='grid place-items-center'><Button className=' bg-green-500 border-2 border-green-200 p-2 w-40 rounded-xl' style={{color: "white"}} onClick={() => {
+              {rouletteStarted ? <><div className='grid place-items-center'><Button className=' bg-green-500 border-2 border-green-200 p-2 w-40 rounded-xl' style={{color: "white"}} onClick={() => {
                 let j = document.createElement("a")
                 j.download = "ML_roulette.json"
                 j.href = URL.createObjectURL(new Blob([localStorage.getItem("roulette")]))

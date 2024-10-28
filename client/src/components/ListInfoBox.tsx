@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { getLevel, APIOneLevel } from '../util/withApi'
 import Records from './Records'
 import { ScrollArea, ScrollAreaNoScroll } from '../primitives/scroll-area'
@@ -14,6 +14,11 @@ interface InfoBoxProps {
 const ListInfoBox: React.FC<InfoBoxProps> = ({ levelName, width, selectedState }) => {
   let [level, setLevel] = useState<APIOneLevel>(undefined)  
   let [view, setView] = useState<'lrr' | 'hrr' | 'comb'>('comb')
+  let [w, setWidth] = useState(352)
+
+function ref(element: HTMLDivElement | null) {
+  setWidth(Math.min(window.innerWidth, element.clientWidth))
+}
 
   useEffect(() => {
     document.body.style.overflow = "hidden"
@@ -41,48 +46,52 @@ function getYouTubeVideoID(url: string) {
 }
 
   return (
-    <div className={`rounded-box flex ${width < 1500 ? "items-center justify-center w-full" : "w-3/5 pl-4"} flex-col overflow-y-auto bg-slate-100 py-12 shadow-inner`}  style={{width: width < 1500 ? "-webkit-fill-available" : "revert-layer",  height: window.innerHeight - 60}}>
-      {level && (<>
-      <br></br>
-        <ScrollAreaNoScroll className="h-full w-full" style={{height: "calc(100vh - 190px)"}}>
-          <div className={`grid ${width < 1500 ? "justify-items-center" : "justify-items-start ml-16"} gap-y-16 w-full`}>
-          <Button onClick={() => {
+    <div className={`rounded-box flex ${width < 1500 ? "items-center justify-center w-full" : "w-[55%] pl-4"} flex-col overflow-y-auto bg-[#f1f9f5] shadow-inner`}  style={{width: width < 1500 ? "min(800px, 100%)" : "revert-layer",  height: window.innerHeight - 72}}>
+      {level ? (<>
+        <ScrollAreaNoScroll className={`h-full w-full`}>
+          <div className={`grid ${width < 1500 ? "justify-items-center" : "justify-items-start ml-16"} gap-y-16 w-full ${width < 1500 ? "" : "pt-12"}`}>
+          <div className={`grid place-items-start w-full ${width < 1500 ? "pl-8 pt-8" : ""} -mb-8`}>
+          <Button className='-mb-8' onClick={() => {
                 selectedState("")
                 setLevel(undefined)
-              }}>Back</Button>
-            <p className="text-4xl">
-              <strong><span className={`text-${width < 1500 ? "5" : "6"}xl text-left`}>#{level.position}</span> - {level.name} </strong>
+              }}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width={16}><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></Button>
+          </div>
+            <p className="text-4xl -mb-11">
+              <strong><span className={`text-${width < 1500 ? "5 text-center" : "6 text-left"}xl`}>#{level.position}</span> - {level.name} </strong>
               <br></br>
-              <span className='text-2xl text-left'>by {level.creator}</span>
+              <span className={`text-2xl text-left ${width < 1500 ? "text-center" : "text-left"}`}>by {level.creator}</span>
             </p>
-            <hr className='h-10 -mt-10'  style={{width: "min(384px, 100%)"}}/>
-            <div className={`grid h-24 -mt-14 ${width < 1500 ? "justify-items-center place-items-center" : "justify-items-start place-items-start"}`} style={{width: "-webkit-fill-available"}}>
-            <iframe width="352" height="198" src={getYouTubeEmbedUrl(level.records[0]?.link || "")} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+            <hr className='h-5'  style={{width: "min(384px, 100%)"}}/>
+            <div className={`grid h-[120%] -mt-14 ${width < 1500 ? "justify-items-center place-items-center" : "justify-items-start place-items-start"}`} style={{width: "-webkit-fill-available", height: "100%"}}>
+              <div className='shadow-black rounded-[33px]' style={{backgroundImage: "url('/frame.png')", backgroundSize: "cover", width: `${w}px`, aspectRatio: 581 / 340}}>
+            <iframe className='border-black rounded-[33px]' style={{width: `calc(100% - (100% * 13 / 340))`, aspectRatio: 16 / 9, marginTop: "calc(100% * 7 / 340)", marginLeft: "calc(100% * 11 / 581)"}} src={getYouTubeEmbedUrl(level.records.filter(e => view == "lrr" ? e.hertz <= 75 : view == "hrr" ? e.hertz > 75 : true)[0]?.link || "")} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
             </div>
-            <br></br>
-            <div className={`grid ${width < 1500 ? "place-items-center" : "place-items-start"} w-full`} style={{width: "min(400px, 90%)"}}>
+            </div>
+            <div className={`grid ${width < 1500 ? "place-items-center" : "place-items-start"} w-full -mt-12`} style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 400px)`}}>
                 <p className={`${width < 1500 ? "text-center" : "text-left"} text-2xl`}>Points: {level.points.toFixed(2)}</p>
               </div>
-              <div className={`grid place-items-center w-full`}  style={{width: "min(400px, 90%)"}}>
-              <Tabs defaultValue="comb" className="w-[300px]" onValueChange={(val: 'lrr' | 'hrr' | 'comb') => setView(val)}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="lrr">LRR</TabsTrigger>
-            <TabsTrigger value="comb">Combined</TabsTrigger>
-            <TabsTrigger value="hrr">HRR</TabsTrigger>
+              <div className={`grid place-items-center w-full -mt-24`}  style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 400px)`}}>
+              <Tabs defaultValue={view} className="w-[300px]" onValueChange={(val: 'lrr' | 'hrr' | 'comb') => setView(val)}>
+          <TabsList className="grid w-full grid-cols-3 -mb-9">
+             <TabsTrigger className='data-[state=active]:bg-[#93fdc5]' value="lrr">LRR</TabsTrigger>
+             <TabsTrigger className='data-[state=active]:bg-[#93fdc5]' value="comb">Combined</TabsTrigger>
+             <TabsTrigger className='data-[state=active]:bg-[#93fdc5]' value="hrr">HRR</TabsTrigger>
           </TabsList>
         </Tabs>
               </div>
-            <div className={`grid ${width < 1500 ? "place-items-center" : "place-items-start"} bg-blue-100`} style={{width: "min(400px, 90%)"}}>
-        <br/>
-              <p className="text-3xl text-center w-full">Records</p>
-              <br />
-              <Records rec={level.records.filter(e => view == "lrr" ? e.hertz <= 75 : view == "hrr" ? e.hertz > 75 : true)} />
+            <div className={`grid ${width < 1500 ? "place-items-center" : "place-items-start"} bg-[#dbfeea] -mt-12`} style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 400px)`}}>
+              <p className="text-3xl text-center w-full font-bold py-6">• Records •</p>
+              <Records rec={level.records.filter(e => view == "lrr" ? e.hertz <= 75 : view == "hrr" ? e.hertz > 75 : true)} refFunction={ref}/>
             </div>
           </div>
           <br></br>
           <br></br>
         </ScrollAreaNoScroll>
-      </>)}
+      </>) : <div className='w-full h-full grid place-items-center'><div
+        tabIndex={0}
+        className="rounded-box border-base-300 cursor-pointer border pl-6 pr-6 pt-4 pb-4 shadow-lg transition-all hover:shadow-xl bg-white"
+        style={{borderRadius: "10px"}}
+      ><p className='text-center font-semibold text-2xl text-green-600'>Select a level to display its information!</p></div></div>}
     </div>
   )
 }

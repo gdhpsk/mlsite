@@ -20,7 +20,7 @@ const App: React.FC = () => {
   return (
     <>
     <Login></Login>
-      <div className="fixed -z-50 h-screen w-full to-blue-800" style={{background: "url('https://storage.hpsk.me/api/bucket/file/0ef55cacd10c')", backgroundPosition: "center", backgroundRepeat: "no-repeat", backgroundSize: "cover"}}/>
+      <div className="fixed -z-50 h-screen w-full to-blue-800" style={{backgroundImage: "url('/left_background.svg')", backgroundPosition: "left center", backgroundRepeat: "no-repeat", backgroundSize: "cover"}}/>
       <HashRouter>
         <Header
           name="GD Mobile List"
