@@ -49,7 +49,7 @@ function getYouTubeVideoID(url: string) {
     <div className={`rounded-box flex ${width < 1500 ? "items-center justify-center w-full" : "w-[55%] pl-4"} flex-col overflow-y-auto bg-[#f1f9f5] shadow-inner`}  style={{width: width < 1500 ? "min(800px, 100%)" : "revert-layer",  height: window.innerHeight - 72}}>
       {level ? (<>
         <ScrollAreaNoScroll className={`h-full w-full`}>
-          <div className={`grid ${width < 1500 ? "justify-items-center" : "justify-items-start ml-16"} gap-y-16 w-full ${width < 1500 ? "" : "pt-12"}`}>
+          <div className={`grid ${width < 1500 ? "justify-items-center" : "justify-items-start ml-16"} gap-y-16 w-full ${width < 1500 ? "" : "pt-12"} pb-12`}>
           <div className={`grid place-items-start w-full ${width < 1500 ? "pl-8 pt-8" : ""} -mb-8`}>
           <Button className='-mb-8' onClick={() => {
                 selectedState("")
@@ -84,8 +84,6 @@ function getYouTubeVideoID(url: string) {
               <Records rec={level.records.filter(e => view == "lrr" ? e.hertz <= 75 : view == "hrr" ? e.hertz > 75 : true)} refFunction={ref}/>
             </div>
           </div>
-          <br></br>
-          <br></br>
         </ScrollAreaNoScroll>
       </>) : <div className='w-full h-full grid place-items-center'><div
         tabIndex={0}
