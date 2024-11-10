@@ -3,7 +3,8 @@ import React, { useState } from 'react'
 import { Input } from '../primitives/input'
 import { Button } from '../primitives/button'
 import * as Dialog from '@radix-ui/react-dialog';
-import { signIn } from "next-auth/react";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+
 
 
 const Login: React.FC = () => {
@@ -36,7 +37,7 @@ const Login: React.FC = () => {
     <Dialog.Content className="DialogContent">
     <Dialog.Title className="DialogTitle" style={{textAlign: "center", width: "100%"}}>Login / Sign Up Form</Dialog.Title>
     <br></br>
-        <p style={{textAlign: "center"}}>Login with HpsLogin</p>
+        <p style={{textAlign: "center"}}>Login</p>
         <br></br>
         <div className='grid place-items-center'>  
           <Input placeholder='Email...'  onChange={e => {
@@ -61,17 +62,18 @@ const Login: React.FC = () => {
           <br></br>
           <Button variant='secondary' disabled={!login.email.text || !login.email.valid || !login.password} onClick={async () => {
             setError({color: "blue", message: "Loading...", type: 1})
-            let req = await signIn("credentials", {email: login.email.text, password: login.password, type: "login", redirect: false, json: true})
-            if(req?.error) {
-                setError({color: "red", message: req?.error || "", type: 1})
-            } else {
-              console.log(req)
+            try {
+              const auth = getAuth();
+              await signInWithEmailAndPassword(auth, login.email.text, login.password);
+              setError({color: "green", message: "Successfully logged in!", type: 1});
+            } catch (err) {
+              setError({color: "red", message: err.message, type: 1});
             }
           }}>Submit</Button>
         </div>
         <br></br>
         <br></br>
-        <p style={{textAlign: "center"}}>Sign up with HpSignUp</p>
+        <p style={{textAlign: "center"}}>Sign up</p>
         <br></br>
         <div className='grid place-items-center'>
           <Input placeholder='Email...' onChange={e => {
@@ -109,7 +111,19 @@ const Login: React.FC = () => {
           {signUp.password2 && signUp.password2 != signUp.password1 ? <p style={{color: "red"}}>Passwords do not match!</p> : ""}
           {error.message && error.type == 2 ? <p style={{color: error.color}}>{error.message}</p> : ""}
           <br></br>
-          <Button variant='secondary' disabled={!signUp.email.text || !signUp.email.valid || !signUp.name || !signUp.password1 || signUp.password1 != signUp.password2}>Submit</Button>
+          <Button variant='secondary' disabled={!signUp.email.text || !signUp.email.valid || !signUp.name || !signUp.password1 || signUp.password1 != signUp.password2} onClick={async () => {
+            setError({color: "blue", message: "Loading...", type: 2})
+            try {
+              const auth = getAuth();
+              const userCredential = await createUserWithEmailAndPassword(auth, signUp.email.text, signUp.password1);
+              await updateProfile(userCredential.user, {
+                displayName: signUp.name
+              });
+              setError({color: "green", message: "Successfully created account!", type: 2});
+            } catch (err) {
+              setError({color: "red", message: err.message, type: 2}); 
+            }
+          }}>Submit</Button>
         </div>
         <br></br>
         <Dialog.Close asChild>

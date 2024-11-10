@@ -26,6 +26,9 @@ const SubmitRecord: React.FC = () => {
   }, [])
 
   useEffect(() => {
+    document.body.style.overflow = "hidden"
+  }, [])
+  useEffect(() => {
     setTimeout(() => {
       setSubmitStatus(undefined)
       setError(undefined)

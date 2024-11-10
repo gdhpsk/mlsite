@@ -86,7 +86,7 @@ const Leaderboard: React.FC = () => {
             />
           </div>
           <div>
-            <ScrollArea style={{height: window.innerHeight - 240}}>
+            <ScrollArea style={{height: "calc(100vh - 240px)"}}>
               
             <Table>
               {classes.map((c, cIndex) => <>

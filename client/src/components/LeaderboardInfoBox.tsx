@@ -21,8 +21,8 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
   }, [playerName])
 
   return (
-    <div className={`rounded-box flex ${width < 1500 ? "items-center justify-center w-full" : "w-3/5 pl-4"} flex-col overflow-y-auto bg-white shadow-inner`}  style={{width: width < 1500 ? "-webkit-fill-available" : "revert-layer",  height: window.innerHeight - 75}}>
-      <ScrollArea style={{height: window.innerHeight - 75}} className='w-full'>
+    <div className={`rounded-box flex ${width < 1500 ? "items-center justify-center w-full" : "w-3/5 pl-4"} flex-col overflow-y-auto bg-white shadow-inner`}  style={{width: width < 1500 ? "-webkit-fill-available" : "revert-layer",  height: "calc(100vh - 75px)"}}>
+      <ScrollArea style={{height: "calc(100vh - 75px)"}} className='w-full'>
         {player ? (
            <div className={`grid justify-items-center`}>
             <div className={`grid place-items-start w-full ${width < 1500 ? "pt-8 pl-8" : "pt-12 pl-16"}`}>
@@ -79,7 +79,7 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
               />
             </div>
           </div>
-  ) : <div className='w-full grid place-items-center' style={{height: window.innerHeight - 75}}><div
+  ) : <div className='w-full grid place-items-center' style={{height: "calc(100vh - 75px)"}}><div
   tabIndex={0}
   className="rounded-box border-base-300 cursor-pointer border pl-6 pr-6 pt-4 pb-4 shadow-lg transition-all hover:shadow-xl bg-white"
   style={{borderRadius: "10px"}}

@@ -7,6 +7,10 @@ import {
   NavigationMenuList,
   NavigationMenuItem,
 } from '../primitives/navigation-menu'
+import * as Dialog from '@radix-ui/react-dialog';
+import { getAuth, sendEmailVerification } from 'firebase/auth';
+import { Button } from 'react-bootstrap';
+import Settings from './Settings';
 
 interface HeaderProps {
   name: string
@@ -19,6 +23,16 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
+  
+  const [currentUser, setCurrentUser] = useState(getAuth().currentUser);
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+    });
+
+    return () => unsubscribe();
+  }, []);
   const { name, main, additional } = props
   // const [mainTabs, additionalTabs] = [['About', 'Levels', 'Legacy', 'Leaderboard', 'Submit Record'], ['FAQ', 'Roulette', 'Changelog', "AME", "Packs"]]
   let location = useLocation()
@@ -82,6 +96,21 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
                 </div>
               </NavigationMenuItem>
             ))}
+            {currentUser ? (
+              <div
+              className="cursor-pointer p-4 text-white hover:bg-[#0b5042]"
+              onClick={() => document.getElementById("settings-form-button").click()}
+            >
+              Settings
+            </div>
+            ) : (
+              <div
+                className="cursor-pointer p-4 text-white hover:bg-[#0b5042]"
+                onClick={() => document.getElementById("login-form-button").click()}
+              >
+                Login
+              </div>
+            )}
             <div className="grid place-items-center p-3 hover:bg-[#0b5042] duration-100" style={{height: element.current ? `${element.current.clientHeight}px` : "auto"}} onMouseOver={() => setShowPC(true)} onMouseLeave={() => setShowPC(false)} id="menu" onClick={(e) => {
               e.stopPropagation()
               e.preventDefault()
@@ -104,12 +133,6 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
               </>
             ))}</div> : ""}
               </div>
-            {/* <div
-                  className="cursor-pointer p-4 text-white hover:bg-[#0b5042]"
-                  onClick={() => document.getElementById("login-form-button").click()}
-                >
-                  Login
-                </div> */}
           </NavigationMenuList>
         </NavigationMenu>
       ) : (
@@ -154,12 +177,21 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
                 </p>
                 <br></br>
               </>))}
-              {/* <p
+              {currentUser ? (
+                <p
+                  className="text-white p-4 text-xl border-double"
+                  onClick={() => document.getElementById("settings-form-button").click()}
+                >
+                  Settings
+                </p>
+              ) : (
+                <p
                   className="text-white p-4 text-xl border-double"
                   onClick={() => document.getElementById("login-form-button").click()}
                 >
                   Login
-                  </p> */}
+                  </p>
+              )}
                   <br></br>
             </div>  
           </div>

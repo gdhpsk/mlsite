@@ -11,9 +11,6 @@ let mods: any = {
   ],
   Editors: [
     { name: 'Batle', discord: '.batle' },
-    { name: 'Mike139115', discord: 'mike139115' },
-    { name: 'DreamTide', discord: 'dreamtide' },
-    { name: 'Nelluque', discord: 'nell076' },
     { name: 'SubZerov', discord: 'subzerovv' },
     { name: 'Rusty', discord: 'ppgrusty' },
     { name: 'LegDina', discord: 'legdina' },
@@ -22,6 +19,8 @@ let mods: any = {
     { name: 'SeaWolfMikes', discord: 'seawolfmikes' },
     { name: 'BiPolarBearr', discord: 'bipolarbearrgd' },
     { name: 'Coheton', discord: 'coheton' },
+    { name: 'Maxdash', discord: 'maxdash7' },
+    { name: 'WhitePythor', discord: 'whitepythor' },
     { name: 'Karthik', discord: 'karthik567' }
   ],
   Developers: [
@@ -78,10 +77,10 @@ const About: React.FC = () => {
                 alert(`Successfully copied ${e.name}'s discord username`)
               }}>{e.name}</p></abbr>)}
               </div>
-              {header == "Editors" ? <abbr title="Click to copy discord username"><p className='hover:cursor-pointer' style={{textDecoration: "dotted underline"}} onClick={() => {
+              {/* {header == "Editors" ? <abbr title="Click to copy discord username" className='-mt-1'><p className='hover:cursor-pointer' style={{textDecoration: "dotted underline"}} onClick={() => {
                 navigator.clipboard.writeText(moderators.at(-1).discord)
                 alert(`Successfully copied ${moderators.at(-1).name}'s discord username`)
-              }}>{moderators.at(-1).name}</p></abbr> : ""}
+              }}>{moderators.at(-1).name}</p></abbr> : ""} */}
             </div>)}
           </div>
           <br></br>

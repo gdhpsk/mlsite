@@ -7,7 +7,7 @@ const AllMobileExtremes: React.FC = () => {
   return (
     <div className={`rounded-box max-w-5xl border-4 bg-[#f2fff7] p-8 sm:m-12 sm:mx-auto ${window.innerWidth < 1500 ? "" : "w-4/5"}`}>
         <div className={`rounded-box flex flex-col overflow-y-auto bg-white p-4 py-12 shadow-inner`}  style={{width: "-webkit-fill-available"}}>
-            <h1 className="text-center font-extrabold text-5xl">All Mobile Extremes</h1>
+            <h1 className="text-center font-extrabold text-5xl">Not List Worthy</h1>
         </div>
         <br></br>
         <div className={`rounded-box flex w-4/5 flex-col overflow-y-auto bg-white p-4 py-12 shadow-inner`}  style={{width: "-webkit-fill-available"}}>

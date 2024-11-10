@@ -5,7 +5,6 @@ import cors from "cors";
 import mongoose, { ClientSession } from "mongoose";
 import path from "path";
 import { Record, Level, Player, Pack } from "./schema";
-import nextAuth from "./auth.route"
 import axios from "axios";
 import cluster from "cluster";
 import os from "os";
@@ -33,7 +32,6 @@ app.use(cors());
 //   next();
 // });
 app.use("/", express.static(path.resolve(__dirname, "../client")));
-app.use("/api/auth", nextAuth)
 app.use("/", express.static("public"))
 
 const authed = (req: Request, res: Response, next: NextFunction) => {
@@ -445,13 +443,7 @@ if (cluster.isPrimary) {
   });
 } else {
   try {
-mongoose.connect(process.env.MONGODB_URI as string, {
-    dbName: "mobilelist",
-    readPreference: "primary",
-    authSource: "$external",
-    authMechanism: "MONGODB-X509",
-    tlsCertificateKeyFile: process.env.keyPath,
-} as any);
+mongoose.connect(process.env.MONGODB_URI as string);
   } catch (error) {
     console.error(error);
   }

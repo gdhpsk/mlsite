@@ -72,7 +72,7 @@ const Legacy: React.FC = () => {
             className={`absolute w-[65vh] ${window.innerWidth < 1500 ? "pl-4" : ""}`}
           ></Form.Range>
         </div>}
-  <div className="flex-grow overflow-hidden bg-white pr-4 pl-4 shadow-inner" style={{height: window.innerHeight - 72}}>
+  <div className="flex-grow overflow-hidden bg-white pr-4 pl-4 shadow-inner" style={{height: "calc(100vh - 72px)"}}>
         <div className="flex">
           <Input type="text" placeholder="Search..." className="m-4 grow" onChange={(e) => setSearch(e.target.value)} defaultValue={search}/>
           <Input type="number" placeholder="Pos..." className="m-4 w-20" disabled={!!search} id="level-pos-box" onKeyDown={(e) => {

@@ -46,7 +46,7 @@ function getYouTubeVideoID(url: string) {
 }
 
   return (
-    <div className={`rounded-box flex ${width < 1500 ? "items-center justify-center w-full" : "w-[55%] pl-4"} flex-col overflow-y-auto bg-[#f1f9f5] shadow-inner`}  style={{width: width < 1500 ? "min(800px, 100%)" : "revert-layer",  height: window.innerHeight - 72}}>
+    <div className={`rounded-box flex ${width < 1500 ? "items-center justify-center w-full" : "w-[55%] pl-4"} flex-col overflow-y-auto bg-[#f1f9f5] shadow-inner`}  style={{width: width < 1500 ? "min(800px, 100%)" : "revert-layer",  height: "calc(100vh - 72px)"}}>
       {level ? (<>
         <ScrollAreaNoScroll className={`h-full w-full`}>
           <div className={`grid ${width < 1500 ? "justify-items-center" : "justify-items-start ml-16"} gap-y-16 w-full ${width < 1500 ? "" : "pt-12"} pb-12`}>
