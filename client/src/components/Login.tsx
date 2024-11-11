@@ -72,7 +72,7 @@ const Login: React.FC = () => {
           }}>Submit</Button>
         </div>
         <br></br>
-        <br></br>
+        {/* <br></br>
         <p style={{textAlign: "center"}}>Sign up</p>
         <br></br>
         <div className='grid place-items-center'>
@@ -125,7 +125,7 @@ const Login: React.FC = () => {
             }
           }}>Submit</Button>
         </div>
-        <br></br>
+        <br></br> */}
         <Dialog.Close asChild>
           <div className="grid place-items-center">
           <Button variant="destructive" size="lg" onClick={() => {
