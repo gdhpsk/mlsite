@@ -19,9 +19,9 @@ let mods: any = {
     { name: 'SeaWolfMikes', discord: 'seawolfmikes' },
     { name: 'BiPolarBearr', discord: 'bipolarbearrgd' },
     { name: 'Coheton', discord: 'coheton' },
+    { name: 'Karthik', discord: 'karthik567' },
     { name: 'Maxdash', discord: 'maxdash7' },
-    { name: 'WhitePythor', discord: 'whitepythor' },
-    { name: 'Karthik', discord: 'karthik567' }
+    { name: 'WhitePythor', discord: 'whitepythor' }
   ],
   Developers: [
     { name: 'Zoink Doink', discord: 'zoinkdoink' },
@@ -46,7 +46,10 @@ let mods: any = {
     { name: 'Bigthunder556', discord: undefined },
     { name: 'Amp1ify', discord: undefined },
     { name: 'Surpl3x', discord: undefined },
-    { name: 'Zeth', discord: undefined }
+    { name: 'Zeth', discord: undefined },
+    { name: "Mike139115", discord: undefined },
+    { name: "DreamTide", discord: undefined },
+    { name: "Nelluque", discord: undefined }
   ]
 }
 
@@ -72,10 +75,10 @@ const About: React.FC = () => {
             {Object.entries(mods).slice(0, -1).map(([header, moderators]: any) => <div className="grid justify-items-center gap-y-1">
               <h5 className="text-lg font-bold mb-2">{window.innerWidth < 800 ? `${header}` : `• ${header} •`}</h5>
               <div className="grid place-items-start justify-items-center" style={{gridTemplateColumns: `repeat(${moderators.length > 10 && window.innerWidth > 768 ? 2 : 1}, minmax(0, 1fr))`}}>
-              {(header == "Editors" && (moderators.length % 2) ? moderators.slice(0, -1) : moderators).map((e:any) => <abbr title="Click to copy discord username"><p className='hover:cursor-pointer' style={{textDecoration: "dotted underline"}} onClick={() => {
+              {(header == "Editors" && (moderators.length % 2) ? moderators.slice(0, -1) : moderators).map((e:any) => <abbr title="Click to copy discord username" style={{textDecoration: "none"}}><p className='hover:cursor-pointer' onClick={() => {
                 navigator.clipboard.writeText(e.discord)
                 alert(`Successfully copied ${e.name}'s discord username`)
-              }}>{e.name}</p></abbr>)}
+              }}><i>{e.name}</i></p></abbr>)}
               </div>
               {/* {header == "Editors" ? <abbr title="Click to copy discord username" className='-mt-1'><p className='hover:cursor-pointer' style={{textDecoration: "dotted underline"}} onClick={() => {
                 navigator.clipboard.writeText(moderators.at(-1).discord)

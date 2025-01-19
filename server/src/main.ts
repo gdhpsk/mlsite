@@ -8,6 +8,7 @@ import { Record, Level, Player, Pack } from "./schema";
 import axios from "axios";
 import cluster from "cluster";
 import os from "os";
+import { authentication as admin} from "./firebase-admin";
 
 if (
   process.env.BOT_TOKEN === undefined ||
@@ -42,6 +43,25 @@ const authed = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const firebaseAuth = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const decodedToken = await admin.verifyIdToken(req.body.token);
+    const user = await admin.getUser(decodedToken.uid);
+    if (!user) return res.sendStatus(401);
+
+    const role = user.customClaims?.role;
+    if (role !== 'editor' && role !== 'leader') {
+      return res.sendStatus(401);
+    }
+    req.headers.user_info = JSON.stringify(user)
+    next();
+  } catch (error) {
+    console.error('Firebase auth error:', error);
+    return res.sendStatus(401);
+  }
+};
+
+
 const transaction = (
   fn: (req: Request, res: Response, session: ClientSession) => Promise<number>
 ) => { 
@@ -62,6 +82,33 @@ const transaction = (
     }
   };
 };
+
+app.post("/auth/assign", firebaseAuth, async (req, res) => {
+  const { uid, role } = req.body;
+  if (!uid || !role) return res.sendStatus(400);
+  
+  // Verify requesting user is a leader
+  try {
+    const requestingUser = JSON.parse(req.headers.user_info as string)
+    if (!requestingUser.customClaims?.role || requestingUser.customClaims.role !== 'leader') {
+      return res.sendStatus(403);
+    }
+
+    // Assign role to target user
+    if (role !== 'editor' && role !== 'leader') {
+      return res.sendStatus(400);
+    }
+
+    await admin.setCustomUserClaims(uid, { role });
+    return res.sendStatus(200);
+
+  } catch (error) {
+    console.error('Error assigning role:', error);
+    return res.sendStatus(500);
+  }
+});
+
+
 
 app.get("/levels", async (req, res) => {
   const levels = await Level.find({ position: req.query.position ? parseInt(req.query.position as string) : { $lte: Infinity } })

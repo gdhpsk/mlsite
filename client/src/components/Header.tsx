@@ -96,21 +96,6 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
                 </div>
               </NavigationMenuItem>
             ))}
-            {currentUser ? (
-              <div
-              className="cursor-pointer p-4 text-white hover:bg-[#0b5042]"
-              onClick={() => document.getElementById("settings-form-button").click()}
-            >
-              Settings
-            </div>
-            ) : (
-              <div
-                className="cursor-pointer p-4 text-white hover:bg-[#0b5042]"
-                onClick={() => document.getElementById("login-form-button").click()}
-              >
-                Login
-              </div>
-            )}
             <div className="grid place-items-center p-3 hover:bg-[#0b5042] duration-100" style={{height: element.current ? `${element.current.clientHeight}px` : "auto"}} onMouseOver={() => setShowPC(true)} onMouseLeave={() => setShowPC(false)} id="menu" onClick={(e) => {
               e.stopPropagation()
               e.preventDefault()
@@ -131,7 +116,13 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
                   {additionalTabs[i]}
                 </p>
               </>
-            ))}</div> : ""}
+            ))}{currentUser ? <p
+            onClick={() => document.getElementById("settings-form-button").click()}
+            className={`text-white p-5 text-base border-double hover:bg-[#0b5042] duration-100`}
+          >Settings</p> : <p
+          onClick={() => document.getElementById("login-form-button").click()}
+          className={`text-white p-5 text-base border-double hover:bg-[#0b5042] duration-100`}
+        >Login</p>}</div> : ""}
               </div>
           </NavigationMenuList>
         </NavigationMenu>

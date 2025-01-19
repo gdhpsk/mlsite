@@ -49,7 +49,7 @@ const SubmitRecord: React.FC = () => {
         </div>
         <Label>Player</Label>
         <CreatableSelect
-          className="z-40 mb-3 w-48"
+          className="z-39 mb-3 w-48"
           name="playerSelect"
           options={players.map((p) => ({ value: p.name, label: p.name }))}
           onChange={(e) => setPlayer(e.value)}
@@ -93,10 +93,12 @@ const SubmitRecord: React.FC = () => {
             disabled={disabled}
             onClick={() => {
               if (player && level && hertz && link && raw) {
+                setDisabled(true)
                 submitRecord({ player, level, hertz, link, raw })
-                  .then((data) => setSubmitStatus(data.status))
-                  .then(() => {
-                    setDisabled(true)
+                  .then((data) => {
+                    setSubmitStatus(data.status)
+                  })
+                  .then((e) => {
                     setPlayer(undefined)
                     setLevel(undefined)
                     setHertz(undefined)

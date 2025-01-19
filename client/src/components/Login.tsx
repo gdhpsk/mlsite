@@ -35,7 +35,7 @@ const Login: React.FC = () => {
     <Dialog.Portal>
     <Dialog.Overlay className="DialogOverlay" />
     <Dialog.Content className="DialogContent">
-    <Dialog.Title className="DialogTitle" style={{textAlign: "center", width: "100%"}}>Login / Sign Up Form</Dialog.Title>
+    <Dialog.Title className="DialogTitle" style={{textAlign: "center", width: "100%"}}>Login Form</Dialog.Title>
     <br></br>
         <p style={{textAlign: "center"}}>Login</p>
         <br></br>

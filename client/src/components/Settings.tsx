@@ -45,6 +45,17 @@ const Settings: React.FC = () => {
             }}>
               Change Email
             </Button>
+            <Button variant="info" onClick={() => {
+              getAuth().currentUser.getIdToken()
+                .then((token) => {
+                  alert("Your Firebase token is:\n\n" + token);
+                })
+                .catch((error) => {
+                  alert("Error getting token: " + error.message);
+                });
+            }}>
+              Show Auth Token
+            </Button>
             <Button variant="danger" onClick={() => {
               getAuth().signOut()
               window.location.reload()
