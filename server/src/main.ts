@@ -4,7 +4,7 @@ import env from "dotenv";
 import cors from "cors";
 import mongoose, { ClientSession } from "mongoose";
 import path from "path";
-import { Record, Level, Player, Pack } from "./schema";
+import { Record, Level, Player, Pack, HRRLevel } from "./schema";
 import axios from "axios";
 import cluster from "cluster";
 import os from "os";
@@ -118,8 +118,26 @@ app.get("/levels", async (req, res) => {
   return res.status(200).json(levels);
 });
 
+app.get("/levels/hrr", async (req, res) => {
+  const levels = await HRRLevel.find({ position: req.query.position ? parseInt(req.query.position as string) : { $lte: Infinity } })
+    .lean({ virtuals: true })
+    .sort("position") 
+    .select("-_id -__v -records");
+  return res.status(200).json(levels);
+});
+
 app.get("/levels/:name", async (req, res) => {
   const level = await Level.findOne({ name: req.params.name })
+    .lean({ virtuals: true })
+    .populate("records", "-_id -__v -level -levelID -playerID")
+    .select("-_id -__v");
+  return level
+    ? res.status(200).json(level)
+    : res.status(404).send("Level not found.");
+});
+
+app.get("/levels/hrr/:name", async (req, res) => {
+  const level = await HRRLevel.findOne({ name: req.params.name })
     .lean({ virtuals: true })
     .populate("records", "-_id -__v -level -levelID -playerID")
     .select("-_id -__v");
@@ -134,6 +152,21 @@ app.post(
   transaction(async (req, res, session) => {
     if (await Level.exists({ name: req.body.name as string })) throw 409;
     const level = new Level({
+      name: req.body.name as string,
+      creator: req.body.creator as string,
+      position: req.body.position as number,
+    });
+    await level.add(session);
+    return 201;
+  })
+);
+
+app.post(
+  "/levels/hrr",
+  authed,
+  transaction(async (req, res, session) => {
+    if (await HRRLevel.exists({ name: req.body.name as string })) throw 409;
+    const level = new HRRLevel({
       name: req.body.name as string,
       creator: req.body.creator as string,
       position: req.body.position as number,

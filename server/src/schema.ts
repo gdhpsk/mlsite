@@ -66,6 +66,7 @@ interface IPlayer {
   };
   discord?: string;
   records?: Types.ObjectId[] | RecordDocument[];
+  hrr_records?: Types.ObjectId[] | RecordDocument[];
   hertz?: { [rr: number]: number };
   mclass?: {
     lrr: string;
@@ -180,6 +181,82 @@ recordSchema.pre("save", async function () {
   this.levelID = level._id;
 });
 
+const HRRrecordSchema = new Schema<IRecord, RecordModel, IRecordMethods>(
+  {
+    player: { type: String, required: true },
+    level: { type: String, required: true },
+    hertz: { type: Number, required: true },
+    link: { type: String, required: true },
+    playerID: { type: Schema.Types.ObjectId, ref: "Player" },
+    levelID: { type: Schema.Types.ObjectId, ref: "HRR_Level" },
+  },
+  {
+    statics: {
+      async playerNameUpdate(
+        session: ClientSession,
+        id: Types.ObjectId,
+        newname: string
+      ) {
+        await this.updateMany(
+          { playerID: id },
+          { $set: { player: newname } }
+        ).session(session);
+      },
+      async levelNameUpdate(
+        session: ClientSession,
+        id: Types.ObjectId,
+        newname: string
+      ) {
+        await this.updateMany(
+          { levelID: id },
+          { $set: { level: newname } }
+        ).session(session);
+      },
+    },
+    methods: {
+      async cascadingDelete(session: ClientSession, justOne?: number) {
+        const level = await HRRLevel.findByIdAndUpdate(this.levelID, {
+          $pull: { records: this._id },
+        }).session(session);
+        await Player.findByIdAndUpdate(this.playerID, {
+          $pull: { hrr_records: this._id },
+          $inc: {
+            [`points.${this.hertz <= 60 ? "lrr" : "hrr"}`]:
+              Math.round(100 * (justOne === 1 ? -level?.points! : 0)) / 100,
+            ["points.comb"]: Math.round(100 * (justOne === 1 ? -level?.points! : 0)) / 100,
+          },
+        }).session(session);
+        
+        await this.deleteOne({ session: session });
+      },
+    },
+  }
+);
+
+HRRrecordSchema.pre("save", async function () {
+  const session = this.$session();
+  const level = await HRRLevel.findOneAndUpdate(
+    { name: this.level },
+    { $addToSet: { records: this._id } },
+    { new: true }
+  ).session(session as ClientSession);
+  if (level === null) throw new Error("Level not found");
+  const player = await Player.findOneAndUpdate(
+    { name: this.player },
+    {
+      $addToSet: { hrr_records: this._id },
+      $inc: {
+        [`points.${this.hertz <= 60 ? "lrr" : "hrr"}`]: level.points!,
+        ["points.comb"]: level.points!,
+      },
+    },
+    { new: true }
+  ).session(session as ClientSession);
+  if (player === null) throw new Error("Player not found");
+  this.playerID = player._id;
+  this.levelID = level._id;
+});
+
 const levelSchema = new Schema<ILevel, LevelModel, ILevelMethods>(
   {
     name: { type: String, required: true },
@@ -265,6 +342,91 @@ const levelSchema = new Schema<ILevel, LevelModel, ILevelMethods>(
   }
 );
 
+const HRRlevelSchema = new Schema<ILevel, LevelModel, ILevelMethods>(
+  {
+    name: { type: String, required: true },
+    creator: { type: String, required: true },
+    urlHash: {type: String},
+    position: { type: Number, required: true },
+    records: [{ type: Schema.Types.ObjectId, ref: "HRR_Record" }],
+  },
+  {
+    minimize: false,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+    virtuals: {
+      points: {
+        get() {
+          return this.position <= 100
+            ? 2160 / (0.35 * this.position + 8.65) - 40
+            : 0;
+        },
+      },
+    },
+    statics: {
+      async levelPoints() {
+        const levels: LevelDocument[] = await this.find({
+          position: { $lte: 100 },
+        });
+        return Object.assign(
+          {},
+          ...levels.map((l) => ({ [l._id.toString()]: l.points }))
+        );
+      },
+    },
+    methods: {
+      async add(session: ClientSession) {
+        await HRRLevel.updateMany(
+          { position: { $gte: this.position } },
+          { $inc: { position: 1 } }
+        ).session(session);
+        this.$session(session);
+        await Player.updateAllPoints(session);
+        await this.save();
+      },
+      async del(session: ClientSession) {
+        await HRRLevel.updateMany(
+          { position: { $gt: this.position } },
+          { $inc: { position: -1 } }
+        ).session(session);
+        await this.populate("records");
+        for (const r of this.records) {
+          await (r as RecordDocument).cascadingDelete(session);
+        }
+        await this.deleteOne({ session: session });
+        await Player.updateAllPoints(session);
+      },
+      async move(session: ClientSession, pos: number) {
+        if (this.position > pos) {
+          await HRRLevel.updateMany(
+            {
+              $and: [
+                { position: { $gte: pos } },
+                { position: { $lt: this.position } },
+              ],
+            },
+            { $inc: { position: 1 } }
+          ).session(session);
+        } else if (this.position < pos) {
+          await HRRLevel.updateMany(
+            {
+              $and: [
+                { position: { $lte: pos } },
+                { position: { $gt: this.position } },
+              ],
+            },
+            { $inc: { position: -1 } }
+          ).session(session);
+        }
+        await HRRLevel.findByIdAndUpdate(this._id, {
+          $set: { position: pos },
+        }).session(session);
+        await Player.updateAllPoints(session);
+      },
+    },
+  }
+);
+
 const packSchema = new Schema({
   name: String,
   levels: [mongoose.SchemaTypes.ObjectId],
@@ -281,6 +443,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
     },
     discord: { type: String, required: false },
     records: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Record' }],
+    hrr_records: [{ type: mongoose.Schema.Types.ObjectId, ref: 'HRR_Record' }]
   },
   {
     minimize: false,
@@ -820,6 +983,8 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
 
 export const Record = model<IRecord, RecordModel>("Record", recordSchema);
 export const Level = model<ILevel, LevelModel>("Level", levelSchema);
+export const HRRRecord = model<IRecord, RecordModel>("HRR_Record", HRRrecordSchema);
+export const HRRLevel = model<ILevel, LevelModel>("HRR_Level", HRRlevelSchema);
 export const Player = model<IPlayer, PlayerModel>("Player", playerSchema);
 export const Pack = model("Pack", packSchema)
 // export const Log = model<ILog>("Log", logSchema);
