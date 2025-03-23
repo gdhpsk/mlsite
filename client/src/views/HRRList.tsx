@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { getLevels, APIManyLevel, APIOneLevel } from '../util/withApi'
+import { getHRRLevels, APIManyLevel, APIOneLevel } from '../util/withApi'
 import Level from '../components/Level'
 import ListInfoBox from '../components/ListInfoBox'
 import { ScrollAreaNoScroll } from '../primitives/scroll-area'
@@ -8,7 +8,7 @@ import { Separator } from '../primitives/separator'
 import { Button, Form } from 'react-bootstrap'
 import { useSearchParams } from 'react-router-dom'
 
-const List: React.FC = () => {
+const HRRList: React.FC = () => {
   useEffect(() => {
     document.body.style.overflow = "hidden"
   }, [])
@@ -43,7 +43,7 @@ const List: React.FC = () => {
       (document.getElementById("scroll-box") as any).value = value
       } catch(_) {}
     }, 10)
-    getLevels().then((l: any) => {
+    getHRRLevels().then((l: any) => {
       setLevels(l.slice(0, 100))
     })
   }, [])
@@ -106,6 +106,7 @@ const List: React.FC = () => {
               {levels.map((level, i) => (
                 <Level
                   {...level}
+                  hrr={true}
                   show={search.length > 0 ? level.name.toLowerCase().indexOf(search.toLowerCase()) !== -1 : true}
                   onSelect={() => {
                     setSelectedLevelName(level.name)
@@ -117,11 +118,11 @@ const List: React.FC = () => {
           </ScrollAreaNoScroll>
         </div>
       </div>}
-      {window.innerWidth < 800 && !selectedLevelName ? "" : <><ListInfoBox levelName={selectedLevelName} width={window.innerWidth} selectedState={setSelectedLevelName}/></>}
+      {window.innerWidth < 800 && !selectedLevelName ? "" : <><ListInfoBox levelName={selectedLevelName} width={window.innerWidth} selectedState={setSelectedLevelName} hrr={true}/></>}
       {window.innerWidth < 2000 ? "" : <div className='bg-slate-300 p-20 text-3xl'>
         <h1 className='font-bold text-center'>Live Changelog</h1>
       </div>}
     </div> )
 }
 
-export default List
+export default HRRList

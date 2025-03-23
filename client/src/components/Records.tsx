@@ -16,10 +16,11 @@ interface Record {
 
 interface RecordsProps {
   rec: Record[],
+  hrr?: true
   refFunction?: Function
 }
 
-const Records: React.FC<RecordsProps> = ({ rec, refFunction }) => {
+const Records: React.FC<RecordsProps> = ({ rec, refFunction, hrr }) => {
   let ref = useRef()
   useEffect(() => {
     if(refFunction) refFunction(ref.current)
@@ -33,7 +34,7 @@ if(rec?.[0]?.level) {
       <TableBody>
         {rec.filter(e => e.levelID ? e.levelID.position < 101 : true).map((r, i) => (
           <TableRow key={`record-${i}`} style={{backgroundColor: i % 2 ? "whitesmoke" : "lightgray"}} className={cn('text-lg', r.hertz === 60 && 'font-semibold')}>
-            <TableCell>{r.level ? r.levelID.position : i+1}. {r.player ? <a href={`/#/leaderboard?player=${r.player}`}>{r.player}</a> : <a href={`/#/?level=${r.level}`}>{r.level}</a>}</TableCell>
+            <TableCell>{r.level ? r.levelID.position : i+1}. {r.player ? <a href={`/#/leaderboard?player=${r.player}`}>{r.player}</a> : <a href={`/#/${hrr ? "hrr" : ""}?level=${r.level}`}>{r.level}</a>}</TableCell>
             <TableCell style={{width: "20px"}}>{r.hertz}</TableCell>
             <TableCell className='grid place-items-center'>
               <a href={r.link} target={'_blank'}>

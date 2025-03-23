@@ -43,7 +43,9 @@ export interface APIOnePlayer extends APIManyPlayer {
     hrr: string
     comb: string
   }
-  records: APIPlayerRecord[]
+  records: APIPlayerRecord[],
+  hrr_records: APIPlayerRecord[],
+  avatar?: string
 }
 
 interface RecordSubmission {
@@ -60,6 +62,14 @@ export const getLevels = async (): Promise<APIManyLevel[]> => {
 
 export const getLevel = async (name: string): Promise<APIOneLevel> => {
   return fetch(`/levels/${name}`).then((data) => data.json())
+}
+
+export const getHRRLevels = async (): Promise<APIManyLevel[]> => {
+  return fetch(`/levels/hrr`).then((data) => data.json())
+}
+
+export const getHRRLevel = async (name: string): Promise<APIOneLevel> => {
+  return fetch(`/levels/hrr/${name}`).then((data) => data.json())
 }
 
 export const getPlayers = async (): Promise<APIManyPlayer[]> => {

@@ -1,0 +1,43 @@
+# Service to expose the web app on port 3021
+apiVersion: v1
+kind: Service
+metadata:
+  name: mobilelist-service
+  labels:
+    app: mobilelist
+spec:
+  type: LoadBalancer   # Will act like NodePort in Docker Desktop
+  selector:
+    app: mobilelist
+  ports:
+    - port: 3021              # Port users connect to (can be any number)
+      targetPort: 3021      # App's internal port inside the container
+      nodePort: 30001
+---
+# Deployment for your app
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mobilelist-deployment
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: mobilelist
+  minReadySeconds: 30
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 3
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: mobilelist
+    spec:
+      containers:
+        - name: mobilelist-container
+          image: mobilelist:latest    # Replace with your custom image
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3021     # Matches the internal app port

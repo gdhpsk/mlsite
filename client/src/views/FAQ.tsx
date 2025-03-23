@@ -67,7 +67,7 @@ let faqJSON: Record<"records" | "submissions" | "misc", Array<[string | React.Re
   ["May I be asked for further proof?", <>We occasionally ask players to <b>play in a live VC</b> if provided proof is insufficient, or if cheats are suspected.</>],
   ],
   misc: [
-    [<>Does the Mobile List have a <a href="https://discord.gg/gdmobile" style={{textDecoration: "none"}}>discord server</a>?</>, <>There is, 1500 members and counting, but you’ll have to find it!</>],
+    [<>Does the Mobile List have a <a href="https://discord.gg/gdmobile" style={{textDecoration: "none"}}>discord server</a>?</>, <>There is, 1600 members and counting, you can find it in the About page!</>],
   ["How do I provide my opinion for level placement?", <>You can <b>contact a list staff</b> and state the level, your opinion on its placement and your progress on it and related levels. #mobile-list-discussion also works!</>],
   ["What is the AME?", <>All Mobile Extremes is a GDDP of sorts for mobile players, and hopes to organize every extreme beaten on mobile into tiers. If you have at least 10 extremes done on mobile, you can ask <b>WhiteEmerald</b>, <b>MiniWheatDuo</b> or <b>Cappyt</b> for a profile.</>],
   ["Will you ever extend the list to 150 levels?", <>Unfortunately due to calculation and workload issues, we <b>do not have plans to extend the list in the near future</b>. However, <a href="https://en.wikipedia.org/wiki/Domestic_pigeon" style={{textDecoration: "none"}} target="_blank">P8geons</a> runs an unofficial extension of the list at <b><a href="https://discord.gg/6J293BBvb7" style={{textDecoration: "none"}} target="_blank">Mobile List Plus</a></b>, so do check it out!</>],

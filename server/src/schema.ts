@@ -73,6 +73,7 @@ interface IPlayer {
     hrr: string;
     comb: string;
   };
+  avatar?: string
 }
 
 interface IPlayerMethods {
@@ -220,11 +221,11 @@ const HRRrecordSchema = new Schema<IRecord, RecordModel, IRecordMethods>(
         }).session(session);
         await Player.findByIdAndUpdate(this.playerID, {
           $pull: { hrr_records: this._id },
-          $inc: {
-            [`points.${this.hertz <= 60 ? "lrr" : "hrr"}`]:
-              Math.round(100 * (justOne === 1 ? -level?.points! : 0)) / 100,
-            ["points.comb"]: Math.round(100 * (justOne === 1 ? -level?.points! : 0)) / 100,
-          },
+          // $inc: {
+          //   [`points.${this.hertz <= 60 ? "lrr" : "hrr"}`]:
+          //     Math.round(100 * (justOne === 1 ? -level?.points! : 0)) / 100,
+          //   ["points.comb"]: Math.round(100 * (justOne === 1 ? -level?.points! : 0)) / 100,
+          // },
         }).session(session);
         
         await this.deleteOne({ session: session });
@@ -245,10 +246,10 @@ HRRrecordSchema.pre("save", async function () {
     { name: this.player },
     {
       $addToSet: { hrr_records: this._id },
-      $inc: {
-        [`points.${this.hertz <= 60 ? "lrr" : "hrr"}`]: level.points!,
-        ["points.comb"]: level.points!,
-      },
+      // $inc: {
+      //   [`points.${this.hertz <= 60 ? "lrr" : "hrr"}`]: level.points!,
+      //   ["points.comb"]: level.points!,
+      // },
     },
     { new: true }
   ).session(session as ClientSession);
@@ -381,7 +382,7 @@ const HRRlevelSchema = new Schema<ILevel, LevelModel, ILevelMethods>(
           { $inc: { position: 1 } }
         ).session(session);
         this.$session(session);
-        await Player.updateAllPoints(session);
+        // await Player.updateAllPoints(session);
         await this.save();
       },
       async del(session: ClientSession) {
@@ -443,7 +444,8 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
     },
     discord: { type: String, required: false },
     records: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Record' }],
-    hrr_records: [{ type: mongoose.Schema.Types.ObjectId, ref: 'HRR_Record' }]
+    hrr_records: [{ type: mongoose.Schema.Types.ObjectId, ref: 'HRR_Record' }],
+    avatar: String
   },
   {
     minimize: false,

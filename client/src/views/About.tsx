@@ -133,6 +133,10 @@ the list in general, reach out to one of the owners on discord.
             For questions/concerns about the site, reach out to either{' '}
             <strong className="select-all">zoinkdoink</strong> or <strong className="select-all">gdhpsk</strong> on discord.
           </p>
+          <br />
+          <p>Join Mobile Squad, the official server for the mobile community, <a href="https://discord.gg/gdmobile" style={{textDecoration: "underline"}}>here</a></p>
+          <br />
+          <iframe src="https://discord.com/widget?id=341748330801659904&theme=dark" width="350" height="500" allowTransparency={true} frameBorder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
         </div>
       </div>
     </div>

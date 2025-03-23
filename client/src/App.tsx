@@ -5,6 +5,7 @@ import './style.css'
 
 import Header from './components/Header'
 import List from './views/List'
+import HRRList from "./views/HRRList"
 import Leaderboard from './views/Leaderboard'
 import SubmitRecord from './views/SubmitRecord'
 import About from './views/About'
@@ -62,6 +63,7 @@ useEffect(() => {
             levels: '/',
             legacy: "/legacy",
             leaderboard: '/leaderboard',
+            hrrlevels: "/hrr",
             submit: "/submit"
           }}
           additional={{
@@ -76,6 +78,7 @@ useEffect(() => {
           <Route path="/" element={<List />} />
           <Route path="/about" element={<About />} />
           <Route path="/" element={<List />} />
+          <Route path="/hrr" element={<HRRList />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/roulette" element={<Roulette />} />

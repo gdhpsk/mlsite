@@ -36,7 +36,7 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
   const { name, main, additional } = props
   // const [mainTabs, additionalTabs] = [['About', 'Levels', 'Legacy', 'Leaderboard', 'Submit Record'], ['FAQ', 'Roulette', 'Changelog', "AME", "Packs"]]
   let location = useLocation()
-  const [mainTabs, additionalTabs] = [['About', 'Levels', 'Legacy', 'Leaderboard', 'Submit Record'], ['FAQ', 'Roulette', 'Changelog', "Not List Worthy"]]
+  const [mainTabs, additionalTabs] = [['About', 'Levels', 'Legacy', 'Leaderboard', 'HRR Levels', 'Submit Record'], ['FAQ', 'Roulette', 'Changelog', "Not List Worthy"]]
   let [show, setShow] = useState<boolean>(false)
   let [showPC, setShowPC] = useState(false)
   const navigate = useNavigate()

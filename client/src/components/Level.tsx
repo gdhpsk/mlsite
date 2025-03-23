@@ -4,6 +4,7 @@ import { Button } from 'react-bootstrap'
 
 interface LevelProps extends APIManyLevel {
   show: boolean
+  hrr?: boolean
   onSelect: () => void
 }
 
@@ -24,7 +25,7 @@ const Level: React.FC<LevelProps> = (props: LevelProps) => {
         style={{borderRadius: "10px", background: `linear-gradient(130deg, rgb(255, 255, 255) ${urlHash ? "calc(100% - 125px)" : "100%"}, transparent 0%)`, backgroundColor: urlHash ? "rgba(0, 0, 0, 0.2)" : ""}}
         onClick={onSelect}
       >
-        {!urlHash && position < 101 ? <div className='relative w-0 h-0' style={{left: "calc(100% - 10px)", top: "15px"}}>
+        {!urlHash && position < 101 && !props.hrr ? <div className='relative w-0 h-0' style={{left: "calc(100% - 10px)", top: "15px"}}>
         <Button className='rounded-full relative bg-sky-600 w-8 text-2xl'>+</Button>
         </div> : ""}
         <div className="text-xl">

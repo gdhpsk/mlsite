@@ -4,7 +4,7 @@ import env from "dotenv";
 import cors from "cors";
 import mongoose, { ClientSession } from "mongoose";
 import path from "path";
-import { Record, Level, Player, Pack, HRRLevel } from "./schema";
+import { Record, Level, Player, Pack, HRRLevel, HRRRecord } from "./schema";
 import axios from "axios";
 import cluster from "cluster";
 import os from "os";
@@ -17,7 +17,7 @@ if (
   env.config();
 
 const app = express();
-const port = process.env.PORT ?? 3000;
+const port = parseInt(process.env.PORT as any) ?? 3000;
 
 app.set("query parser", "simple");
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -119,7 +119,7 @@ app.get("/levels", async (req, res) => {
 });
 
 app.get("/levels/hrr", async (req, res) => {
-  const levels = await HRRLevel.find({ position: req.query.position ? parseInt(req.query.position as string) : { $lte: Infinity } })
+  const levels = await HRRLevel.find({ position: req.query.position ? parseInt(req.query.position as string) : { $lte: 50 } })
     .lean({ virtuals: true })
     .sort("position") 
     .select("-_id -__v -records");
@@ -226,19 +226,19 @@ app.get("/players", async (req, res) => {
   return res.status(200).json(players);
 });
 
-app.get("/players", async (req, res) => {
-  const players = await Player.find({ "points.comb": { $gt: 0 } })
-    .lean()
-    .sort("-points.comb")
-    .select("name points -_id");
-  return res.status(200).json(players);
-});
-
 app.get("/players/:name", async (req, res) => {
   Player.findOne({ name: req.params.name })
   .lean({virtuals: true})
   .populate({
     path: 'records',                   // First, populate the 'records' field
+    select: '-_id -id -__v -player -playerID',  // Exclude fields from 'records'
+    populate: {
+      path: 'levelID',                 // Then, populate the 'levelID' field inside each 'record'
+      select: 'position',              // Include only the 'position' field from 'Level'
+    }
+  })
+  .populate({
+    path: 'hrr_records',                   // First, populate the 'records' field
     select: '-_id -id -__v -player -playerID',  // Exclude fields from 'records'
     populate: {
       path: 'levelID',                 // Then, populate the 'levelID' field inside each 'record'
@@ -304,6 +304,35 @@ app.patch(
       return 200;
     }
     throw 400;
+  })
+);
+
+app.post(
+  "/records/hrr",
+  authed,
+  transaction(async (req, res, session) => {
+    if (
+      !(await Player.exists({ name: req.body.player as string })) ||
+      !(await HRRLevel.exists({ name: req.body.level as string }))
+    )
+      throw 404;
+    if (req.body.hertz === undefined || req.body.link === undefined) throw 400;
+    if (
+      await HRRRecord.exists({
+        player: req.body.player as string,
+        level: req.body.level as string,
+      })
+    )
+      throw 409;
+    const record = new HRRRecord({
+      player: req.body.player as string,
+      level: req.body.level as string,
+      hertz: req.body.hertz as number,
+      link: req.body.link as string,
+    });
+    record.$session(session);
+    await record.save();
+    return 201;
   })
 );
 
@@ -528,7 +557,7 @@ mongoose.connect(process.env.MONGODB_URI as string);
     console.error(error);
   }
 
-  app.listen(port, () => {
+  app.listen(port, '0.0.0.0', () => {
     console.log(`App listening at http://localhost:${port}`);
   });
 }

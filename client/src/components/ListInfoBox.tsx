@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { getLevel, APIOneLevel } from '../util/withApi'
+import { getLevel, getHRRLevel, APIOneLevel } from '../util/withApi'
 import Records from './Records'
 import { ScrollArea, ScrollAreaNoScroll } from '../primitives/scroll-area'
 import { Button } from 'react-bootstrap'
@@ -7,11 +7,12 @@ import { Tabs, TabsList, TabsTrigger } from '../primitives/tabs'
 
 interface InfoBoxProps {
   levelName: string,
+  hrr?: boolean,
   width: number,
   selectedState: Function
 }
 
-const ListInfoBox: React.FC<InfoBoxProps> = ({ levelName, width, selectedState }) => {
+const ListInfoBox: React.FC<InfoBoxProps> = ({ levelName, width, selectedState, hrr }) => {
   let [level, setLevel] = useState<APIOneLevel>(undefined)  
   let [view, setView] = useState<'lrr' | 'hrr' | 'comb'>('comb')
   let [w, setWidth] = useState(352)
@@ -22,7 +23,7 @@ function ref(element: HTMLDivElement | null) {
 
   useEffect(() => {
     document.body.style.overflow = "hidden"
-    levelName && getLevel(levelName).then((l) => setLevel(l))
+    levelName && (hrr ? getHRRLevel(levelName) : getLevel(levelName)).then((l) => setLevel(l))
   }, [levelName])
 
   function getYouTubeEmbedUrl(url: string) {
@@ -68,18 +69,19 @@ function getYouTubeVideoID(url: string) {
             </div>
             </div>
             <div className={`grid ${width < 1500 ? "place-items-center" : "place-items-start"} w-full -mt-12`} style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 400px)`}}>
-                <p className={`${width < 1500 ? "text-center" : "text-left"} text-2xl`}>Points: {level.points.toFixed(2)}</p>
+                {hrr ? "" : <p className={`${width < 1500 ? "text-center" : "text-left"} text-2xl`}>Points: {level.points.toFixed(2)}</p>}
               </div>
               <div className={`grid place-items-center w-full -mt-24`}  style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 400px)`}}>
               <Tabs defaultValue={view} className="w-[300px]" onValueChange={(val: 'lrr' | 'hrr' | 'comb') => setView(val)}>
-          <TabsList className="grid w-full grid-cols-3 -mb-9">
+          {!hrr ? <TabsList className="grid w-full grid-cols-3 -mb-9">
              <TabsTrigger className='data-[state=active]:bg-[#93fdc5]' value="lrr">LRR</TabsTrigger>
              <TabsTrigger className='data-[state=active]:bg-[#93fdc5]' value="comb">Combined</TabsTrigger>
              <TabsTrigger className='data-[state=active]:bg-[#93fdc5]' value="hrr">HRR</TabsTrigger>
-          </TabsList>
+          </TabsList> : ""}
         </Tabs>
               </div>
-            <div className={`grid ${width < 1500 ? "place-items-center" : "place-items-start"} bg-[#dbfeea] -mt-12`} style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 400px)`}}>
+
+            <div className={`grid ${width < 1500 ? "place-items-center" : "place-items-start"} bg-[#dbfeea] -mt-12`} style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 400px)`, marginTop: hrr ? "-128px" : "unset"}}>
               <p className="text-3xl text-center w-full font-bold py-6">• Records •</p>
               <Records rec={level.records.filter(e => view == "lrr" ? e.hertz <= 75 : view == "hrr" ? e.hertz > 75 : true)} refFunction={ref}/>
             </div>
