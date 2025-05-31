@@ -151,7 +151,7 @@ const recordSchema = new Schema<IRecord, RecordModel, IRecordMethods>(
             ["points.comb"]: Math.round(100 * (justOne === 1 ? -level?.points! : 0)) / 100,
           },
         }).session(session);
-        
+
         await this.deleteOne({ session: session });
       },
     },
@@ -227,7 +227,7 @@ const HRRrecordSchema = new Schema<IRecord, RecordModel, IRecordMethods>(
           //   ["points.comb"]: Math.round(100 * (justOne === 1 ? -level?.points! : 0)) / 100,
           // },
         }).session(session);
-        
+
         await this.deleteOne({ session: session });
       },
     },
@@ -262,7 +262,7 @@ const levelSchema = new Schema<ILevel, LevelModel, ILevelMethods>(
   {
     name: { type: String, required: true },
     creator: { type: String, required: true },
-    urlHash: {type: String},
+    urlHash: { type: String },
     position: { type: Number, required: true },
     records: [{ type: Schema.Types.ObjectId, ref: "Record" }],
   },
@@ -347,7 +347,7 @@ const HRRlevelSchema = new Schema<ILevel, LevelModel, ILevelMethods>(
   {
     name: { type: String, required: true },
     creator: { type: String, required: true },
-    urlHash: {type: String},
+    urlHash: { type: String },
     position: { type: Number, required: true },
     records: [{ type: Schema.Types.ObjectId, ref: "HRR_Record" }],
   },
@@ -486,10 +486,10 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
         let objs = await this.aggregate([
           {
             '$lookup': {
-              'from': 'records', 
+              'from': 'records',
               'let': {
                 'records': '$records'
-              }, 
+              },
               'pipeline': [
                 {
                   '$match': {
@@ -501,20 +501,20 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                   }
                 }, {
                   '$project': {
-                    '_id': '$levelID', 
-                    'id': '$_id', 
+                    '_id': '$levelID',
+                    'id': '$_id',
                     'hertz': '$hertz'
                   }
                 }
-              ], 
+              ],
               'as': 'temp'
             }
           }, {
             '$lookup': {
-              'from': 'levels', 
+              'from': 'levels',
               'let': {
                 'records': '$temp'
-              }, 
+              },
               'pipeline': [
                 {
                   '$match': {
@@ -522,7 +522,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                       '$in': [
                         '$_id', {
                           '$map': {
-                            'input': '$$records', 
+                            'input': '$$records',
                             'in': '$$this._id'
                           }
                         }
@@ -532,10 +532,14 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                 }, {
                   '$project': {
                     'points': {
-                      '$cond' : {
-                        'if': {'$gt': ['$position', 100]},
+                      '$cond': {
+                        'if': {
+                          '$gt': [
+                            '$position', 100
+                          ]
+                        },
                         'then': 0,
-                        'else':  {
+                        'else': {
                           '$subtract': [
                             {
                               '$divide': [
@@ -556,24 +560,24 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                     }
                   }
                 }
-              ], 
+              ],
               'as': 'temp2'
             }
           }, {
             '$project': {
-              'name': 1, 
-              'discord': 1, 
+              'name': 1,
+              'discord': 1,
               'records': {
                 '$map': {
-                  'input': '$temp', 
+                  'input': '$temp',
                   'in': {
-                    '_id': '$$this.id', 
+                    '_id': '$$this.id',
                     'level': {
                       '$arrayElemAt': [
                         {
                           '$filter': {
-                            'input': '$temp2', 
-                            'as': 'this2', 
+                            'input': '$temp2',
+                            'as': 'this2',
                             'cond': {
                               '$eq': [
                                 '$$this2._id', '$$this._id'
@@ -585,59 +589,108 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                     }
                   }
                 }
-              }, 
+              },
               'lrr': {
                 '$filter': {
-                  'input': '$temp2', 
+                  'input': '$temp2',
                   'cond': {
                     '$in': [
                       '$$this._id', {
                         '$map': {
                           'input': {
                             '$filter': {
-                              'input': '$temp', 
-                              'as': 'this2', 
+                              'input': '$temp',
+                              'as': 'this2',
                               'cond': {
-                                '$or': [
-                                  {
-                                    "$lte": [{"$toInt": {"$arrayElemAt": [{"$split": ["$$this2.hertz", "/"]}, -1]}}, 60]
+                                '$cond': {
+                                  'if': {
+                                    '$eq': [
+                                      {
+                                        '$arrayElemAt': [
+                                          {
+                                            '$split': [
+                                              '$$this2.hertz', '/'
+                                            ]
+                                          }, -1
+                                        ]
+                                      }, 'CBF'
+                                    ]
+                                  },
+                                  'then': false,
+                                  'else': {
+                                    '$lte': [
+                                      {
+                                        '$toInt': {
+                                          '$arrayElemAt': [
+                                            {
+                                              '$split': [
+                                                '$$this2.hertz', '/'
+                                              ]
+                                            }, -1
+                                          ]
+                                        }
+                                      }, 60
+                                    ]
                                   }
-                                ]
+                                }
                               }
                             }
-                          }, 
-                          'as': 'this3', 
+                          },
+                          'as': 'this3',
                           'in': '$$this3._id'
                         }
                       }
                     ]
                   }
                 }
-              }, 
+              },
               'hrr': {
                 '$filter': {
-                  'input': '$temp2', 
+                  'input': '$temp2',
                   'cond': {
                     '$in': [
                       '$$this._id', {
                         '$map': {
                           'input': {
                             '$filter': {
-                              'input': '$temp', 
-                              'as': 'this2', 
+                              'input': '$temp',
+                              'as': 'this2',
                               'cond': {
-                                '$or': [
-                                  {
-                                    "$eq": [{"$arrayElemAt": [{"$split": ["$$this2.hertz", "/"]}, -1]}, "CBF"]
+                                '$cond': {
+                                  'if': {
+                                    '$eq': [
+                                      {
+                                        '$arrayElemAt': [
+                                          {
+                                            '$split': [
+                                              '$$this2.hertz', '/'
+                                            ]
+                                          }, -1
+                                        ]
+                                      }, 'CBF'
+                                    ]
                                   },
-                                  {
-                                    "$gt": [{"$toInt": {"$arrayElemAt": [{"$split": ["$$this2.hertz", "/"]}, -1]}}, 60]
+                                  'then': true,
+                                  'else': {
+                                    '$gt': [
+                                      {
+                                        '$toInt': {
+                                          '$arrayElemAt': [
+                                            {
+                                              '$split': [
+                                                '$$this2.hertz', '/'
+                                              ]
+                                            }, -1
+                                          ]
+                                        }
+                                      }, 60
+                                    ]
                                   }
-                                ]
+                                }
                               }
                             }
-                          }, 
-                          'as': 'this3', 
+                          },
+                          'as': 'this3',
                           'in': '$$this3._id'
                         }
                       }
@@ -648,32 +701,32 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             }
           }, {
             '$project': {
-              'name': 1, 
-              'discord': 1, 
+              'name': 1,
+              'discord': 1,
               'records': {
                 '$sortArray': {
-                  'input': '$records', 
+                  'input': '$records',
                   'sortBy': {
                     'level.points': -1
                   }
                 }
-              }, 
+              },
               'points': {
                 'lrr': {
                   '$reduce': {
-                    'input': '$lrr', 
-                    'initialValue': 0, 
+                    'input': '$lrr',
+                    'initialValue': 0,
                     'in': {
                       '$add': [
                         '$$value', '$$this.points'
                       ]
                     }
                   }
-                }, 
+                },
                 'hrr': {
                   '$reduce': {
-                    'input': '$hrr', 
-                    'initialValue': 0, 
+                    'input': '$hrr',
+                    'initialValue': 0,
                     'in': {
                       '$add': [
                         '$$value', '$$this.points'
@@ -685,25 +738,25 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             }
           }, {
             '$project': {
-              'name': 1, 
-              'discord': 1, 
+              'name': 1,
+              'discord': 1,
               'records': {
                 '$map': {
-                  'input': '$records', 
+                  'input': '$records',
                   'in': '$$this._id'
                 }
-              }, 
+              },
               'points': {
                 'lrr': {
                   '$round': [
                     '$points.lrr', 2
                   ]
-                }, 
+                },
                 'hrr': {
                   '$round': [
                     '$points.hrr', 2
                   ]
-                }, 
+                },
                 'comb': {
                   '$round': [
                     {
@@ -716,9 +769,9 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
               }
             }
           }
-        ], {session})
-        await this.deleteMany({}, {session})
-        await this.insertMany(objs, {session})
+        ], { session })
+        await this.deleteMany({}, { session })
+        await this.insertMany(objs, { session })
       },
     },
     methods: {
@@ -738,16 +791,16 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
       async updatePoints(session: ClientSession) {
         let obj = await model("Records").aggregate([
           {
-              '$match': {
-                '_id': this._id
-              }
+            '$match': {
+              '_id': this._id
+            }
           },
           {
             '$lookup': {
-              'from': 'records', 
+              'from': 'records',
               'let': {
                 'records': '$records'
-              }, 
+              },
               'pipeline': [
                 {
                   '$match': {
@@ -759,20 +812,20 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                   }
                 }, {
                   '$project': {
-                    '_id': '$levelID', 
-                    'id': '$_id', 
+                    '_id': '$levelID',
+                    'id': '$_id',
                     'hertz': '$hertz'
                   }
                 }
-              ], 
+              ],
               'as': 'temp'
             }
           }, {
             '$lookup': {
-              'from': 'levels', 
+              'from': 'levels',
               'let': {
                 'records': '$temp'
-              }, 
+              },
               'pipeline': [
                 {
                   '$match': {
@@ -780,7 +833,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                       '$in': [
                         '$_id', {
                           '$map': {
-                            'input': '$$records', 
+                            'input': '$$records',
                             'in': '$$this._id'
                           }
                         }
@@ -789,11 +842,11 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                   }
                 }, {
                   '$project': {
-                    'points':  {
-                      '$cond' : {
-                        'if': {'$gt': ['$position', 100]},
+                    'points': {
+                      '$cond': {
+                        'if': { '$gt': ['$position', 100] },
                         'then': 0,
-                        'else':  {
+                        'else': {
                           '$subtract': [
                             {
                               '$divide': [
@@ -814,24 +867,24 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                     }
                   }
                 }
-              ], 
+              ],
               'as': 'temp2'
             }
           }, {
             '$project': {
-              'name': 1, 
-              'discord': 1, 
+              'name': 1,
+              'discord': 1,
               'records': {
                 '$map': {
-                  'input': '$temp', 
+                  'input': '$temp',
                   'in': {
-                    '_id': '$$this.id', 
+                    '_id': '$$this.id',
                     'level': {
                       '$arrayElemAt': [
                         {
                           '$filter': {
-                            'input': '$temp2', 
-                            'as': 'this2', 
+                            'input': '$temp2',
+                            'as': 'this2',
                             'cond': {
                               '$eq': [
                                 '$$this2._id', '$$this._id'
@@ -843,59 +896,108 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                     }
                   }
                 }
-              }, 
+              },
               'lrr': {
                 '$filter': {
-                  'input': '$temp2', 
+                  'input': '$temp2',
                   'cond': {
                     '$in': [
                       '$$this._id', {
                         '$map': {
                           'input': {
                             '$filter': {
-                              'input': '$temp', 
-                              'as': 'this2', 
+                              'input': '$temp',
+                              'as': 'this2',
                               'cond': {
-                                '$or': [
-                                  {
-                                    "$lte": [{"$toInt": {"$arrayElemAt": [{"$split": ["$$this2.hertz", "/"]}, -1]}}, 60]
+                                '$cond': {
+                                  'if': {
+                                    '$eq': [
+                                      {
+                                        '$arrayElemAt': [
+                                          {
+                                            '$split': [
+                                              '$$this2.hertz', '/'
+                                            ]
+                                          }, -1
+                                        ]
+                                      }, 'CBF'
+                                    ]
+                                  },
+                                  'then': false,
+                                  'else': {
+                                    '$lte': [
+                                      {
+                                        '$toInt': {
+                                          '$arrayElemAt': [
+                                            {
+                                              '$split': [
+                                                '$$this2.hertz', '/'
+                                              ]
+                                            }, -1
+                                          ]
+                                        }
+                                      }, 60
+                                    ]
                                   }
-                                ]
+                                }
                               }
                             }
-                          }, 
-                          'as': 'this3', 
+                          },
+                          'as': 'this3',
                           'in': '$$this3._id'
                         }
                       }
                     ]
                   }
                 }
-              }, 
+              },
               'hrr': {
                 '$filter': {
-                  'input': '$temp2', 
+                  'input': '$temp2',
                   'cond': {
                     '$in': [
                       '$$this._id', {
                         '$map': {
                           'input': {
                             '$filter': {
-                              'input': '$temp', 
-                              'as': 'this2', 
+                              'input': '$temp',
+                              'as': 'this2',
                               'cond': {
-                                '$or': [
-                                  {
-                                    "$eq": [{"$arrayElemAt": [{"$split": ["$$this2.hertz", "/"]}, -1]}, "CBF"]
+                                '$cond': {
+                                  'if': {
+                                    '$eq': [
+                                      {
+                                        '$arrayElemAt': [
+                                          {
+                                            '$split': [
+                                              '$$this2.hertz', '/'
+                                            ]
+                                          }, -1
+                                        ]
+                                      }, 'CBF'
+                                    ]
                                   },
-                                  {
-                                    "$gt": [{"$toInt": {"$arrayElemAt": [{"$split": ["$$this2.hertz", "/"]}, -1]}}, 60]
+                                  'then': true,
+                                  'else': {
+                                    '$gt': [
+                                      {
+                                        '$toInt': {
+                                          '$arrayElemAt': [
+                                            {
+                                              '$split': [
+                                                '$$this2.hertz', '/'
+                                              ]
+                                            }, -1
+                                          ]
+                                        }
+                                      }, 60
+                                    ]
                                   }
-                                ]
+                                }
                               }
                             }
-                          }, 
-                          'as': 'this3', 
+                          },
+                          'as': 'this3',
                           'in': '$$this3._id'
                         }
                       }
@@ -906,32 +1008,32 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             }
           }, {
             '$project': {
-              'name': 1, 
-              'discord': 1, 
+              'name': 1,
+              'discord': 1,
               'records': {
                 '$sortArray': {
-                  'input': '$records', 
+                  'input': '$records',
                   'sortBy': {
                     'level.points': -1
                   }
                 }
-              }, 
+              },
               'points': {
                 'lrr': {
                   '$reduce': {
-                    'input': '$lrr', 
-                    'initialValue': 0, 
+                    'input': '$lrr',
+                    'initialValue': 0,
                     'in': {
                       '$add': [
                         '$$value', '$$this.points'
                       ]
                     }
                   }
-                }, 
+                },
                 'hrr': {
                   '$reduce': {
-                    'input': '$hrr', 
-                    'initialValue': 0, 
+                    'input': '$hrr',
+                    'initialValue': 0,
                     'in': {
                       '$add': [
                         '$$value', '$$this.points'
@@ -943,25 +1045,25 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             }
           }, {
             '$project': {
-              'name': 1, 
-              'discord': 1, 
+              'name': 1,
+              'discord': 1,
               'records': {
                 '$map': {
-                  'input': '$records', 
+                  'input': '$records',
                   'in': '$$this._id'
                 }
-              }, 
+              },
               'points': {
                 'lrr': {
                   '$round': [
                     '$points.lrr', 2
                   ]
-                }, 
+                },
                 'hrr': {
                   '$round': [
                     '$points.hrr', 2
                   ]
-                }, 
+                },
                 'comb': {
                   '$round': [
                     {
@@ -974,8 +1076,8 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
               }
             }
           }
-        ], {session})
-        let {lrr, hrr, comb} = obj[0]
+        ], { session })
+        let { lrr, hrr, comb } = obj[0]
         this.points = { lrr, hrr, comb };
         this.$session(session);
         await this.save();
