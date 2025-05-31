@@ -1,5 +1,5 @@
 interface APIRecordBase {
-  hertz: number
+  hertz: string
   link: string
   id?: any
 }

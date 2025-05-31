@@ -65,7 +65,7 @@ function getYouTubeVideoID(url: string) {
             <hr className='h-5'  style={{width: "min(384px, 100%)"}}/>
             <div className={`grid h-[120%] -mt-14 ${width < 1500 ? "justify-items-center place-items-center" : "justify-items-start place-items-start"}`} style={{width: "-webkit-fill-available", height: "100%"}}>
               <div className='shadow-black rounded-[30px]' style={{backgroundImage: "url('/frame.png')", backgroundSize: "cover", width: `${w}px`, aspectRatio: 581 / 340}}>
-            <iframe className='border-black rounded-[30px]' style={{width: `calc(100% - (100% * 13 / 340))`, aspectRatio: 16 / 9, marginTop: "calc(100% * 7 / 340)", marginLeft: "calc(100% * 11 / 581)"}} src={getYouTubeEmbedUrl(level.records.filter(e => view == "lrr" ? e.hertz <= 75 : view == "hrr" ? e.hertz > 75 : true)[0]?.link || "")} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+            <iframe className='border-black rounded-[30px]' style={{width: `calc(100% - (100% * 13 / 340))`, aspectRatio: 16 / 9, marginTop: "calc(100% * 7 / 340)", marginLeft: "calc(100% * 11 / 581)"}} src={getYouTubeEmbedUrl(level.records.filter(e => view == "lrr" ? parseInt(e.hertz.split("/").at(-1)) <= 75 : view == "hrr" ? parseInt(e.hertz.split("/").at(-1)) > 75 || e.hertz.split("/").at(-1) == "CBF" : true)[0]?.link || "")} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
             </div>
             </div>
             <div className={`grid ${width < 1500 ? "place-items-center" : "place-items-start"} w-full -mt-12`} style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 400px)`}}>
@@ -83,7 +83,7 @@ function getYouTubeVideoID(url: string) {
 
             <div className={`grid ${width < 1500 ? "place-items-center" : "place-items-start"} bg-[#dbfeea] -mt-12`} style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 400px)`, marginTop: hrr ? "-128px" : "unset"}}>
               <p className="text-3xl text-center w-full font-bold py-6">• Records •</p>
-              <Records rec={level.records.filter(e => view == "lrr" ? e.hertz <= 75 : view == "hrr" ? e.hertz > 75 : true)} refFunction={ref}/>
+              <Records rec={level.records.filter(e => view == "lrr" ? parseInt(e.hertz.split("/").at(-1)) <= 75 : view == "hrr" ? parseInt(e.hertz.split("/").at(-1)) > 75 || e.hertz.split("/").at(-1) == "CBF" : true)} refFunction={ref}/>
             </div>
           </div>
         </ScrollAreaNoScroll>

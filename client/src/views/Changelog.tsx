@@ -3,6 +3,18 @@ import ChangelogBox, { ChangelogBoxTypes } from '../components/ChangelogBox'
 
 let changelog: ChangelogBoxTypes[] = [
     {
+        title: "",
+        date: "",
+        ruleChanges: [],
+        levelPlacements: [],
+        placementAdjustments: [],
+        knockedOffLevels: [],
+        playerNews: [],
+        websiteChanges: [],
+        other: [],
+        extra: <></>
+    },
+    {
         title: "The Final Overdue Update",
         date: "8/6/2023",
         ruleChanges: [

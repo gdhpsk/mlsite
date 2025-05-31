@@ -11,14 +11,22 @@ export interface ChangelogBoxTypes {
   levelPlacements: Array<JSX.Element>,
   placementAdjustments: Array<JSX.Element>,
   knockedOffLevels: Array<JSX.Element>,
+  websiteChanges?: Array<JSX.Element>,
+  playerNews?: Array<JSX.Element>
   other: Array<JSX.Element>
   extra: JSX.Element
 }
 
-const ChangelogBox: React.FC<ChangelogBoxTypes> = ({ title, date, ruleChanges, levelPlacements, placementAdjustments, knockedOffLevels, other, extra }) => {
+const ChangelogBox: React.FC<ChangelogBoxTypes> = ({ title, date, ruleChanges, levelPlacements, placementAdjustments, knockedOffLevels, other, extra, websiteChanges, playerNews }) => {
   return (
     <div className={`rounded-box flex w-4/5 flex-col overflow-y-auto bg-white p-4 py-12 shadow-inner`}  style={{width: "-webkit-fill-available"}}>
       <h1 className="font-extrabold text-xl">({date}){title ?  `- ${title}` : ""}</h1>
+      {websiteChanges ? <>
+    <br></br>
+        <h1 className="font-extrabold text-xl">Website Changes</h1>
+        {websiteChanges.map(e => <><br></br>- {e}</>)}
+        <br></br>
+    </> : ""}
     {ruleChanges.length ? <>
     <br></br>
         <h1 className="font-extrabold text-xl">Rule Changes</h1>
@@ -41,6 +49,12 @@ const ChangelogBox: React.FC<ChangelogBoxTypes> = ({ title, date, ruleChanges, l
     <br></br>
         <h1 className="font-extrabold text-xl">Level Removals</h1>
         {knockedOffLevels.map(e => <><br></br>- {e}</>)}
+        <br></br>
+    </> : ""}
+    {playerNews ? <>
+    <br></br>
+        <h1 className="font-extrabold text-xl">Player News</h1>
+        {playerNews.map(e => <><br></br>- {e}</>)}
         <br></br>
     </> : ""}
     {other.length ? <>

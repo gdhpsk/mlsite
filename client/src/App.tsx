@@ -61,9 +61,9 @@ useEffect(() => {
           main={{
             about: '/about',
             levels: '/',
+            hrrlevels: "/hrr",
             legacy: "/legacy",
             leaderboard: '/leaderboard',
-            hrrlevels: "/hrr",
             submit: "/submit"
           }}
           additional={{

@@ -64,9 +64,9 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
                   .filter((record) => {
                     switch (view) {
                       case 'lrr':
-                        return record.hertz <= 60
+                        return parseInt(record.hertz.split("/").at(-1)) <= 60
                       case 'hrr':
-                        return record.hertz > 60
+                        return parseInt(record.hertz.split("/").at(-1)) > 60 || record.hertz.split("/").at(-1) == "CBF"
                       case 'comb':
                         return true
                     }
@@ -76,9 +76,9 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
                   .filter((record) => {
                     switch (view) {
                       case 'lrr':
-                        return record.hertz <= 60
+                        return parseInt(record.hertz.split("/").at(-1)) <= 60
                       case 'hrr':
-                        return record.hertz > 60
+                        return parseInt(record.hertz.split("/").at(-1)) > 60 || record.hertz.split("/").at(-1) == "CBF"
                       case 'comb':
                         return true
                     }

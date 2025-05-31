@@ -11,7 +11,7 @@ import { mongooseLeanVirtuals } from "mongoose-lean-virtuals";
 interface IRecord {
   player: string;
   level: string;
-  hertz: number;
+  hertz: string;
   link: string;
   playerID?: Types.ObjectId;
   levelID?: Types.ObjectId;
@@ -110,7 +110,7 @@ const recordSchema = new Schema<IRecord, RecordModel, IRecordMethods>(
   {
     player: { type: String, required: true },
     level: { type: String, required: true },
-    hertz: { type: Number, required: true },
+    hertz: { type: String, required: true },
     link: { type: String, required: true },
     playerID: { type: Schema.Types.ObjectId, ref: "Player" },
     levelID: { type: Schema.Types.ObjectId, ref: "Level" },
@@ -171,7 +171,7 @@ recordSchema.pre("save", async function () {
     {
       $addToSet: { records: this._id },
       $inc: {
-        [`points.${this.hertz <= 60 ? "lrr" : "hrr"}`]: level.points!,
+        [`points.${parseInt(this.hertz.split("/").at(-1) as string) <= 60 || this.hertz.split("/").at(-1) as string == "CBF" ? "lrr" : "hrr"}`]: level.points!,
         ["points.comb"]: level.points!,
       },
     },
@@ -186,7 +186,7 @@ const HRRrecordSchema = new Schema<IRecord, RecordModel, IRecordMethods>(
   {
     player: { type: String, required: true },
     level: { type: String, required: true },
-    hertz: { type: Number, required: true },
+    hertz: { type: String, required: true },
     link: { type: String, required: true },
     playerID: { type: Schema.Types.ObjectId, ref: "Player" },
     levelID: { type: Schema.Types.ObjectId, ref: "HRR_Level" },
@@ -454,9 +454,9 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
     virtuals: {
       hertz: {
         get() {
-          let rrs: { [rr: number]: number } = {};
+          let rrs: { [rr: string]: number } = {};
           for (const r of this.records as RecordDocument[]) {
-            rrs[r.hertz] = (rrs[r.hertz] || 0) + 1;
+            rrs[r.hertz.split("/").at(-1) as string] = (rrs[r.hertz.split("/").at(-1) as string] || 0) + 1;
           }
           return rrs;
         },
@@ -598,8 +598,10 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                               'input': '$temp', 
                               'as': 'this2', 
                               'cond': {
-                                '$lte': [
-                                  '$$this2.hertz', 60
+                                '$or': [
+                                  {
+                                    "$lte": [{"$toInt": {"$arrayElemAt": [{"$split": ["$$this2.hertz", "/"]}, -1]}}, 60]
+                                  }
                                 ]
                               }
                             }
@@ -624,8 +626,13 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                               'input': '$temp', 
                               'as': 'this2', 
                               'cond': {
-                                '$gt': [
-                                  '$$this2.hertz', 60
+                                '$or': [
+                                  {
+                                    "$eq": [{"$arrayElemAt": [{"$split": ["$$this2.hertz", "/"]}, -1]}, "CBF"]
+                                  },
+                                  {
+                                    "$gt": [{"$toInt": {"$arrayElemAt": [{"$split": ["$$this2.hertz", "/"]}, -1]}}, 60]
+                                  }
                                 ]
                               }
                             }
@@ -849,8 +856,10 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                               'input': '$temp', 
                               'as': 'this2', 
                               'cond': {
-                                '$lte': [
-                                  '$$this2.hertz', 60
+                                '$or': [
+                                  {
+                                    "$lte": [{"$toInt": {"$arrayElemAt": [{"$split": ["$$this2.hertz", "/"]}, -1]}}, 60]
+                                  }
                                 ]
                               }
                             }
@@ -875,8 +884,13 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                               'input': '$temp', 
                               'as': 'this2', 
                               'cond': {
-                                '$gt': [
-                                  '$$this2.hertz', 60
+                                '$or': [
+                                  {
+                                    "$eq": [{"$arrayElemAt": [{"$split": ["$$this2.hertz", "/"]}, -1]}, "CBF"]
+                                  },
+                                  {
+                                    "$gt": [{"$toInt": {"$arrayElemAt": [{"$split": ["$$this2.hertz", "/"]}, -1]}}, 60]
+                                  }
                                 ]
                               }
                             }

@@ -5,7 +5,7 @@ import { ScrollArea } from '../primitives/scroll-area'
 import { cn } from '../util/reusables'
 
 interface Record {
-  hertz: number
+  hertz: string
   link: string
   player?: string
   level?: string
@@ -33,7 +33,7 @@ if(rec?.[0]?.level) {
     <Table>
       <TableBody>
         {rec.filter(e => e.levelID ? e.levelID.position < 101 : true).map((r, i) => (
-          <TableRow key={`record-${i}`} style={{backgroundColor: i % 2 ? "whitesmoke" : "lightgray"}} className={cn('text-lg', r.hertz === 60 && 'font-semibold')}>
+          <TableRow key={`record-${i}`} style={{backgroundColor: i % 2 ? "whitesmoke" : "lightgray"}} className={cn('text-lg', r.hertz.split("/").at(-1) == "60" && 'font-semibold')}>
             <TableCell>{r.level ? r.levelID.position : i+1}. {r.player ? <a href={`/#/leaderboard?player=${r.player}`}>{r.player}</a> : <a href={`/#/${hrr ? "hrr" : ""}?level=${r.level}`}>{r.level}</a>}</TableCell>
             <TableCell style={{width: "20px"}}>{r.hertz}</TableCell>
             <TableCell className='grid place-items-center'>
