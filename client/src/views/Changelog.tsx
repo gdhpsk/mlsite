@@ -57,7 +57,7 @@ let changelog: ChangelogBoxTypes[] = [
 <p>- Cappyt</p>
             </div>
         </div>
-    },
+    }, 
     {
         title: "The Last Update",
         date: "10/30/2024",
