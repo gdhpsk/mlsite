@@ -3,16 +3,105 @@ import ChangelogBox, { ChangelogBoxTypes } from '../components/ChangelogBox'
 
 let changelog: ChangelogBoxTypes[] = [
     {
-        title: "",
-        date: "",
+        title: "The First Update",
+        date: "10/30/2024",
         ruleChanges: [],
         levelPlacements: [],
         placementAdjustments: [],
         knockedOffLevels: [],
         playerNews: [],
-        websiteChanges: [],
+        websiteChanges: [
+            <>After 3 years of work, we finally have a proper website!</>,
+            <>Level previews in the scroll section</>,
+            <>Level name and position searches</>,
+            <>Watchable first victor of levels, can be sorted by refresh rate</>,
+            <>All 326 levels now visible through legacy list!</>,
+            <>Leaderboards also sortable by refresh rate</>,
+            <>Proper player profiles, more to come...</>,
+            <>Integrated submission system for records (we'll still check the google form)</>,
+            <>FAQ on our guidelines (no secrets involved :trol:)</>,
+            <>List roulette with fully customisable range</>,
+            <>New mobile NLW page</>,
+            <>And much more coming soon...</>
+        ],
         other: [],
-        extra: <></>
+        extra: <div>
+            <h1 className='font-extrabold text-xl'>
+                Upcoming Changes
+            </h1>
+            <div>
+                <br></br>
+            <p>- Full legacy support</p>
+<p>- List packs point system</p>
+<p>- Player login page</p>
+<p>- Player pfps!</p>
+<p>- More HRR support</p>
+<p>- List% for Top 50 levels</p>
+<br></br>
+            </div>
+            <h1 className='font-extrabold text-xl'>
+                Special Messages from the Leaders
+            </h1>
+            <div>
+            <br></br>
+            <p>Thanks guys lol</p>
+<br></br>
+<p>- MiniWheatDuo</p>
+<br></br>
+<p>The Mobile List has been such a special part of my life and has felt insane to be a part of. Today marks the day that 5 years of an "idea" is now real. Words can't describe what this means to me and everyone else who has worked on this site. It doesn't even feel real. To leave the old site behind makes me sad, but this new beginning is exactly what us mobile players needed. I hope for a bright future for mobile players 🥂</p>
+<br></br>
+<p>- Coopersuper8</p>
+<br></br>
+<p>Having started much later than other players, I was surprised by the sheer skill the top players had, as well as the dedication of the list staff to manage a list like this. After joining the team, the fact that most of the work was handled entirely manually by staff was just incredible. This list really is a passion project for the mobile community, and I hope with a new website that we'll continue to inspire new generations of mobile players!</p>
+<br></br>
+<p>- Cappyt</p>
+            </div>
+        </div>
+    },
+    {
+        title: "The Last Update",
+        date: "10/30/2024",
+        ruleChanges: [],
+        levelPlacements: [
+            <>"Crimson Planet" was placed at #1, dethroning Yata's long reign at the top of the list...</>,
+            <>"Ourwa" was placed at #16, timmydog is a menace</>,
+            <>"Shmarley Ville" was placed at #17, :fear:</>,
+            <>"Sides Of My Mind" was placed at #19, a new hardest 2p level on the list</>,
+            <>"Spirit House" was placed at #22, Hydrus has done it again</>,
+            <>"Ethereal Artifice" was placed at #28, I had a double take looking at that number</>,
+            <>"ConFusion" was placed at #32, can't wait for the rest of the Con series</>,
+            <>"Nightshade" was placed at #34, Oblivion next? :mstroll:</>,
+            <>"Retention Rush" was placed at #53, a lot of newcomers making very respectable additions</>,
+            <>"lovel" was placed at #56, I...didn't know this level existed</>,
+            <>"Edelweiss" was placed at #67, this list is getting a little hard...</>,
+            <>"The Sulphur Sea" was placed at #70, I really liked this deco for some reason</>,
+            <>"DARKENED" was placed at #73, I <strong className='contents'>really</strong> thought this level was higher</>,
+            <>"MadMansion" was placed at #84, Amp has finally been vindicated :GG:</>,
+            <>"Shinigami" was placed at #90, sorry Chosbar for taking so long</>,
+            <>"Voltaic", "ZOOOOOOOOOOOOOOOOOOM" and "maddening" were list worthy when completed, but after later additions they were pushed into legacy (#109, #110, #111)</>
+        ],
+        placementAdjustments: [
+            <>"Artificial Ascent" is near-identical to SuSan difficulty, so we fixed that (20 {"->"} 21)</>,
+            <>"Blade of Justice" has been swapped with "SubSonic" to be on top (40 {"<->"} 41)</>,
+            <>"Disentombed" finally got lowered for the nerfdate (65 {"->"} 93)</>,
+            <>"Apollo 11" was saved from extinction, thanks Hydrus (88 {"->"} 95)</>,
+            <>"Under Lavaland" makes a clutch return, I had hoped it would stay dead (112 {"->"} 96)</>,
+            <>"Mystic" gets raised to Deflective's spot (93 {"->"} 104)</>,
+            <>"Deflective" gets lowered to Mystic's spot (86 {"->"} 112)</>
+        ],
+        knockedOffLevels: [
+            <>Oh boy here we go</>,
+            <>lodin da fish washer (unloding from list), Worse Trip (based mashup), Ecstasy (MY EYES), Mystic (divine demon), EnvY (Nintenfox demon), Fabricated Thoughts (man), Faded Dream (DreamTide keeps cooking), Prismatic Haze (half our player base loses their points), Voltaic (whoops), ZOOOOOOOOOOOOOOOOOOM (whoops again), maddening (whoopsies), Deflective (the -flective series was cool idc), The Hell World (WHAT), The Hell Origin (THE), The Hell Zone (FUCK), OPSM1 (think Hilo beat this?), Betrayal of Fate (RIP Rei...), Volume (level's been here before I was wtf), and Boogie (long af nivel) were slain in batle, we shall see them all in Valhalla (legacy)...</>
+        ],
+        other: [
+            <>Coheton and Karthik are now list mods (technically they've been for some time but eh)</>,
+        ],
+        extra: <div>
+          I'd like to thank Cooper and Bipolar for digging for opinions amongst other things, don't miss the video!
+<br></br>
+<br></br>
+- Cappyt
+        </div>
     },
     {
         title: "The Final Overdue Update",
@@ -1824,6 +1913,8 @@ useEffect(() => {
         levelPlacements={e.levelPlacements}
         placementAdjustments={e.placementAdjustments}
         knockedOffLevels={e.knockedOffLevels}
+        websiteChanges={e.websiteChanges}
+        playerNews={e.playerNews}
         other={e.other}
         extra={e.extra}
       /><br></br></>)}

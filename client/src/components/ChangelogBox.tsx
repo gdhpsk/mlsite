@@ -18,10 +18,11 @@ export interface ChangelogBoxTypes {
 }
 
 const ChangelogBox: React.FC<ChangelogBoxTypes> = ({ title, date, ruleChanges, levelPlacements, placementAdjustments, knockedOffLevels, other, extra, websiteChanges, playerNews }) => {
+
   return (
     <div className={`rounded-box flex w-4/5 flex-col overflow-y-auto bg-white p-4 py-12 shadow-inner`}  style={{width: "-webkit-fill-available"}}>
       <h1 className="font-extrabold text-xl">({date}){title ?  `- ${title}` : ""}</h1>
-      {websiteChanges ? <>
+      {websiteChanges?.length ? <>
     <br></br>
         <h1 className="font-extrabold text-xl">Website Changes</h1>
         {websiteChanges.map(e => <><br></br>- {e}</>)}
@@ -41,7 +42,7 @@ const ChangelogBox: React.FC<ChangelogBoxTypes> = ({ title, date, ruleChanges, l
     </> : ""}
     {placementAdjustments.length ? <>
     <br></br>
-        <h1 className="font-extrabold text-xl">Placement Adjustments</h1>
+        <h1 className="font-extrabold text-xl">Level Movements</h1>
         {placementAdjustments.map(e => <><br></br>- {e}</>)}
         <br></br>
     </> : ""}
@@ -51,7 +52,7 @@ const ChangelogBox: React.FC<ChangelogBoxTypes> = ({ title, date, ruleChanges, l
         {knockedOffLevels.map(e => <><br></br>- {e}</>)}
         <br></br>
     </> : ""}
-    {playerNews ? <>
+    {playerNews?.length ? <>
     <br></br>
         <h1 className="font-extrabold text-xl">Player News</h1>
         {playerNews.map(e => <><br></br>- {e}</>)}
