@@ -119,7 +119,7 @@ app.get("/levels", async (req, res) => {
 });
 
 app.get("/levels/hrr", async (req, res) => {
-  const levels = await HRRLevel.find({ position: req.query.position ? parseInt(req.query.position as string) : { $lte: 50 } })
+  const levels = await HRRLevel.find({ position: req.query.position ? parseInt(req.query.position as string) : { $lte: 100 } })
     .lean({ virtuals: true })
     .sort("position") 
     .select("-_id -__v -records");
@@ -226,6 +226,14 @@ app.get("/players", async (req, res) => {
   return res.status(200).json(players);
 });
 
+app.get("/players/legacy", async (req, res) => {
+  const players = await Player.find({ "points.comb": { $eq: 0 }, hrr_records: {$eq: []} })
+    .lean()
+    .sort("-points.comb")
+    .select("name points -_id");
+  return res.status(200).json(players);
+});
+
 app.get("/players/:name", async (req, res) => {
   Player.findOne({ name: req.params.name })
   .lean({virtuals: true})
@@ -234,7 +242,7 @@ app.get("/players/:name", async (req, res) => {
     select: '-_id -id -__v -player -playerID',  // Exclude fields from 'records'
     populate: {
       path: 'levelID',                 // Then, populate the 'levelID' field inside each 'record'
-      select: 'position',              // Include only the 'position' field from 'Level'
+      select: 'position listpercent',              // Include only the 'position' field from 'Level'
     }
   })
   .populate({

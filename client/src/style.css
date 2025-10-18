@@ -200,3 +200,13 @@
   cursor: pointer;
   border-radius: 50%;
 }
+
+.legacy-popup {
+  border-radius: 16px;
+}
+
+.legacy-container {
+  margin-left: -10px;
+  margin-right: -10px;
+  margin-bottom: -5px;
+}

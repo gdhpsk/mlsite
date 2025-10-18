@@ -15,6 +15,7 @@ interface IRecord {
   link: string;
   playerID?: Types.ObjectId;
   levelID?: Types.ObjectId;
+  percent: number
 }
 
 interface IRecordMethods {
@@ -42,6 +43,7 @@ interface ILevel {
   creator: string;
   urlHash?: string;
   position: number;
+  listpercent?: number;
   records?: Types.ObjectId[] | RecordDocument[];
   points?: number;
 }
@@ -112,6 +114,7 @@ const recordSchema = new Schema<IRecord, RecordModel, IRecordMethods>(
     level: { type: String, required: true },
     hertz: { type: String, required: true },
     link: { type: String, required: true },
+    percent: { type: Number, required: true },
     playerID: { type: Schema.Types.ObjectId, ref: "Player" },
     levelID: { type: Schema.Types.ObjectId, ref: "Level" },
   },
@@ -166,6 +169,7 @@ recordSchema.pre("save", async function () {
     { new: true }
   ).session(session as ClientSession);
   if (level === null) throw new Error("Level not found");
+  if(level.listpercent && level.listpercent > this.percent) throw new Error("Not List%")
   const player = await Player.findOneAndUpdate(
     { name: this.player },
     {
@@ -188,6 +192,7 @@ const HRRrecordSchema = new Schema<IRecord, RecordModel, IRecordMethods>(
     level: { type: String, required: true },
     hertz: { type: String, required: true },
     link: { type: String, required: true },
+    percent: { type: Number, required: true },
     playerID: { type: Schema.Types.ObjectId, ref: "Player" },
     levelID: { type: Schema.Types.ObjectId, ref: "HRR_Level" },
   },
@@ -242,6 +247,7 @@ HRRrecordSchema.pre("save", async function () {
     { new: true }
   ).session(session as ClientSession);
   if (level === null) throw new Error("Level not found");
+  if(level.listpercent && level.listpercent > this.percent) throw new Error("Not List%")
   const player = await Player.findOneAndUpdate(
     { name: this.player },
     {
@@ -263,6 +269,7 @@ const levelSchema = new Schema<ILevel, LevelModel, ILevelMethods>(
     name: { type: String, required: true },
     creator: { type: String, required: true },
     urlHash: { type: String },
+    listpercent: {type: Number},
     position: { type: Number, required: true },
     records: [{ type: Schema.Types.ObjectId, ref: "Record" }],
   },

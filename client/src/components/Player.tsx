@@ -19,7 +19,7 @@ const Player: React.FC<PlayerProps> = ({ name, points, position, show, view, onS
           <TableCell className="font-semibold">
             {position}.&nbsp;{name}
           </TableCell>
-          <TableCell className="italic lead-points"><span className='text-white select-none'>{[...new Array(4 - points[view].toFixed(2).toString().split(".")[0].length)].map(e => "0")}</span>{points[view].toFixed(2).toString().split(".")[0]}<span className='px-[1px]'>.</span>{points[view].toFixed(2).toString().split(".")[1]}</TableCell>
+          {points.comb ? <TableCell className="italic lead-points"><span className='text-white select-none'>{[...new Array(4 - points[view].toFixed(2).toString().split(".")[0].length)].map(e => "0")}</span>{points[view].toFixed(2).toString().split(".")[0]}<span className='px-[1px]'>.</span>{points[view].toFixed(2).toString().split(".")[1]}</TableCell> : ""}
         </TableRow>
       </>
     )

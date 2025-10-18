@@ -8830,10 +8830,10 @@ sweetalert2-react-content@^5.0.7:
   resolved "https://registry.npmjs.org/sweetalert2-react-content/-/sweetalert2-react-content-5.0.7.tgz"
   integrity sha512-8Fk82Mpk45lFXpJWKIFF/lq8k/dJKDDQGFcuqVosaL/qRdViyAs5+u37LoTGfnOIvf+rfQB3PAXcp1XLLn+0ew==
 
-sweetalert2@^11.6.13:
-  version "11.6.13"
-  resolved "https://registry.npmjs.org/sweetalert2/-/sweetalert2-11.6.13.tgz"
-  integrity sha512-n5yVF0FNx1lm4XzpPyb1HIaiptzODfVyeCzmB809tpK+1bPdoKoevKOxYjrtId75DV7xuIp4r6cjn8xUAB8dPQ==
+sweetalert2@^11.26.1:
+  version "11.26.1"
+  resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-11.26.1.tgz#816182285020176a3b759a461a9d0b4ee0a5b826"
+  integrity sha512-AoRHyIcCbfq9LyZI3YE9Z/3HZVzf7SSm59P+E6Ju4fHbypwfIWIk0VEnndEvuknsFjLn8iF4nUmcPX1NFu+Vsg==
 
 symbol-tree@^3.2.4:
   version "3.2.4"
