@@ -50,7 +50,17 @@ if(rec?.[0]?.level) {
                 window.location.assign(`/#/legacy?player=${r.player}`)
                 window.location.reload()
               }
-            }}>{r.player}{longest ? <span className='opacity-0 select-none'>{Array.from(new Array(longest - r.player.length)).join("e")}</span> : ""}</a> : <a href={`/#/${hrr ? "hrr" : ""}?level=${r.level}`}>{r.level}{longest ? <span className='opacity-0 select-none'>{Array.from(new Array(longest-r.level.length)).join("e")}</span> : ""}</a>}</TableCell>
+            }}>{r.player}{longest ? <span className='opacity-0 select-none'>{Array.from(new Array(longest - r.player.length)).join("e")}</span> : ""}</a> : <a href={`/#/${hrr ? "hrr" : ""}?level=${r.level}`} onClick={async () => {
+              if(legacy) Swal.close()
+              if(r.levelID.position > 100) {
+                window.location.assign(`/#/legacy?level=${r.level}`)
+                window.location.reload()
+              } else if(hrr) {
+                window.location.href = `/#/hrr?level=${r.level}`
+              } else {
+                window.location.href = `/#/levels?level=${r.level}`
+              }
+            }}>{r.level}{longest ? <span className='opacity-0 select-none'>{Array.from(new Array(longest-r.level.length)).join("e")}</span> : ""}</a>}</TableCell>
             <TableCell style={{width: "100px"}}>{r.hertz}</TableCell>
             <TableCell className='grid place-items-center'>
               <a href={r.link} target={'_blank'}>

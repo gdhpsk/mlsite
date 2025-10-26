@@ -36,9 +36,12 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
             setPlayer(undefined)
           }}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width={16}><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></Button>
           </div>
-            <p className="text-4xl mt-3 mb-2">
+            <div className='flex items-center relative'>
+              <p className="text-4xl mt-3 mb-2">
               <strong>{player.name}</strong>
             </p>
+            {player.nationality ? <img src={`https://raw.githubusercontent.com/hampusborgos/country-flags/3d5d2c5423b589b7cd9d31a4a79222775ea4cacd/svg/${player.nationality}.svg`} className='h-6 absolute' style={{left: `calc(100% + 8px + ${Math.ceil(player.name.length / 2)}ch)`}}></img> : ""}
+            </div>
             {player.avatar ? <div className='grid place-items-center'>
               <div style={{backgroundImage: `url(https://storage.hpsk.me/api/bucket/file/${player.avatar})`, width: "128px", height: "128px", borderRadius: "200px", backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "center"}}></div>
             </div> : ""}
@@ -87,6 +90,13 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
                   })}
               />
             </div> : ""}
+            {player.hrr_records.length ? <><br></br><br></br><div className="grid justify-items-center bg-[#dbfeea]" style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 500px)`}}>
+              <p className="text-3xl font-bold py-6">• HRR Records ({player.hrr_records.length}) •</p>
+              <Records
+                rec={player.hrr_records}
+                hrr={true}
+              />
+            </div></> : ""}
             {player.points.comb != 0 && player.records.filter((e: any) => e.levelID.position > 100 && e.percent == 100).length ? <><br></br><br></br><div className="grid justify-items-center bg-[#dbfeea]" style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 500px)`}}>
               <p className="text-3xl font-bold py-6">• Legacy ({player.records.filter((e: any) => e.levelID.position > 100 && e.percent == 100)
                   .filter((record) => {
@@ -112,13 +122,6 @@ const LeaderboardInfoBox: React.FC<InfoBoxProps> = (props: InfoBoxProps) => {
                     }
                   })}
                 legacy={true}
-              />
-            </div></> : ""}
-            {player.hrr_records.length ? <><br></br><br></br><div className="grid justify-items-center bg-[#dbfeea]" style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 500px)`}}>
-              <p className="text-3xl font-bold py-6">• HRR Records ({player.hrr_records.length}) •</p>
-              <Records
-                rec={player.hrr_records}
-                hrr={true}
               />
             </div></> : ""}
             {player.records.filter((e: any) => e.levelID.position < 51 && e.levelID.listpercent <= e.percent && e.percent != 100).length ? <div className="grid justify-items-center bg-[#dbfeea] mt-8" style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 500px)`}}>

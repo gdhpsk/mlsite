@@ -238,7 +238,7 @@ app.get("/players/:name", async (req, res) => {
   Player.findOne({ name: req.params.name })
   .lean({virtuals: true})
   .populate({
-    path: 'records',                   // First, populate the 'records' field
+    path: 'records hrr_records',                   // First, populate the 'records' field
     select: '-_id -id -__v -player -playerID',  // Exclude fields from 'records'
     populate: {
       path: 'levelID',                 // Then, populate the 'levelID' field inside each 'record'
@@ -337,6 +337,7 @@ app.post(
       level: req.body.level as string,
       hertz: req.body.hertz as number,
       link: req.body.link as string,
+      percent: 100
     });
     record.$session(session);
     await record.save();
@@ -366,6 +367,7 @@ app.post(
       level: req.body.level as string,
       hertz: req.body.hertz as number,
       link: req.body.link as string,
+      percent: req.body.percent as number || 100
     });
     record.$session(session);
     await record.save();
@@ -469,14 +471,20 @@ app.route("/packs")
 app.post("/submit", async (req, res) => {
   var isNew = 0;
   if (
+    (req.body.tab == "lrr" &&
     await Record.exists({
       player: req.body.player as string,
       level: req.body.level as string,
-    })
+    })) || (req.body.tab == "hrr" &&
+    await HRRRecord.exists({
+      player: req.body.player as string,
+      level: req.body.level as string,
+    }))
   )
     return res.sendStatus(409);
   if (!(await Player.exists({ name: req.body.player as string }))) isNew += 1;
-  if (!(await Level.exists({ name: req.body.level as string }))) isNew += 2;
+  if(req.body.tab == "lrr" && !(await Level.exists({ name: req.body.level as string }))) isNew += 2
+  if (req.body.tab == "hrr" &&  !(await HRRLevel.exists({ name: req.body.level as string }))) isNew += 2;
   return axios
     .post(
       `${process.env.BOT_LISTENER_URI}/submit`,

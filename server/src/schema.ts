@@ -76,6 +76,7 @@ interface IPlayer {
     comb: string;
   };
   avatar?: string
+  nationality?: string
 }
 
 interface IPlayerMethods {
@@ -114,7 +115,7 @@ const recordSchema = new Schema<IRecord, RecordModel, IRecordMethods>(
     level: { type: String, required: true },
     hertz: { type: String, required: true },
     link: { type: String, required: true },
-    percent: { type: Number, required: true },
+    percent: { type: Number, required: true, default: 100 },
     playerID: { type: Schema.Types.ObjectId, ref: "Player" },
     levelID: { type: Schema.Types.ObjectId, ref: "Level" },
   },
@@ -192,7 +193,7 @@ const HRRrecordSchema = new Schema<IRecord, RecordModel, IRecordMethods>(
     level: { type: String, required: true },
     hertz: { type: String, required: true },
     link: { type: String, required: true },
-    percent: { type: Number, required: true },
+    percent: { type: Number, required: true, default: 100 },
     playerID: { type: Schema.Types.ObjectId, ref: "Player" },
     levelID: { type: Schema.Types.ObjectId, ref: "HRR_Level" },
   },
@@ -452,7 +453,8 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
     discord: { type: String, required: false },
     records: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Record' }],
     hrr_records: [{ type: mongoose.Schema.Types.ObjectId, ref: 'HRR_Record' }],
-    avatar: String
+    avatar: String,
+    nationality: String
   },
   {
     minimize: false,
@@ -574,6 +576,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1,
               'discord': 1,
+              'hrr_records': 1,
               'records': {
                 '$map': {
                   'input': '$temp',
@@ -710,6 +713,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1,
               'discord': 1,
+              'hrr_records': 1,
               'records': {
                 '$sortArray': {
                   'input': '$records',
@@ -747,6 +751,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1,
               'discord': 1,
+              'hrr_records': 1,
               'records': {
                 '$map': {
                   'input': '$records',
@@ -881,6 +886,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1,
               'discord': 1,
+              'hrr_records': 1,
               'records': {
                 '$map': {
                   'input': '$temp',
@@ -1017,6 +1023,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1,
               'discord': 1,
+              'hrr_records': 1,
               'records': {
                 '$sortArray': {
                   'input': '$records',
@@ -1054,6 +1061,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1,
               'discord': 1,
+              'hrr_records': 1,
               'records': {
                 '$map': {
                   'input': '$records',

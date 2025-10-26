@@ -49,6 +49,7 @@ export interface APIOnePlayer extends APIManyPlayer {
   records: APIPlayerRecord[],
   hrr_records: APIPlayerRecord[],
   avatar?: string
+  nationality?: undefined
 }
 
 interface RecordSubmission {
@@ -57,6 +58,8 @@ interface RecordSubmission {
   hertz: number
   link: string
   raw: string
+  hrr: boolean
+  progress: number
 }
 
 export const getLevels = async (): Promise<APIManyLevel[]> => {
