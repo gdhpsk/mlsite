@@ -75,7 +75,7 @@ const Legacy: React.FC = () => {
     if (selectedLevel && levels.length) {
       const level = levels.find(e => e.name == selectedLevel)
       withReactContent(Swal).fire({
-        width: window.innerWidth < 1200 ? "98vw" : "75vw",
+        width: window.innerWidth < 1300 ? "98vw" : "75vw",
         showConfirmButton: false,
         customClass: {
           popup: ["legacy-popup"],

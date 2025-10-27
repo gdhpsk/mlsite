@@ -519,35 +519,129 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
               'as': 'temp'
             }
           }, {
-            '$lookup': {
-              'from': 'levels',
-              'let': {
-                'records': '$temp'
-              },
-              'pipeline': [
-                {
-                  '$match': {
-                    '$expr': {
-                      '$in': [
-                        '$_id', {
-                          '$map': {
-                            'input': '$$records',
-                            'in': '$$this._id'
-                          }
+    '$lookup': {
+      'from': 'levels', 
+      'let': {
+        'records': '$temp'
+      }, 
+      'pipeline': [
+        {
+          '$match': {
+            '$expr': {
+              '$in': [
+                '$_id', {
+                  '$map': {
+                    'input': '$$records', 
+                    'in': '$$this._id'
+                  }
+                }
+              ]
+            }
+          }
+        }, {
+          '$project': {
+            'points': {
+              '$cond': {
+                'if': {
+                  '$gt': [
+                    '$position', 100
+                  ]
+                }, 
+                'then': 0, 
+                'else': {
+                  '$cond': {
+                    'if': {
+                      '$and': [
+                        {
+                          '$lte': [
+                            '$position', 50
+                          ]
+                        }, {
+                          '$eq': [
+                            {
+                              '$size': {
+                                '$filter': {
+                                  'input': '$$records', 
+                                  'cond': {
+                                    '$and': [
+                                      {
+                                        '$eq': [
+                                          '$$this._id', '$_id'
+                                        ]
+                                      }, {
+                                        '$gte': [
+                                          '$$this.percent', '$listpercent'
+                                        ]
+                                      }, {
+                                        '$ne': [
+                                          '$$this.percent', 100
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }, 1
+                          ]
                         }
                       ]
-                    }
-                  }
-                }, {
-                  '$project': {
-                    'points': {
+                    }, 
+                    'then': {
+                      '$divide': [
+                        {
+                          '$subtract': [
+                            {
+                              '$divide': [
+                                2160, {
+                                  '$add': [
+                                    {
+                                      '$multiply': [
+                                        0.35, '$position'
+                                      ]
+                                    }, 8.65
+                                  ]
+                                }
+                              ]
+                            }, 40
+                          ]
+                        }, 6
+                      ]
+                    }, 
+                    'else': {
                       '$cond': {
                         'if': {
-                          '$gt': [
-                            '$position', 100
+                          '$and': [
+                            {
+                              '$gt': [
+                                '$position', 50
+                              ]
+                            }, {
+                              '$eq': [
+                                {
+                                  '$size': {
+                                    '$filter': {
+                                      'input': '$$records', 
+                                      'cond': {
+                                        '$and': [
+                                          {
+                                            '$eq': [
+                                              '$$this._id', '$_id'
+                                            ]
+                                          }, {
+                                            '$ne': [
+                                              '$$this.percent', 100
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }, 1
+                              ]
+                            }
                           ]
-                        },
-                        'then': 0,
+                        }, 
+                        'then': 0, 
                         'else': {
                           '$subtract': [
                             {
@@ -569,10 +663,14 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                     }
                   }
                 }
-              ],
-              'as': 'temp2'
+              }
             }
-          }, {
+          }
+        }
+      ], 
+      'as': 'temp2'
+    }
+  }, {
             '$project': {
               'name': 1,
               'discord': 1,
@@ -833,31 +931,129 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
               'as': 'temp'
             }
           }, {
-            '$lookup': {
-              'from': 'levels',
-              'let': {
-                'records': '$temp'
-              },
-              'pipeline': [
-                {
-                  '$match': {
-                    '$expr': {
-                      '$in': [
-                        '$_id', {
-                          '$map': {
-                            'input': '$$records',
-                            'in': '$$this._id'
-                          }
+    '$lookup': {
+      'from': 'levels', 
+      'let': {
+        'records': '$temp'
+      }, 
+      'pipeline': [
+        {
+          '$match': {
+            '$expr': {
+              '$in': [
+                '$_id', {
+                  '$map': {
+                    'input': '$$records', 
+                    'in': '$$this._id'
+                  }
+                }
+              ]
+            }
+          }
+        }, {
+          '$project': {
+            'points': {
+              '$cond': {
+                'if': {
+                  '$gt': [
+                    '$position', 100
+                  ]
+                }, 
+                'then': 0, 
+                'else': {
+                  '$cond': {
+                    'if': {
+                      '$and': [
+                        {
+                          '$lte': [
+                            '$position', 50
+                          ]
+                        }, {
+                          '$eq': [
+                            {
+                              '$size': {
+                                '$filter': {
+                                  'input': '$$records', 
+                                  'cond': {
+                                    '$and': [
+                                      {
+                                        '$eq': [
+                                          '$$this._id', '$_id'
+                                        ]
+                                      }, {
+                                        '$gte': [
+                                          '$$this.percent', '$listpercent'
+                                        ]
+                                      }, {
+                                        '$ne': [
+                                          '$$this.percent', 100
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }, 1
+                          ]
                         }
                       ]
-                    }
-                  }
-                }, {
-                  '$project': {
-                    'points': {
+                    }, 
+                    'then': {
+                      '$divide': [
+                        {
+                          '$subtract': [
+                            {
+                              '$divide': [
+                                2160, {
+                                  '$add': [
+                                    {
+                                      '$multiply': [
+                                        0.35, '$position'
+                                      ]
+                                    }, 8.65
+                                  ]
+                                }
+                              ]
+                            }, 40
+                          ]
+                        }, 6
+                      ]
+                    }, 
+                    'else': {
                       '$cond': {
-                        'if': { '$gt': ['$position', 100] },
-                        'then': 0,
+                        'if': {
+                          '$and': [
+                            {
+                              '$gt': [
+                                '$position', 50
+                              ]
+                            }, {
+                              '$eq': [
+                                {
+                                  '$size': {
+                                    '$filter': {
+                                      'input': '$$records', 
+                                      'cond': {
+                                        '$and': [
+                                          {
+                                            '$eq': [
+                                              '$$this._id', '$_id'
+                                            ]
+                                          }, {
+                                            '$ne': [
+                                              '$$this.percent', 100
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }, 1
+                              ]
+                            }
+                          ]
+                        }, 
+                        'then': 0, 
                         'else': {
                           '$subtract': [
                             {
@@ -879,10 +1075,14 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                     }
                   }
                 }
-              ],
-              'as': 'temp2'
+              }
             }
-          }, {
+          }
+        }
+      ], 
+      'as': 'temp2'
+    }
+  }, {
             '$project': {
               'name': 1,
               'discord': 1,

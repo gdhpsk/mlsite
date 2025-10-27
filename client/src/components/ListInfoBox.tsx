@@ -58,10 +58,10 @@ function getYouTubeVideoID(url: string) {
     <div className={`rounded-box flex ${legacy ? "w-full rounded-2xl" : width < 1500 ? "items-center justify-center w-full overflow-y-auto" : "w-[55%] pl-4 overflow-y-auto"} flex-col bg-[#f1f9f5] shadow-inner`}  style={{width: width < 1500 && !legacy ? "min(800px, 100%)" : "revert-layer",  height: legacy ? "100%" : "calc(100vh - 72px)"}}>
       {level ? (<>
         {legacy ? <div className={`w-full h-full ${width < 1300 ? "grid justify-content-center" : "flex"}`}>
-          <div className={`grid ${width < 1300 ? "justify-items-center" : "justify-items-start ml-16 h-96"} gap-y-16 ${width < 1200 ? "pt-12 w-full" : "pt-12 w-2/4"} pb-12`}>
+          <div className={`grid ${width < 1300 ? "justify-items-center" : "justify-items-start ml-16 h-96"} gap-y-16 ${width < 1300 ? "pt-12 w-full" : "pt-12 w-2/4"} pb-12`}>
 
           <div className={`grid place-items-start w-full ${legacy ? "-ml-4 -mt-4" : width < 1500 ? "pl-8 pt-8" : ""} -mb-8`}>
-          <Button className={`-mb-8 ${width < 1200 ? "-ml-1" : "-ml-8"} -mt-6 fixed`} onClick={() => {
+          <Button className={`-mb-8 ${width < 1300 ? "-ml-1" : "-ml-8"} -mt-6 fixed`} onClick={() => {
                 if(swalClose) swalClose()
                 selectedState("")
                 setLevel(undefined)
@@ -79,7 +79,7 @@ function getYouTubeVideoID(url: string) {
             </div>
             </div>
           </div>
-          <div className={`${width < 1200 ? "w-full" : "w-2/4"} h-full ${width < 1300 ? "grid" : ""}`} style={{textAlign: width < 1300 ? "-webkit-center" as any : "unset"}}>
+          <div className={`${width < 1300 ? "w-full" : "w-2/4"} h-full ${width < 1300 ? "grid" : ""}`} style={{textAlign: width < 1300 ? "-webkit-center" as any : "unset"}}>
           <ScrollAreaNoScroll className={`w-full h-full`}>
           <div className={`grid place-items-center w-full mt-6`}  style={{width: `min(${window.innerWidth < 1500 ? "90%" : "calc(100% - 160px), 90%"}, 400px)`}}>
               <Tabs defaultValue={view} className="w-[300px]" onValueChange={(val: 'lrr' | 'hrr' | 'comb') => setView(val)}>
@@ -124,7 +124,7 @@ function getYouTubeVideoID(url: string) {
                       </div>
                       <div className='grid w-2/4'>
                         <p className='w-full text-center font-bold text-2xl mb-2'>Progress ({level.listpercent}%)</p>
-                        <p className='w-full text-center text-lg'>{(level.points / 4).toFixed(2)}</p>
+                        <p className='w-full text-center text-lg'>{(level.points / 6).toFixed(2)}</p>
                       </div>
                     </div>
                 </div></>}
