@@ -3,12 +3,16 @@ import { ExternalLink } from 'lucide-react'
 import { Table, TableBody, TableRow, TableCell } from '../primitives/table'
 import { ScrollArea } from '../primitives/scroll-area'
 import { cn } from '../util/reusables'
+import e from 'cors'
+import { getPlayer } from '../util/withApi'
+import Swal from 'sweetalert2'
 
 interface Record {
   hertz: string
   link: string
   player?: string
   level?: string
+  percent: number
   levelID?: {
     position?: number
   }
@@ -17,10 +21,13 @@ interface Record {
 interface RecordsProps {
   rec: Record[],
   hrr?: true
+  progress?: boolean
+  longest?: number
+  legacy?: boolean
   refFunction?: Function
 }
 
-const Records: React.FC<RecordsProps> = ({ rec, refFunction, hrr }) => {
+const Records: React.FC<RecordsProps> = ({ rec, refFunction, hrr, progress, longest, legacy }) => {
   let ref = useRef()
   useEffect(() => {
     if(refFunction) refFunction(ref.current)
@@ -32,14 +39,33 @@ if(rec?.[0]?.level) {
     <div className='overflow-x-hidden w-full' ref={ref}>
     <Table>
       <TableBody>
-        {rec.filter(e => e.levelID ? e.levelID.position < 101 : true).map((r, i) => (
+        {rec.filter(e => e.levelID && !legacy ? e.levelID.position < 101 : true).map((r, i) => (
           <TableRow key={`record-${i}`} style={{backgroundColor: i % 2 ? "whitesmoke" : "lightgray"}} className={cn('text-lg', r.hertz.split("/").at(-1) == "60" && 'font-semibold')}>
-            <TableCell>{r.level ? r.levelID.position : i+1}. {r.player ? <a href={`/#/leaderboard?player=${r.player}`}>{r.player}</a> : <a href={`/#/${hrr ? "hrr" : ""}?level=${r.level}`}>{r.level}</a>}</TableCell>
-            <TableCell style={{width: "20px"}}>{r.hertz}</TableCell>
+            <TableCell className='text-left'>{r.level ? r.levelID.position : i+1}. {r.player ? <a onClick={async () => {
+              const player = await getPlayer(r.player)
+              if(legacy) Swal.close()
+              if(player.points.comb) {
+                window.location.href = `/#/leaderboard?player=${r.player}`
+              } else {
+                window.location.assign(`/#/legacy?player=${r.player}`)
+                window.location.reload()
+              }
+            }}>{r.player}{longest ? <span className='opacity-0 select-none'>{Array.from(new Array(longest - r.player.length)).join("e")}</span> : ""}</a> : <a href={`/#/${hrr ? "hrr" : ""}?level=${r.level}`} onClick={async () => {
+              if(legacy) Swal.close()
+              if(r.levelID.position > 100) {
+                window.location.assign(`/#/legacy?level=${r.level}`)
+                window.location.reload()
+              } else if(hrr) {
+                window.location.href = `/#/hrr?level=${r.level}`
+              } else {
+                window.location.href = `/#/levels?level=${r.level}`
+              }
+            }}>{r.level}{longest ? <span className='opacity-0 select-none'>{Array.from(new Array(longest-r.level.length)).join("e")}</span> : ""}</a>}</TableCell>
+            <TableCell style={{width: "100px"}}>{r.hertz}</TableCell>
             <TableCell className='grid place-items-center'>
               <a href={r.link} target={'_blank'}>
                 <div className="w-min rounded-lg p-2 hover:bg-[#f1f9f5]">
-                  <ExternalLink />
+                  {progress ? <p className='text-blue-800 font-bold hover:bg-none'>{r.percent}%</p> : <ExternalLink />}
                 </div>
               </a>
             </TableCell>

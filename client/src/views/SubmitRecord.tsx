@@ -1,27 +1,32 @@
 import React, { useState, useEffect } from 'react'
 import CreatableSelect from 'react-select/creatable'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
-import { getLevels, getPlayers, APIManyLevel, APIManyPlayer, submitRecord } from '../util/withApi'
+import { getLevels, getPlayers, APIManyLevel, APIManyPlayer, submitRecord, getHRRLevels } from '../util/withApi'
 import RenderTime from '../partials/RenderTime'
 import { Input } from '../primitives/input'
 import { Label } from '../primitives/label'
 import { Button } from '../primitives/button'
 import { cn } from '../util/reusables'
+import { Tabs, TabsList, TabsTrigger } from '../primitives/tabs'
 
 const SubmitRecord: React.FC = () => {
   let [levels, setLevels] = useState<Array<APIManyLevel>>([])
   let [players, setPlayers] = useState<Array<APIManyPlayer>>([])
+  let [HRRLevels, setHRRLevels] = useState<Array<APIManyLevel>>([])
   let [level, setLevel] = useState<string>('')
   let [player, setPlayer] = useState<string>('')
   let [hertz, setHertz] = useState<number>(60)
+  let [progress, setProgress] = useState({progress: 0, disabled: true})
   let [link, setLink] = useState<string>('')
   let [raw, setRaw] = useState<string>('')
   let [submitStatus, setSubmitStatus] = useState<number>(undefined)
   let [error, setError] = useState<string>(undefined)
   let [disabled, setDisabled] = useState<boolean>(false)
+  let [tab, setTab] = useState<"lrr" | "hrr">("lrr")
 
   useEffect(() => {
-    getLevels().then((l) => setLevels(l))
+    getHRRLevels().then((l) => setHRRLevels(l.filter(e => e.position <= 120)))
+    getLevels().then((l) => setLevels(l.filter(e => e.position <= 120)))
     getPlayers().then((p) => setPlayers(p))
   }, [])
 
@@ -36,6 +41,16 @@ const SubmitRecord: React.FC = () => {
   }, [submitStatus, error])
 
   useEffect(() => {
+    
+                    setPlayer(undefined)
+                    setLevel(undefined)
+                    setHertz(undefined)
+                    setLink(undefined)
+                    setRaw(undefined)
+                    setProgress({progress: 0, disabled: true})
+  }, [tab])
+
+  useEffect(() => {
     setTimeout(() => {
       setDisabled(false)
     }, 62000)
@@ -47,6 +62,14 @@ const SubmitRecord: React.FC = () => {
         <div className="mb-3 grid justify-items-center text-3xl font-bold">
           <p>Submit a Record</p>
         </div>
+         <div className='w-full grid place-items-center'>
+          <Tabs defaultValue="lrr" className="w-[250px]" onValueChange={(val: 'lrr' | 'hrr') => setTab(val)}>
+          <TabsList className="grid w-full grid-cols-2">
+             <TabsTrigger className='data-[state=active]:bg-[#93fdc5]' value="lrr">Main List</TabsTrigger>
+             <TabsTrigger className='data-[state=active]:bg-[#93fdc5]' value="hrr">HRR List</TabsTrigger>
+          </TabsList>
+        </Tabs>
+         </div>
         <Label>Player</Label>
         <CreatableSelect
           className="z-39 mb-3 w-48"
@@ -66,8 +89,15 @@ const SubmitRecord: React.FC = () => {
         <CreatableSelect
           className="z-39 mb-3 w-48"
           name="levelSelect"
-          options={levels.map((l) => ({ value: l.name, label: l.name }))}
-          onChange={(e) => setLevel(e.value)}
+          options={(tab == "lrr" ? levels : HRRLevels).map((l) => ({ value: l.name, label: l.name }))}
+          onChange={(e) => {
+            if(tab == "lrr" && levels.find(i => i.name == e.value).position < 50) {
+              setProgress({...progress, disabled: false})
+            } else {
+              setProgress({progress: 0, disabled: true})
+            }
+            setLevel(e.value)
+          }}
           isSearchable
           openMenuOnClick={false}
           placeholder=". . ."
@@ -77,13 +107,30 @@ const SubmitRecord: React.FC = () => {
             }),
           }}
         />
-        <Label>Refresh Rate</Label>
+        <div className='flex justify-between flex-wrap gap-3'>
+          <div>
+            <Label>Refresh Rate</Label>
         <Input
           type="number"
           placeholder=". . ."
           className="mb-3 w-48"
           onChange={(e) => setHertz(Number(e.target.value))}
         />
+          </div>
+         {tab == "lrr" ? <div>
+          <div style={{width: "100%", display: "inline-grid", placeItems: window.innerWidth < 936 ? "start" : "end"}}>
+            <Label>Percentage</Label>
+          </div>
+        <Input
+          type="number"
+          placeholder=". . ."
+          className="mb-3 w-48"
+          value={progress.progress || ""}
+          disabled={progress.disabled}
+          onChange={(e) => setProgress({...progress, progress: Number(e.target.value)})}
+        />
+         </div> : ""}
+        </div>
         <Label>Video Link</Label>
         <Input type="text" onChange={(e) => setLink(e.target.value)} className="mb-3" placeholder=". . ." />
         <Label>Raw Footage</Label>
@@ -94,7 +141,7 @@ const SubmitRecord: React.FC = () => {
             onClick={() => {
               if (player && level && hertz && link && raw) {
                 setDisabled(true)
-                submitRecord({ player, level, hertz, link, raw })
+                submitRecord({ player, level, hertz, link, raw, hrr: tab == "hrr", progress: progress.progress || 100 })
                   .then((data) => {
                     setSubmitStatus(data.status)
                   })
@@ -104,6 +151,7 @@ const SubmitRecord: React.FC = () => {
                     setHertz(undefined)
                     setLink(undefined)
                     setRaw(undefined)
+                    setProgress({progress: 0, disabled: true})
                   })
               } else {
                 setError('Please fill out all fields')

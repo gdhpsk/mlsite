@@ -6,10 +6,12 @@ interface APIRecordBase {
 
 export interface APILevelRecord extends APIRecordBase {
   player: string
+  percent: number
 }
 
 export interface APIPlayerRecord extends APIRecordBase {
   level: string
+  percent: number
 }
 
 export interface APIManyLevel {
@@ -17,6 +19,7 @@ export interface APIManyLevel {
   creator: string
   position: number
   points: number
+  listpercent?: number
   id?: any
   urlHash?: string
 }
@@ -46,6 +49,7 @@ export interface APIOnePlayer extends APIManyPlayer {
   records: APIPlayerRecord[],
   hrr_records: APIPlayerRecord[],
   avatar?: string
+  nationality?: undefined
 }
 
 interface RecordSubmission {
@@ -54,6 +58,8 @@ interface RecordSubmission {
   hertz: number
   link: string
   raw: string
+  hrr: boolean
+  progress: number
 }
 
 export const getLevels = async (): Promise<APIManyLevel[]> => {
@@ -74,6 +80,10 @@ export const getHRRLevel = async (name: string): Promise<APIOneLevel> => {
 
 export const getPlayers = async (): Promise<APIManyPlayer[]> => {
   return fetch(`/players`).then((data) => data.json())
+}
+
+export const getLegacyPlayers = async (): Promise<APIManyPlayer[]> => {
+  return fetch(`/players/legacy`).then((data) => data.json())
 }
 
 export const getPlayer = async (name: string): Promise<APIOnePlayer> => {

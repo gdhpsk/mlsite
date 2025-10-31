@@ -15,6 +15,7 @@ interface IRecord {
   link: string;
   playerID?: Types.ObjectId;
   levelID?: Types.ObjectId;
+  percent: number
 }
 
 interface IRecordMethods {
@@ -42,6 +43,7 @@ interface ILevel {
   creator: string;
   urlHash?: string;
   position: number;
+  listpercent?: number;
   records?: Types.ObjectId[] | RecordDocument[];
   points?: number;
 }
@@ -74,6 +76,7 @@ interface IPlayer {
     comb: string;
   };
   avatar?: string
+  nationality?: string
 }
 
 interface IPlayerMethods {
@@ -112,6 +115,7 @@ const recordSchema = new Schema<IRecord, RecordModel, IRecordMethods>(
     level: { type: String, required: true },
     hertz: { type: String, required: true },
     link: { type: String, required: true },
+    percent: { type: Number, required: true, default: 100 },
     playerID: { type: Schema.Types.ObjectId, ref: "Player" },
     levelID: { type: Schema.Types.ObjectId, ref: "Level" },
   },
@@ -166,6 +170,7 @@ recordSchema.pre("save", async function () {
     { new: true }
   ).session(session as ClientSession);
   if (level === null) throw new Error("Level not found");
+  if(level.listpercent && level.listpercent > this.percent) throw new Error("Not List%")
   const player = await Player.findOneAndUpdate(
     { name: this.player },
     {
@@ -188,6 +193,7 @@ const HRRrecordSchema = new Schema<IRecord, RecordModel, IRecordMethods>(
     level: { type: String, required: true },
     hertz: { type: String, required: true },
     link: { type: String, required: true },
+    percent: { type: Number, required: true, default: 100 },
     playerID: { type: Schema.Types.ObjectId, ref: "Player" },
     levelID: { type: Schema.Types.ObjectId, ref: "HRR_Level" },
   },
@@ -242,6 +248,7 @@ HRRrecordSchema.pre("save", async function () {
     { new: true }
   ).session(session as ClientSession);
   if (level === null) throw new Error("Level not found");
+  if(level.listpercent && level.listpercent > this.percent) throw new Error("Not List%")
   const player = await Player.findOneAndUpdate(
     { name: this.player },
     {
@@ -263,6 +270,7 @@ const levelSchema = new Schema<ILevel, LevelModel, ILevelMethods>(
     name: { type: String, required: true },
     creator: { type: String, required: true },
     urlHash: { type: String },
+    listpercent: {type: Number},
     position: { type: Number, required: true },
     records: [{ type: Schema.Types.ObjectId, ref: "Record" }],
   },
@@ -445,7 +453,8 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
     discord: { type: String, required: false },
     records: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Record' }],
     hrr_records: [{ type: mongoose.Schema.Types.ObjectId, ref: 'HRR_Record' }],
-    avatar: String
+    avatar: String,
+    nationality: String
   },
   {
     minimize: false,
@@ -510,35 +519,129 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
               'as': 'temp'
             }
           }, {
-            '$lookup': {
-              'from': 'levels',
-              'let': {
-                'records': '$temp'
-              },
-              'pipeline': [
-                {
-                  '$match': {
-                    '$expr': {
-                      '$in': [
-                        '$_id', {
-                          '$map': {
-                            'input': '$$records',
-                            'in': '$$this._id'
-                          }
+    '$lookup': {
+      'from': 'levels', 
+      'let': {
+        'records': '$temp'
+      }, 
+      'pipeline': [
+        {
+          '$match': {
+            '$expr': {
+              '$in': [
+                '$_id', {
+                  '$map': {
+                    'input': '$$records', 
+                    'in': '$$this._id'
+                  }
+                }
+              ]
+            }
+          }
+        }, {
+          '$project': {
+            'points': {
+              '$cond': {
+                'if': {
+                  '$gt': [
+                    '$position', 100
+                  ]
+                }, 
+                'then': 0, 
+                'else': {
+                  '$cond': {
+                    'if': {
+                      '$and': [
+                        {
+                          '$lte': [
+                            '$position', 50
+                          ]
+                        }, {
+                          '$eq': [
+                            {
+                              '$size': {
+                                '$filter': {
+                                  'input': '$$records', 
+                                  'cond': {
+                                    '$and': [
+                                      {
+                                        '$eq': [
+                                          '$$this._id', '$_id'
+                                        ]
+                                      }, {
+                                        '$gte': [
+                                          '$$this.percent', '$listpercent'
+                                        ]
+                                      }, {
+                                        '$ne': [
+                                          '$$this.percent', 100
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }, 1
+                          ]
                         }
                       ]
-                    }
-                  }
-                }, {
-                  '$project': {
-                    'points': {
+                    }, 
+                    'then': {
+                      '$divide': [
+                        {
+                          '$subtract': [
+                            {
+                              '$divide': [
+                                2160, {
+                                  '$add': [
+                                    {
+                                      '$multiply': [
+                                        0.35, '$position'
+                                      ]
+                                    }, 8.65
+                                  ]
+                                }
+                              ]
+                            }, 40
+                          ]
+                        }, 6
+                      ]
+                    }, 
+                    'else': {
                       '$cond': {
                         'if': {
-                          '$gt': [
-                            '$position', 100
+                          '$and': [
+                            {
+                              '$gt': [
+                                '$position', 50
+                              ]
+                            }, {
+                              '$eq': [
+                                {
+                                  '$size': {
+                                    '$filter': {
+                                      'input': '$$records', 
+                                      'cond': {
+                                        '$and': [
+                                          {
+                                            '$eq': [
+                                              '$$this._id', '$_id'
+                                            ]
+                                          }, {
+                                            '$ne': [
+                                              '$$this.percent', 100
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }, 1
+                              ]
+                            }
                           ]
-                        },
-                        'then': 0,
+                        }, 
+                        'then': 0, 
                         'else': {
                           '$subtract': [
                             {
@@ -560,13 +663,18 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                     }
                   }
                 }
-              ],
-              'as': 'temp2'
+              }
             }
-          }, {
+          }
+        }
+      ], 
+      'as': 'temp2'
+    }
+  }, {
             '$project': {
               'name': 1,
               'discord': 1,
+              'hrr_records': 1,
               'records': {
                 '$map': {
                   'input': '$temp',
@@ -703,6 +811,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1,
               'discord': 1,
+              'hrr_records': 1,
               'records': {
                 '$sortArray': {
                   'input': '$records',
@@ -740,6 +849,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1,
               'discord': 1,
+              'hrr_records': 1,
               'records': {
                 '$map': {
                   'input': '$records',
@@ -821,31 +931,129 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
               'as': 'temp'
             }
           }, {
-            '$lookup': {
-              'from': 'levels',
-              'let': {
-                'records': '$temp'
-              },
-              'pipeline': [
-                {
-                  '$match': {
-                    '$expr': {
-                      '$in': [
-                        '$_id', {
-                          '$map': {
-                            'input': '$$records',
-                            'in': '$$this._id'
-                          }
+    '$lookup': {
+      'from': 'levels', 
+      'let': {
+        'records': '$temp'
+      }, 
+      'pipeline': [
+        {
+          '$match': {
+            '$expr': {
+              '$in': [
+                '$_id', {
+                  '$map': {
+                    'input': '$$records', 
+                    'in': '$$this._id'
+                  }
+                }
+              ]
+            }
+          }
+        }, {
+          '$project': {
+            'points': {
+              '$cond': {
+                'if': {
+                  '$gt': [
+                    '$position', 100
+                  ]
+                }, 
+                'then': 0, 
+                'else': {
+                  '$cond': {
+                    'if': {
+                      '$and': [
+                        {
+                          '$lte': [
+                            '$position', 50
+                          ]
+                        }, {
+                          '$eq': [
+                            {
+                              '$size': {
+                                '$filter': {
+                                  'input': '$$records', 
+                                  'cond': {
+                                    '$and': [
+                                      {
+                                        '$eq': [
+                                          '$$this._id', '$_id'
+                                        ]
+                                      }, {
+                                        '$gte': [
+                                          '$$this.percent', '$listpercent'
+                                        ]
+                                      }, {
+                                        '$ne': [
+                                          '$$this.percent', 100
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }, 1
+                          ]
                         }
                       ]
-                    }
-                  }
-                }, {
-                  '$project': {
-                    'points': {
+                    }, 
+                    'then': {
+                      '$divide': [
+                        {
+                          '$subtract': [
+                            {
+                              '$divide': [
+                                2160, {
+                                  '$add': [
+                                    {
+                                      '$multiply': [
+                                        0.35, '$position'
+                                      ]
+                                    }, 8.65
+                                  ]
+                                }
+                              ]
+                            }, 40
+                          ]
+                        }, 6
+                      ]
+                    }, 
+                    'else': {
                       '$cond': {
-                        'if': { '$gt': ['$position', 100] },
-                        'then': 0,
+                        'if': {
+                          '$and': [
+                            {
+                              '$gt': [
+                                '$position', 50
+                              ]
+                            }, {
+                              '$eq': [
+                                {
+                                  '$size': {
+                                    '$filter': {
+                                      'input': '$$records', 
+                                      'cond': {
+                                        '$and': [
+                                          {
+                                            '$eq': [
+                                              '$$this._id', '$_id'
+                                            ]
+                                          }, {
+                                            '$ne': [
+                                              '$$this.percent', 100
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }, 1
+                              ]
+                            }
+                          ]
+                        }, 
+                        'then': 0, 
                         'else': {
                           '$subtract': [
                             {
@@ -867,13 +1075,18 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                     }
                   }
                 }
-              ],
-              'as': 'temp2'
+              }
             }
-          }, {
+          }
+        }
+      ], 
+      'as': 'temp2'
+    }
+  }, {
             '$project': {
               'name': 1,
               'discord': 1,
+              'hrr_records': 1,
               'records': {
                 '$map': {
                   'input': '$temp',
@@ -1010,6 +1223,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1,
               'discord': 1,
+              'hrr_records': 1,
               'records': {
                 '$sortArray': {
                   'input': '$records',
@@ -1047,6 +1261,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
             '$project': {
               'name': 1,
               'discord': 1,
+              'hrr_records': 1,
               'records': {
                 '$map': {
                   'input': '$records',

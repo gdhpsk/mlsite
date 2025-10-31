@@ -119,7 +119,7 @@ app.get("/levels", async (req, res) => {
 });
 
 app.get("/levels/hrr", async (req, res) => {
-  const levels = await HRRLevel.find({ position: req.query.position ? parseInt(req.query.position as string) : { $lte: 50 } })
+  const levels = await HRRLevel.find({ position: req.query.position ? parseInt(req.query.position as string) : { $lte: 100 } })
     .lean({ virtuals: true })
     .sort("position") 
     .select("-_id -__v -records");
@@ -226,15 +226,23 @@ app.get("/players", async (req, res) => {
   return res.status(200).json(players);
 });
 
+app.get("/players/legacy", async (req, res) => {
+  const players = await Player.find({ "points.comb": { $eq: 0 }, hrr_records: {$eq: []} })
+    .lean()
+    .sort("-points.comb")
+    .select("name points -_id");
+  return res.status(200).json(players);
+});
+
 app.get("/players/:name", async (req, res) => {
   Player.findOne({ name: req.params.name })
   .lean({virtuals: true})
   .populate({
-    path: 'records',                   // First, populate the 'records' field
+    path: 'records hrr_records',                   // First, populate the 'records' field
     select: '-_id -id -__v -player -playerID',  // Exclude fields from 'records'
     populate: {
       path: 'levelID',                 // Then, populate the 'levelID' field inside each 'record'
-      select: 'position',              // Include only the 'position' field from 'Level'
+      select: 'position listpercent',              // Include only the 'position' field from 'Level'
     }
   })
   .populate({
@@ -329,6 +337,7 @@ app.post(
       level: req.body.level as string,
       hertz: req.body.hertz as number,
       link: req.body.link as string,
+      percent: 100
     });
     record.$session(session);
     await record.save();
@@ -358,6 +367,7 @@ app.post(
       level: req.body.level as string,
       hertz: req.body.hertz as number,
       link: req.body.link as string,
+      percent: req.body.percent as number || 100
     });
     record.$session(session);
     await record.save();
@@ -461,14 +471,20 @@ app.route("/packs")
 app.post("/submit", async (req, res) => {
   var isNew = 0;
   if (
+    (req.body.tab == "lrr" &&
     await Record.exists({
       player: req.body.player as string,
       level: req.body.level as string,
-    })
+    })) || (req.body.tab == "hrr" &&
+    await HRRRecord.exists({
+      player: req.body.player as string,
+      level: req.body.level as string,
+    }))
   )
     return res.sendStatus(409);
   if (!(await Player.exists({ name: req.body.player as string }))) isNew += 1;
-  if (!(await Level.exists({ name: req.body.level as string }))) isNew += 2;
+  if(req.body.tab == "lrr" && !(await Level.exists({ name: req.body.level as string }))) isNew += 2
+  if (req.body.tab == "hrr" &&  !(await HRRLevel.exists({ name: req.body.level as string }))) isNew += 2;
   return axios
     .post(
       `${process.env.BOT_LISTENER_URI}/submit`,
