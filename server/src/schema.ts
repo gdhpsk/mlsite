@@ -631,7 +631,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                                                       '$$this._id', '$_id'
                                                     ]
                                                   }, {
-                                                    '$eq': [
+                                                    '$ne': [
                                                       '$$this.percent', 100
                                                     ]
                                                   }
@@ -1046,7 +1046,7 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                                                       '$$this._id', '$_id'
                                                     ]
                                                   }, {
-                                                    '$eq': [
+                                                    '$ne': [
                                                       '$$this.percent', 100
                                                     ]
                                                   }
