@@ -512,7 +512,10 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                   '$project': {
                     '_id': '$levelID',
                     'id': '$_id',
-                    'hertz': '$hertz'
+                    'hertz': '$hertz',
+                    'percent': {
+                      '$toInt': '$percent'
+                    }
                   }
                 }
               ],
@@ -924,7 +927,10 @@ const playerSchema = new Schema<IPlayer, PlayerModel, IPlayerMethods>(
                   '$project': {
                     '_id': '$levelID',
                     'id': '$_id',
-                    'hertz': '$hertz'
+                    'hertz': '$hertz',
+                    'percent': {
+                      '$toInt': '$percent'
+                    }
                   }
                 }
               ],
