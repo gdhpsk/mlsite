@@ -152,7 +152,7 @@ const recordSchema = new Schema<IRecord, RecordModel, IRecordMethods>(
           $inc: {
             [`points.${this.hertz <= 60 ? "lrr" : "hrr"}`]:
               Math.round(100 * (justOne === 1 ? -(this.percent < 100 ? (level?.position! >= 50 && level?.listpercent! <= this.percent ? level?.points! / 6 : 0) : level?.points!)! : 0)) / 100,
-            ["points.comb"]: Math.round(100 * (justOne === 1 ? -(this.percent < 100 ? (level?.position! >= 50 && level?.listpercent! <= this.percent ? level?.points! / 6 : 0) ? level?.points! / 6 : level?.points!)! : 0)) / 100,
+            ["points.comb"]: Math.round(100 * (justOne === 1 ? -(this.percent < 100 ? (level?.position! >= 50 && level?.listpercent! <= this.percent ? level?.points! / 6 : 0) : level?.points!)! : 0)) / 100,
           },
         }).session(session);
 
